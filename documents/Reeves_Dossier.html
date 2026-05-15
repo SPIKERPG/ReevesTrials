@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UGD Personnel Dossier — Reeves, E.</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Bebas+Neue&family=Barlow+Condensed:wght@300;400;500;600;700&display=swap');
+
+:root {
+  --bg:         #0b0c09;
+  --surface:    #111309;
+  --surface2:   #161810;
+  --border:     #232618;
+  --border-hi:  #303520;
+  --text:       #b8baa5;
+  --text-dim:   #626554;
+  --text-hi:    #dfe1cc;
+  --green:      #7a9a28;
+  --green-dim:  #4a5e18;
+  --red:        #8a2020;
+  --red-bright: #c03030;
+  --amber:      #b87820;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 15px;
+  line-height: 1.55;
+  min-height: 100vh;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 48px 24px 64px;
+}
+
+body::after {
+  content: '';
+  position: fixed; inset: 0;
+  background: repeating-linear-gradient(0deg, transparent 0, transparent 3px, rgba(0,0,0,.05) 3px, rgba(0,0,0,.05) 4px);
+  pointer-events: none;
+  z-index: 9999;
+}
+
+.page {
+  width: 100%;
+  max-width: 720px;
+  position: relative;
+}
+
+/* HEADER BAND */
+.doc-band {
+  background: var(--green);
+  padding: 3px 18px;
+  display: flex;
+  justify-content: space-between;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 8px;
+  letter-spacing: .22em;
+  color: var(--bg);
+}
+
+/* MAIN DOC BODY */
+.doc-body {
+  background: var(--surface2);
+  border: 1px solid var(--border-hi);
+  border-top: none;
+  padding: 32px 36px 36px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* WATERMARK */
+.doc-body::before {
+  content: 'UGD';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(-22deg);
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 160px;
+  letter-spacing: .12em;
+  color: rgba(122,154,40,.025);
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+/* DOC HEADER */
+.doc-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border-hi);
+}
+
+.doc-title-block {}
+
+.doc-org {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 7.5px;
+  letter-spacing: .28em;
+  color: var(--green);
+  margin-bottom: 8px;
+}
+
+.doc-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 28px;
+  letter-spacing: .35em;
+  color: var(--text-hi);
+  line-height: 1;
+  margin-bottom: 4px;
+}
+
+.doc-subtitle {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 8px;
+  letter-spacing: .22em;
+  color: var(--text-dim);
+}
+
+.doc-meta {
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.doc-ref {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 7.5px;
+  letter-spacing: .18em;
+  color: var(--text-dim);
+  line-height: 1.9;
+}
+
+.doc-ref span { color: var(--text); }
+
+/* CLASSIFICATION STAMP */
+.stamp-row {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 24px;
+}
+
+.stamp {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 7px;
+  letter-spacing: .28em;
+  color: var(--red-bright);
+  border: 1px solid var(--red);
+  padding: 3px 12px;
+  display: inline-block;
+  transform: rotate(-.6deg);
+}
+
+/* PHOTO PLACEHOLDER */
+.identity-row {
+  display: flex;
+  gap: 22px;
+  margin-bottom: 22px;
+  align-items: flex-start;
+}
+
+.photo-block {
+  flex-shrink: 0;
+  width: 110px;
+}
+
+.photo-placeholder {
+  width: 110px;
+  height: 132px;
+  background: var(--surface);
+  border: 1px solid var(--border-hi);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.photo-x {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 28px;
+  color: var(--border-hi);
+  line-height: 1;
+}
+
+.photo-label {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 6.5px;
+  letter-spacing: .2em;
+  color: var(--text-dim);
+  text-align: center;
+}
+
+/* IDENTITY FIELDS */
+.identity-fields {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px 16px;
+  align-content: start;
+}
+
+.field {}
+
+.field-label {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 7px;
+  letter-spacing: .2em;
+  color: var(--green);
+  margin-bottom: 3px;
+  display: block;
+}
+
+.field-value {
+  font-size: 14px;
+  color: var(--text-hi);
+  font-weight: 600;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 4px;
+  line-height: 1.3;
+}
+
+.field-value.redacted {
+  color: var(--text-dim);
+  font-weight: 300;
+  font-style: italic;
+  font-size: 12px;
+}
+
+.field.full { grid-column: 1 / -1; }
+
+/* DIVIDER LABEL */
+.section-divider {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 7.5px;
+  letter-spacing: .26em;
+  color: var(--green);
+  border-bottom: 1px solid var(--border-hi);
+  padding-bottom: 5px;
+  margin-bottom: 14px;
+}
+
+/* BIOGRAPHY */
+.bio-block {
+  margin-bottom: 22px;
+}
+
+.bio-para {
+  font-size: 14px;
+  color: var(--text);
+  line-height: 1.65;
+  margin-bottom: 10px;
+}
+
+.bio-para:last-child { margin-bottom: 0; }
+
+.bio-para strong { color: var(--text-hi); font-weight: 600; }
+
+/* NOTE BOX */
+.note-box {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--amber);
+  padding: 9px 12px;
+  margin: 14px 0;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 9px;
+  letter-spacing: .08em;
+  color: var(--amber);
+  line-height: 1.6;
+}
+
+.note-box .note-label {
+  font-size: 7px;
+  letter-spacing: .22em;
+  color: var(--text-dim);
+  display: block;
+  margin-bottom: 3px;
+}
+
+/* METRICS ROW */
+.metrics-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0;
+  border: 1px solid var(--border-hi);
+  margin-bottom: 22px;
+}
+
+.metric-cell {
+  padding: 10px 12px;
+  border-right: 1px solid var(--border);
+  text-align: center;
+}
+
+.metric-cell:last-child { border-right: none; }
+
+.metric-label {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 6.5px;
+  letter-spacing: .18em;
+  color: var(--text-dim);
+  margin-bottom: 5px;
+}
+
+.metric-value {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 20px;
+  letter-spacing: .1em;
+  color: var(--text-hi);
+  line-height: 1;
+}
+
+.metric-value.none {
+  color: var(--text-dim);
+  font-size: 14px;
+  letter-spacing: .2em;
+  font-family: 'Share Tech Mono', monospace;
+  padding-top: 3px;
+}
+
+/* ASSESSMENT BLOCK */
+.assessment-block {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-top: 2px solid var(--green-dim);
+  padding: 12px 14px;
+  margin-bottom: 20px;
+}
+
+.assessment-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 5px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 13px;
+  gap: 10px;
+}
+
+.assessment-row:last-child { border-bottom: none; }
+
+.ar-key {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 7.5px;
+  letter-spacing: .14em;
+  color: var(--text-dim);
+  min-width: 140px;
+  flex-shrink: 0;
+}
+
+.ar-val { color: var(--text); flex: 1; }
+
+.ar-val.approved  { color: var(--green); }
+.ar-val.deprioritized { color: var(--amber); }
+.ar-val.unknown { color: var(--text-dim); font-style: italic; }
+
+/* FOOTER */
+.doc-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 14px;
+  margin-top: 8px;
+  border-top: 1px solid var(--border);
+}
+
+.footer-ref {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 7px;
+  letter-spacing: .16em;
+  color: var(--text-dim);
+  line-height: 1.7;
+}
+
+.footer-seal {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 13px;
+  letter-spacing: .4em;
+  color: var(--border-hi);
+  text-align: right;
+}
+
+/* REDACTED LINE */
+.redacted-line {
+  display: inline-block;
+  background: var(--text-dim);
+  height: 10px;
+  border-radius: 1px;
+  vertical-align: middle;
+  opacity: .4;
+}
+
+@media (max-width: 560px) {
+  .identity-fields { grid-template-columns: 1fr; }
+  .metrics-row { grid-template-columns: 1fr 1fr; }
+  .metrics-row .metric-cell:nth-child(2) { border-right: none; }
+  .metrics-row .metric-cell:nth-child(3) { border-top: 1px solid var(--border); }
+  .metrics-row .metric-cell:nth-child(4) { border-top: 1px solid var(--border); border-right: none; }
+  .doc-header { flex-direction: column; }
+  .doc-meta { text-align: left; }
+}
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <div class="doc-band">
+    <span>■ UNITED GLOBAL DIRECTORATE ■ DIVISION IV ■</span>
+    <span>PERSONNEL CLASSIFICATION RECORD</span>
+    <span>■ YEAR 5 POST-RESET ■</span>
+  </div>
+
+  <div class="doc-body">
+
+    <div class="doc-header">
+      <div class="doc-title-block">
+        <div class="doc-org">UNITED GLOBAL DIRECTORATE // DIVISION IV — RESEARCH RECOVERY</div>
+        <div class="doc-title">PERSONNEL DOSSIER</div>
+        <div class="doc-subtitle">AUTHORIZED PERSONNEL SUMMARY // COMMISSIONED RESEARCHER</div>
+      </div>
+      <div class="doc-meta">
+        <div class="doc-ref">
+          DOC NO. <span>PR-2046-RVSIV</span><br>
+          DIVISION <span>IV — RESEARCH</span><br>
+          COMPILED <span>YEAR 5</span><br>
+          ACCESS <span>OPERATIONAL</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="stamp-row">
+      <div class="stamp">■ CLASSIFIED ■ AUTHORIZED PERSONNEL ONLY ■</div>
+    </div>
+
+    <!-- IDENTITY -->
+    <div class="identity-row">
+      <div class="photo-block">
+        <div class="photo-placeholder">
+          <div class="photo-x">[ ]</div>
+          <div class="photo-label">NO PHOTOGRAPH<br>ON FILE</div>
+        </div>
+        <div style="font-family:'Share Tech Mono',monospace;font-size:6.5px;letter-spacing:.16em;color:var(--text-dim);text-align:center;margin-top:5px;line-height:1.5;">PHOTO NOT SUBMITTED<br>WITH INITIAL RECORD</div>
+      </div>
+
+      <div class="identity-fields">
+        <div class="field">
+          <span class="field-label">SURNAME</span>
+          <div class="field-value">REEVES</div>
+        </div>
+        <div class="field">
+          <span class="field-label">GIVEN NAME(S)</span>
+          <div class="field-value">ELIAS JAMES — IV</div>
+        </div>
+        <div class="field">
+          <span class="field-label">NATIONALITY (PRE-RESET)</span>
+          <div class="field-value">UNITED STATES</div>
+        </div>
+        <div class="field">
+          <span class="field-label">DATE OF BIRTH</span>
+          <div class="field-value redacted">NOT ON FILE</div>
+        </div>
+        <div class="field">
+          <span class="field-label">FACILITY ASSIGNED</span>
+          <div class="field-value">RE-01 // INDIANA, USA</div>
+        </div>
+        <div class="field">
+          <span class="field-label">RESEARCH MANDATE</span>
+          <div class="field-value">GENE THERAPY / NEUROLOGICAL</div>
+        </div>
+        <div class="field">
+          <span class="field-label">COMMISSION STATUS</span>
+          <div class="field-value" style="color:var(--amber)">INACTIVE — YEAR 0</div>
+        </div>
+        <div class="field">
+          <span class="field-label">POST-RESET STATUS</span>
+          <div class="field-value redacted">UNCONFIRMED / PRESUMED RESET</div>
+        </div>
+        <div class="field full">
+          <span class="field-label">KNOWN COLLABORATORS</span>
+          <div class="field-value redacted">None cited in filing record</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- METRICS -->
+    <div class="section-divider">■ RESEARCH RECORD SUMMARY</div>
+
+    <div class="metrics-row">
+      <div class="metric-cell">
+        <div class="metric-label">PUBLICATIONS</div>
+        <div class="metric-value none">—</div>
+      </div>
+      <div class="metric-cell">
+        <div class="metric-label">CITED OUTCOMES</div>
+        <div class="metric-value none">—</div>
+      </div>
+      <div class="metric-cell">
+        <div class="metric-label">YEARS COMMISSIONED</div>
+        <div class="metric-value">2</div>
+      </div>
+      <div class="metric-cell">
+        <div class="metric-label">ANNUAL REVIEWS ON FILE</div>
+        <div class="metric-value none">—</div>
+      </div>
+    </div>
+
+    <!-- BIOGRAPHY -->
+    <div class="section-divider">■ BIOGRAPHICAL SUMMARY</div>
+
+    <div class="bio-block">
+      <p class="bio-para">
+        Dr. Elias James Reeves IV is a neurological researcher and behavioral scientist who came to the attention of the World Health Organization's Emergency Mental Health Committee in 2045. He was among the first cohort of researchers formally assessed by the committee following the establishment of the <strong>WHO Underground Mental Health Summit (WHOUMHS)</strong> in response to the global SPIKE crisis.
+      </p>
+
+      <p class="bio-para">
+        At the Summit's inaugural session, Dr. Reeves submitted a proposal for a broad-spectrum neurological intervention. The proposal was reviewed by the full committee and <strong>deprioritized in favor of a more targeted therapeutic approach</strong>. Dr. Reeves accepted this determination without formal objection and indicated his intention to pursue a revised research direction.
+      </p>
+
+      <div class="note-box">
+        <span class="note-label">■ COMMITTEE NOTE — WHOUMHS SESSION 01</span>
+        Initial proposal reviewed and declined. Concerns noted regarding scope and delivery methodology. Researcher advised to revise in line with committee parameters. No further record of the original proposal contents exists in public archive.
+      </div>
+
+      <p class="bio-para">
+        Following the deprioritization of his original proposal, Dr. Reeves pivoted to <strong>gene therapy research</strong> with a stated focus on neurological resilience in future generations — a natural continuation of his prior interests, adapted to committee-approved parameters. He was subsequently awarded a Division IV research commission in 2046 and assigned to <strong>Research Establishment 01 (RE-01)</strong> in the former state of Indiana, United States.
+      </p>
+
+      <p class="bio-para">
+        RE-01 operated under ongoing UGD monitoring. Facility records for the upper research levels were submitted as required. Dr. Reeves is noted to have managed a staff of <span class="redacted-line" style="width:42px;"></span> personnel and to have maintained the facility's operational mandate through Year 0.
+      </p>
+
+      <p class="bio-para">
+        <strong>RE-01 ceased reporting at Year 0.</strong> Subsequent contact attempts yielded no response. Dr. Reeves did not report to UGD administrative intake in the post-Reset period. It is the working assessment of Division IV that he underwent the Reset alongside the general population. His post-Reset whereabouts are not confirmed.
+      </p>
+    </div>
+
+    <!-- ASSESSMENT RECORD -->
+    <div class="section-divider">■ ADMINISTRATIVE ASSESSMENT RECORD</div>
+
+    <div class="assessment-block">
+      <div class="assessment-row">
+        <span class="ar-key">ORIGINAL WHO PROPOSAL</span>
+        <span class="ar-val deprioritized">Deprioritized — Session 01. Scope and methodology flagged.</span>
+      </div>
+      <div class="assessment-row">
+        <span class="ar-key">REVISED MANDATE — GENE THERAPY</span>
+        <span class="ar-val approved">Approved — Division IV Commission, 2046</span>
+      </div>
+      <div class="assessment-row">
+        <span class="ar-key">ANIMAL TRIALS — AEROSOL APPLICATION</span>
+        <span class="ar-val approved">Approved — Declared as subsidiary inquiry. Records submitted.</span>
+      </div>
+      <div class="assessment-row">
+        <span class="ar-key">ANNUAL REPORTING COMPLIANCE</span>
+        <span class="ar-val deprioritized">Partial. Year 1–2 returns filed. Year 3 return incomplete.</span>
+      </div>
+      <div class="assessment-row">
+        <span class="ar-key">EXTERNAL SUPPLY CHAIN (AP LOGISTICS)</span>
+        <span class="ar-val unknown">Unreviewed. Flagged for infrastructure audit — pending.</span>
+      </div>
+      <div class="assessment-row">
+        <span class="ar-key">POST-RESET STATUS</span>
+        <span class="ar-val unknown">Unconfirmed. No intake record. Presumed Reset. No further action taken.</span>
+      </div>
+      <div class="assessment-row">
+        <span class="ar-key">RE-01 FACILITY STATUS</span>
+        <span class="ar-val deprioritized">Sealed. Emergency systems active. Pending field assessment.</span>
+      </div>
+    </div>
+
+    <!-- FOOTER -->
+    <div class="doc-footer">
+      <div class="footer-ref">
+        PREPARED BY UGD DIV IV RECORDS // YEAR 5<br>
+        DOC REF: PR-2046-RVSIV // SINGLE PAGE SUMMARY<br>
+        SOURCE MATERIAL: WHOUMHS ARCHIVE, DIVISION IV INTAKE, RE-01 FILINGS
+      </div>
+      <div class="footer-seal">UNITED<br>GLOBAL<br>DIRECTORATE</div>
+    </div>
+
+  </div>
+
+</div>
+
+</body>
+</html>
