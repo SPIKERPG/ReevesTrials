@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SPIKE: Field Vault — The Reeves Trials</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Bebas+Neue&family=Barlow+Condensed:wght@300;400;500;600;700&display=swap');
+
+:root {
+  --bg:         #0b0c09;
+  --surface:    #111309;
+  --surface2:   #161810;
+  --surface3:   #1c1f14;
+  --border:     #252820;
+  --border-hi:  #363929;
+  --text:       #bdbfaa;
+  --text-dim:   #686b57;
+  --text-hi:    #e2e4ce;
+  --green:      #7a9a28;
+  --green-dim:  #4a5e18;
+  --green-pale: #1a2008;
+  --red:        #7a1a1a;
+  --red-bright: #c03030;
+  --amber:      #b87820;
+  --amber-dim:  #6e4810;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { height: 100%; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 16px;
+  line-height: 1.55;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+body::after {
+  content: '';
+  position: fixed; inset: 0;
+  background: repeating-linear-gradient(
+    0deg, transparent 0px, transparent 3px,
+    rgba(0,0,0,0.055) 3px, rgba(0,0,0,0.055) 4px
+  );
+  pointer-events: none;
+  z-index: 9000;
+}
+
+/* ── TOP BAND ── */
+.top-band {
+  background: var(--green);
+  padding: 3px 20px;
+  display: flex;
+  justify-content: space-between;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 8.5px;
+  letter-spacing: .2em;
+  color: var(--bg);
+  flex-shrink: 0;
+}
+
+/* ── HEADER ── */
+.main-header {
+  background: var(--surface);
+  border-bottom: 2px solid var(--green-dim);
+  padding: 10px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+}
+.mh-left, .mh-right {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 8px; letter-spacing: .18em;
+  color: var(--text-dim); line-height: 1.7;
+}
+.mh-center { text-align: center; }
+.mh-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 20px; letter-spacing: .45em;
+  color: var(--text-hi); line-height: 1;
+}
+.mh-sub {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 8px; letter-spacing: .22em;
+  color: var(--green); margin-top: 2px;
+}
+
+/* ── MAIN ── */
+main {
+  flex: 1;
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 32px 20px 60px;
+  width: 100%;
+}
+
+/* ── FEATURED BANNER ── */
+.featured-banner {
+  background: var(--surface2);
+  border: 1px solid var(--border-hi);
+  border-top: 2px solid var(--green);
+  padding: 14px 18px;
+  margin-bottom: 24px;
+  display: none;
+}
+.featured-banner.visible { display: block; }
+.featured-label {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 8px; letter-spacing: .22em;
+  color: var(--green); margin-bottom: 8px;
+}
+.featured-name {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 22px; letter-spacing: .22em;
+  color: var(--text-hi); margin-bottom: 10px;
+}
+.featured-open-btn {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 8.5px; letter-spacing: .18em;
+  background: var(--green-dim); border: 1px solid var(--green);
+  color: var(--text-hi); padding: 8px 18px;
+  cursor: pointer; transition: all .15s;
+}
+.featured-open-btn:hover { background: var(--green); color: var(--bg); }
+
+/* ── SECTION HEAD ── */
+.section-head {
+  display: flex; align-items: center; gap: 12px;
+  margin-bottom: 20px; padding-bottom: 8px;
+  border-bottom: 1px solid var(--border-hi);
+}
+.sh-num {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 8px; letter-spacing: .2em;
+  color: var(--green); white-space: nowrap;
+}
+.sh-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 22px; letter-spacing: .22em;
+  color: var(--text-hi);
+}
+.sh-line { flex: 1; height: 1px; background: var(--border); }
+
+/* ── KEYPAD PANEL ── */
+.keypad-panel {
+  background: var(--surface2);
+  border: 1px solid var(--border-hi);
+  border-top: 2px solid var(--green-dim);
+  padding: 24px 20px 20px;
+  margin-bottom: 24px;
+}
+
+.code-display-wrap {
+  margin-bottom: 18px;
+  text-align: center;
+}
+.code-display-label {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 7.5px; letter-spacing: .24em;
+  color: var(--text-dim); margin-bottom: 8px;
+}
+.code-display {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+}
+.code-digit {
+  width: 34px; height: 42px;
+  background: var(--surface);
+  border: 1px solid var(--border-hi);
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 22px; letter-spacing: 0;
+  color: var(--text-hi);
+  transition: border-color .15s, background .15s;
+}
+.code-digit.filled {
+  border-color: var(--green-dim);
+  background: var(--green-pale);
+  color: var(--green);
+}
+.code-digit.error {
+  border-color: var(--red-bright);
+  background: rgba(122,26,26,.2);
+  color: var(--red-bright);
+  animation: shake .3s ease;
+}
+.code-sep {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 14px; color: var(--border-hi);
+  margin: 0 2px;
+}
+
+@keyframes shake {
+  0%,100% { transform: translateX(0); }
+  25% { transform: translateX(-4px); }
+  75% { transform: translateX(4px); }
+}
+
+/* ── KEYPAD ── */
+.keypad {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 7px;
+  max-width: 280px;
+  margin: 0 auto;
+}
+.key {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 26px; letter-spacing: .06em;
+  background: var(--surface);
+  border: 1px solid var(--border-hi);
+  color: var(--text-hi);
+  padding: 14px 0;
+  cursor: pointer;
+  text-align: center;
+  transition: all .12s;
+  user-select: none;
+  line-height: 1;
+}
+.key:hover { border-color: var(--green-dim); background: rgba(122,154,40,.08); color: var(--green); }
+.key:active { transform: scale(.96); }
+.key.back {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 14px; letter-spacing: .1em;
+  color: var(--text-dim);
+}
+.key.back:hover { border-color: var(--amber-dim); color: var(--amber); }
+.key.submit {
+  background: var(--green-dim); border-color: var(--green);
+  color: var(--text-hi);
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px; letter-spacing: .2em;
+}
+.key.submit:hover { background: var(--green); color: var(--bg); }
+.key.submit:disabled { opacity: .35; pointer-events: none; }
+
+.keypad-hint {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 7.5px; letter-spacing: .16em;
+  color: var(--text-dim); text-align: center;
+  margin-top: 12px;
+}
+.keypad-error {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 8px; letter-spacing: .16em;
+  color: var(--red-bright);
+  text-align: center; margin-top: 10px;
+  min-height: 18px;
+  transition: opacity .2s;
+}
+
+/* ── UNLOCKED DOCUMENTS ── */
+.unlocked-section { margin-bottom: 24px; }
+
+.unlocked-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.unlocked-item {
+  background: var(--surface2);
+  border: 1px solid var(--border-hi);
+  border-left: 3px solid var(--green-dim);
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  cursor: pointer;
+  transition: border-color .15s, background .15s;
+}
+.unlocked-item:hover {
+  border-color: var(--green-dim);
+  background: rgba(122,154,40,.04);
+}
+.ui-icon {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 16px; color: var(--green);
+  flex-shrink: 0;
+}
+.ui-body { flex: 1; }
+.ui-name {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 18px; letter-spacing: .16em;
+  color: var(--text-hi); line-height: 1.1;
+}
+.ui-meta {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 7px; letter-spacing: .14em;
+  color: var(--text-dim); margin-top: 2px;
+}
+.ui-arrow {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 12px; color: var(--green-dim);
+  flex-shrink: 0;
+}
+.ui-remove {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 9px; letter-spacing: .1em;
+  color: var(--text-dim);
+  border: 1px solid var(--border-hi);
+  background: transparent;
+  padding: 3px 8px; cursor: pointer;
+  transition: all .12s; flex-shrink: 0;
+}
+.ui-remove:hover { color: var(--red-bright); border-color: var(--red); }
+
+.empty-vault {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 8px; letter-spacing: .18em;
+  color: var(--text-dim); text-align: center;
+  padding: 24px 0; line-height: 2;
+}
+
+/* ── DOCUMENT VIEWER MODAL ── */
+.viewer-backdrop {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,.92);
+  z-index: 1000;
+  display: none;
+  flex-direction: column;
+}
+.viewer-backdrop.open { display: flex; }
+
+.viewer-topbar {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border-hi);
+  padding: 9px 16px;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 12px; flex-shrink: 0;
+}
+.viewer-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 16px; letter-spacing: .28em;
+  color: var(--text-hi); flex: 1;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.viewer-meta {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 7.5px; letter-spacing: .14em;
+  color: var(--text-dim); white-space: nowrap;
+}
+.viewer-close {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 8.5px; letter-spacing: .18em;
+  background: transparent; border: 1px solid var(--border-hi);
+  color: var(--text-dim); padding: 5px 12px;
+  cursor: pointer; transition: all .12s; flex-shrink: 0;
+}
+.viewer-close:hover { border-color: var(--red-bright); color: var(--red-bright); }
+
+.viewer-body {
+  flex: 1;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg);
+}
+
+/* iframe embed */
+.viewer-iframe {
+  width: 100%; height: 100%;
+  border: none; display: block;
+}
+
+/* image display */
+.viewer-img {
+  max-width: 100%; max-height: 100%;
+  object-fit: contain; display: block;
+}
+
+/* pdf embed */
+.viewer-pdf {
+  width: 100%; height: 100%;
+  border: none; display: block;
+}
+
+/* ── FOOTER ── */
+footer {
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  display: flex; justify-content: space-between;
+  padding: 10px 24px;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 8px; letter-spacing: .14em;
+  color: var(--text-dim); flex-shrink: 0;
+}
+
+/* ── MOBILE ── */
+@media (max-width: 480px) {
+  .code-digit { width: 28px; height: 36px; font-size: 18px; }
+  .key { font-size: 22px; padding: 12px 0; }
+}
+</style>
+</head>
+<body>
+
+<div class="top-band">
+  <a href="index.html" style="font-family:'Share Tech Mono',monospace;font-size:8.5px;letter-spacing:.18em;color:inherit;text-decoration:none;opacity:.85;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='.85'">← OPERATIVE PORTAL</a>
+  <span>■ UNITED GLOBAL DIRECTORATE ■ FIELD OPERATIONS ■</span>
+  <span>■ AUTHORIZED PERSONNEL ONLY ■</span>
+</div>
+
+<header class="main-header">
+  <div class="mh-left">UGD // FIELD OPERATIONS<br>DIVISION IV — INTELLIGENCE</div>
+  <div class="mh-center">
+    <div class="mh-title">FIELD VAULT</div>
+    <div class="mh-sub">OPERATIVE DOCUMENT ACCESS // YEAR 5 POST-RESET</div>
+  </div>
+  <div class="mh-right" style="text-align:right;">SECURE ACCESS<br>REEVES TRIALS</div>
+</header>
+
+<main>
+
+  <!-- FEATURED DOCUMENT (GM-pushed) -->
+  <div class="featured-banner" id="featured-banner">
+    <div class="featured-label">■ ACTIVE FIELD DOCUMENT — ISSUED BY DIVISION IV</div>
+    <div class="featured-name" id="featured-name">—</div>
+    <button class="featured-open-btn" onclick="openFeatured()">▶ OPEN DOCUMENT</button>
+  </div>
+
+  <!-- ACCESS CODE ENTRY -->
+  <div class="section-head">
+    <span class="sh-num">SECTION 01 //</span>
+    <span class="sh-title">ACCESS CODE ENTRY</span>
+    <div class="sh-line"></div>
+  </div>
+
+  <div class="keypad-panel">
+    <div class="code-display-wrap">
+      <div class="code-display-label">■ ENTER 8-DIGIT DOCUMENT ACCESS CODE</div>
+      <div class="code-display" id="code-display">
+        <div class="code-digit" id="d0"></div>
+        <div class="code-digit" id="d1"></div>
+        <div class="code-digit" id="d2"></div>
+        <div class="code-digit" id="d3"></div>
+        <div class="code-sep">·</div>
+        <div class="code-digit" id="d4"></div>
+        <div class="code-digit" id="d5"></div>
+        <div class="code-digit" id="d6"></div>
+        <div class="code-digit" id="d7"></div>
+      </div>
+    </div>
+
+    <div class="keypad" id="keypad">
+      <div class="key" onclick="pressKey('1')">1</div>
+      <div class="key" onclick="pressKey('2')">2</div>
+      <div class="key" onclick="pressKey('3')">3</div>
+      <div class="key" onclick="pressKey('4')">4</div>
+      <div class="key" onclick="pressKey('5')">5</div>
+      <div class="key" onclick="pressKey('6')">6</div>
+      <div class="key" onclick="pressKey('7')">7</div>
+      <div class="key" onclick="pressKey('8')">8</div>
+      <div class="key" onclick="pressKey('9')">9</div>
+      <div class="key back" onclick="backspace()">⌫ DEL</div>
+      <div class="key" onclick="pressKey('0')">0</div>
+      <div class="key submit" id="submit-key" onclick="submitCode()">UNLOCK</div>
+    </div>
+
+    <div class="keypad-hint">Codes are issued by Division IV field command.</div>
+    <div class="keypad-error" id="keypad-error"></div>
+  </div>
+
+  <!-- UNLOCKED DOCUMENTS -->
+  <div class="unlocked-section">
+    <div class="section-head">
+      <span class="sh-num">SECTION 02 //</span>
+      <span class="sh-title">UNLOCKED DOCUMENTS</span>
+      <div class="sh-line"></div>
+    </div>
+    <div class="unlocked-list" id="unlocked-list">
+      <div class="empty-vault" id="vault-empty">
+        [ ] NO DOCUMENTS UNLOCKED<br>
+        ENTER AN ACCESS CODE ABOVE TO RETRIEVE FIELD INTELLIGENCE
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<footer>
+  <span>UGD // SPIKE: THE REEVES TRIALS // FIELD VAULT</span>
+  <span>■ AUTHORIZED PERSONNEL ONLY ■</span>
+</footer>
+
+<!-- DOCUMENT VIEWER -->
+<div class="viewer-backdrop" id="viewer-backdrop">
+  <div class="viewer-topbar">
+    <div class="viewer-title" id="viewer-title">—</div>
+    <div class="viewer-meta" id="viewer-meta"></div>
+    <button class="viewer-close" onclick="closeViewer()">✕ CLOSE</button>
+  </div>
+  <div class="viewer-body" id="viewer-body"></div>
+</div>
+
+<script>
+// ── STORAGE KEYS (shared with gm_maps.html) ──
+const REGISTRY_KEY = 'spike_doc_registry_v1';
+const FEATURED_KEY = 'spike_doc_featured_v1';
+const UNLOCKED_KEY = 'spike_vault_unlocked_v1'; // player-side: list of unlocked doc IDs
+
+// ── STATE ──
+let codeBuffer = '';
+let registry   = null;
+let unlocked   = []; // array of { id, name, type, path, mode, unlockedAt }
+let featured   = null;
+
+// ── INIT ──
+window.addEventListener('DOMContentLoaded', () => {
+  loadRegistry();
+  loadUnlocked();
+  loadFeatured();
+  renderUnlocked();
+  checkFeatured();
+  updateDisplay();
+});
+
+// Poll for featured changes (GM pushes doc mid-session)
+setInterval(() => { loadFeatured(); checkFeatured(); }, 3000);
+
+// ── LOAD FROM STORAGE ──
+function loadRegistry() {
+  try {
+    const r = localStorage.getItem(REGISTRY_KEY);
+    if (r) registry = JSON.parse(r);
+  } catch(e) { registry = null; }
+}
+
+function loadUnlocked() {
+  try {
+    const u = localStorage.getItem(UNLOCKED_KEY);
+    if (u) unlocked = JSON.parse(u);
+    else unlocked = [];
+  } catch(e) { unlocked = []; }
+}
+
+function saveUnlocked() {
+  try { localStorage.setItem(UNLOCKED_KEY, JSON.stringify(unlocked)); } catch(e) {}
+}
+
+function loadFeatured() {
+  try {
+    const f = localStorage.getItem(FEATURED_KEY);
+    featured = f ? JSON.parse(f) : null;
+  } catch(e) { featured = null; }
+}
+
+// ── FEATURED DOCUMENT ──
+function checkFeatured() {
+  const banner = document.getElementById('featured-banner');
+  const nameEl = document.getElementById('featured-name');
+  if (featured && featured.name) {
+    nameEl.textContent = featured.name.toUpperCase();
+    banner.classList.add('visible');
+  } else {
+    banner.classList.remove('visible');
+  }
+}
+
+function openFeatured() {
+  if (!featured) return;
+  openViewer(featured.name, featured.path, featured.mode || 'iframe', featured.type || 'DOCUMENT');
+}
+
+// ── KEYPAD ──
+function pressKey(digit) {
+  if (codeBuffer.length >= 8) return;
+  codeBuffer += digit;
+  updateDisplay();
+}
+
+function backspace() {
+  codeBuffer = codeBuffer.slice(0, -1);
+  clearError();
+  updateDisplay();
+}
+
+function updateDisplay() {
+  for (let i = 0; i < 8; i++) {
+    const el = document.getElementById('d' + i);
+    el.classList.remove('error');
+    if (i < codeBuffer.length) {
+      el.textContent = codeBuffer[i];
+      el.classList.add('filled');
+    } else {
+      el.textContent = '';
+      el.classList.remove('filled');
+    }
+  }
+  // Auto-submit when 8 digits entered
+  if (codeBuffer.length === 8) {
+    setTimeout(submitCode, 180);
+  }
+}
+
+function submitCode() {
+  if (codeBuffer.length !== 8) {
+    showError('CODE INCOMPLETE — ENTER 8 DIGITS');
+    return;
+  }
+  loadRegistry(); // refresh in case GM added docs
+  if (!registry || !registry.docs) {
+    showError('VAULT OFFLINE — NO REGISTRY DETECTED');
+    return;
+  }
+  const doc = registry.docs.find(d => d.code === codeBuffer);
+  if (!doc) {
+    showError('ACCESS DENIED — INVALID CODE');
+    triggerError();
+    codeBuffer = '';
+    setTimeout(() => { updateDisplay(); clearError(); }, 1600);
+    return;
+  }
+  // Already unlocked?
+  if (unlocked.some(u => u.id === doc.id)) {
+    showError('DOCUMENT ALREADY UNLOCKED');
+    codeBuffer = '';
+    setTimeout(() => { updateDisplay(); clearError(); }, 1400);
+    openViewer(doc.name, doc.path, doc.mode || 'iframe', doc.type || 'DOCUMENT');
+    return;
+  }
+  // Unlock it
+  unlocked.push({
+    id: doc.id,
+    name: doc.name,
+    path: doc.path,
+    type: doc.type || 'DOCUMENT',
+    mode: doc.mode || 'iframe',
+    unlockedAt: new Date().toISOString(),
+  });
+  saveUnlocked();
+  codeBuffer = '';
+  updateDisplay();
+  clearError();
+  renderUnlocked();
+  // Open immediately
+  openViewer(doc.name, doc.path, doc.mode || 'iframe', doc.type || 'DOCUMENT');
+}
+
+function triggerError() {
+  for (let i = 0; i < 8; i++) {
+    const el = document.getElementById('d' + i);
+    el.classList.add('error');
+    el.textContent = '✕';
+  }
+}
+
+function showError(msg) {
+  const el = document.getElementById('keypad-error');
+  el.textContent = '■ ' + msg;
+}
+
+function clearError() {
+  document.getElementById('keypad-error').textContent = '';
+}
+
+// ── RENDER UNLOCKED LIST ──
+function renderUnlocked() {
+  const list = document.getElementById('unlocked-list');
+  const empty = document.getElementById('vault-empty');
+  if (!unlocked.length) {
+    if (empty) empty.style.display = '';
+    list.innerHTML = '';
+    list.appendChild(emptyEl());
+    return;
+  }
+  list.innerHTML = unlocked.slice().reverse().map(doc => {
+    const icon = iconFor(doc.type);
+    const date = doc.unlockedAt ? new Date(doc.unlockedAt).toLocaleDateString('en-GB',{day:'2-digit',month:'short'}) : '';
+    return `
+    <div class="unlocked-item" onclick="openViewer('${esc(doc.name)}','${esc(doc.path)}','${esc(doc.mode||'iframe')}','${esc(doc.type||'DOCUMENT')}')">
+      <div class="ui-icon">${icon}</div>
+      <div class="ui-body">
+        <div class="ui-name">${esc(doc.name)}</div>
+        <div class="ui-meta">${esc(doc.type||'DOCUMENT')} // UNLOCKED ${date}</div>
+      </div>
+      <button class="ui-remove" onclick="removeUnlocked('${doc.id}',event)" title="Remove from vault">✕</button>
+      <div class="ui-arrow">→</div>
+    </div>`;
+  }).join('');
+}
+
+function emptyEl() {
+  const d = document.createElement('div');
+  d.className = 'empty-vault';
+  d.innerHTML = '[ ] NO DOCUMENTS UNLOCKED<br>ENTER AN ACCESS CODE ABOVE TO RETRIEVE FIELD INTELLIGENCE';
+  return d;
+}
+
+function removeUnlocked(id, evt) {
+  evt.stopPropagation();
+  unlocked = unlocked.filter(u => u.id !== id);
+  saveUnlocked();
+  renderUnlocked();
+}
+
+function iconFor(type) {
+  const map = {
+    MAP: '⬡', DOCUMENT: '▣', DOSSIER: '◈', INTEL: '◉', LOG: '▸', IMAGE: '▪'
+  };
+  return map[(type||'').toUpperCase()] || '▣';
+}
+
+// ── DOCUMENT VIEWER ──
+function openViewer(name, path, mode, type) {
+  const backdrop = document.getElementById('viewer-backdrop');
+  const titleEl  = document.getElementById('viewer-title');
+  const metaEl   = document.getElementById('viewer-meta');
+  const body     = document.getElementById('viewer-body');
+
+  titleEl.textContent = name.toUpperCase();
+  metaEl.textContent  = (type || 'DOCUMENT') + ' // FIELD INTELLIGENCE';
+  body.innerHTML = '';
+
+  if (mode === 'image') {
+    const img = document.createElement('img');
+    img.className = 'viewer-img';
+    img.src = path;
+    img.alt = name;
+    body.appendChild(img);
+  } else if (mode === 'pdf') {
+    const embed = document.createElement('embed');
+    embed.className = 'viewer-pdf';
+    embed.src = path;
+    embed.type = 'application/pdf';
+    body.appendChild(embed);
+  } else {
+    // iframe (default — HTML pages)
+    const frame = document.createElement('iframe');
+    frame.className = 'viewer-iframe';
+    frame.src = path;
+    frame.title = name;
+    // Allow the iframe to function fully
+    frame.setAttribute('allow', 'fullscreen');
+    body.appendChild(frame);
+  }
+
+  backdrop.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeViewer() {
+  const backdrop = document.getElementById('viewer-backdrop');
+  backdrop.classList.remove('open');
+  document.getElementById('viewer-body').innerHTML = '';
+  document.body.style.overflow = '';
+}
+
+// Keyboard support
+document.addEventListener('keydown', e => {
+  const viewerOpen = document.getElementById('viewer-backdrop').classList.contains('open');
+  if (viewerOpen) {
+    if (e.key === 'Escape') closeViewer();
+    return;
+  }
+  if (e.key >= '0' && e.key <= '9') pressKey(e.key);
+  if (e.key === 'Backspace') backspace();
+  if (e.key === 'Enter') submitCode();
+});
+
+// ── UTIL ──
+function esc(str) {
+  if (typeof str !== 'string') return '';
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+</script>
+
+</body>
+</html>
