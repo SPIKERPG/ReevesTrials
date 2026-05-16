@@ -351,25 +351,27 @@ main {
 /* Viewer body — for images (zoomable) */
 .viewer-body {
   flex: 1;
-  overflow: auto;
-  display: flex;
-  align-items: flex-start;
-  justify-content: flex-start;
+  overflow: hidden;
   background: #080908;
   position: relative;
   cursor: grab;
 }
 .viewer-body.grabbing { cursor: grabbing; }
 .viewer-body.centered {
+  /* no-op - kept for iframe compat */
+  display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .viewer-img-wrap {
   display: inline-flex;
-  transform-origin: top left;
+  transform-origin: center center;
   transition: transform .15s ease;
   user-select: none;
+  position: absolute;
+  top: 50%;
+  left: 50%;
 }
 .viewer-img {
   display: block;
@@ -744,8 +746,6 @@ function openViewer(doc) {
     zoomBtns.style.display = 'flex';
     hintEl.classList.remove('hidden');
 
-    body.classList.add('centered');
-
     const wrap = document.createElement('div');
     wrap.className = 'viewer-img-wrap';
     wrap.id = 'img-wrap';
@@ -833,7 +833,9 @@ function updateZoomLabel() {
 function applyTransform() {
   const wrap = document.getElementById('img-wrap');
   if (!wrap) return;
-  wrap.style.transform = `translate(${panOffsetX}px, ${panOffsetY}px) scale(${zoomScale})`;
+  // The wrap is positioned at top:50%, left:50% of the body.
+  // translate(-50%, -50%) centers it, then we add pan offsets and scale from center.
+  wrap.style.transform = `translate(calc(-50% + ${panOffsetX}px), calc(-50% + ${panOffsetY}px)) scale(${zoomScale})`;
 }
 
 // ── SCROLL TO ZOOM ──
@@ -861,7 +863,7 @@ function setupImagePan(body, wrap) {
     if (!isPanning) return;
     panOffsetX = e.clientX - panStartX;
     panOffsetY = e.clientY - panStartY;
-    wrap.style.transform = `translate(${panOffsetX}px, ${panOffsetY}px) scale(${zoomScale})`;
+    applyTransform();
   });
 
   document.addEventListener('mouseup', () => {
@@ -888,7 +890,7 @@ function setupImagePan(body, wrap) {
     if (e.touches.length === 1) {
       panOffsetX = e.touches[0].clientX - touchStartX;
       panOffsetY = e.touches[0].clientY - touchStartY;
-      wrap.style.transform = `translate(${panOffsetX}px, ${panOffsetY}px) scale(${zoomScale})`;
+      applyTransform();
     }
     if (e.touches.length === 2) {
       const dist = getTouchDist(e.touches);
