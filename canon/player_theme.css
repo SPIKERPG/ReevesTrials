@@ -1,15 +1,120 @@
 :root {
+
     --theme-primary: #5ad67d;
     --theme-secondary: #87f5a5;
+
+    --theme-bg: #0b1210;
+
+    --theme-panel: #111b17;
+
+    --theme-header:
+        rgba(90,214,125,0.08);
 }
+
+/*
+========================================
+BACKGROUND
+========================================
+*/
+
+body {
+
+    background:
+        linear-gradient(
+            to bottom,
+            rgba(0,0,0,0.82),
+            rgba(0,0,0,0.95)
+        ),
+        url('../assets/ui/player_bg.jpg');
+
+    background-size: cover;
+
+    background-attachment: fixed;
+}
+
+/*
+========================================
+HEADER
+========================================
+*/
 
 .header-bar {
-    background: rgba(90,214,125,0.08);
-    border-bottom: 1px solid rgba(90,214,125,0.2);
+
+    background: var(--theme-header);
+
+    border-bottom:
+        1px solid rgba(90,214,125,0.2);
+
     padding: 18px 24px;
+
+    backdrop-filter: blur(8px);
 }
 
+/*
+========================================
+NAVIGATION
+========================================
+*/
+
 .nav-link {
+
     color: var(--theme-primary);
+
     text-decoration: none;
+
+    margin-right: 18px;
+
+    font-weight: 600;
+}
+
+.nav-link:hover {
+    color: var(--theme-secondary);
+}
+
+/*
+========================================
+RULE BLOCK OVERRIDES
+========================================
+*/
+
+.rule-block {
+    border-left-color: var(--theme-primary);
+}
+
+.rb-sub {
+    color: var(--theme-primary);
+}
+
+/*
+========================================
+ACCENT TEXT
+========================================
+*/
+
+.text-accent {
+    color: var(--theme-primary);
+}
+
+/*
+========================================
+WARNING BLOCKS
+========================================
+*/
+
+.warning-block {
+
+    border-left:
+        4px solid var(--amber);
+}
+
+/*
+========================================
+DANGER BLOCKS
+========================================
+*/
+
+.danger-block {
+
+    border-left:
+        4px solid var(--red);
 }
