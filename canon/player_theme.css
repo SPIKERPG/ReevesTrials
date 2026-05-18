@@ -1,0 +1,15 @@
+:root {
+    --theme-primary: #5ad67d;
+    --theme-secondary: #87f5a5;
+}
+
+.header-bar {
+    background: rgba(90,214,125,0.08);
+    border-bottom: 1px solid rgba(90,214,125,0.2);
+    padding: 18px 24px;
+}
+
+.nav-link {
+    color: var(--theme-primary);
+    text-decoration: none;
+}
