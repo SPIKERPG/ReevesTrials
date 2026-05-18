@@ -1,34 +1,237 @@
 :root {
+
     --font-main: 'Inter', sans-serif;
     --font-mono: 'JetBrains Mono', monospace;
+
     --bg-dark: #0a0f14;
+
     --panel-dark: #101820;
     --panel-light: #16212d;
+
     --text-main: #d9e2ec;
     --text-dim: #8fa3b8;
+
     --green: #5ad67d;
     --amber: #d6b25a;
     --red: #d65a5a;
     --blue: #4a8edb;
+
     --border: rgba(255,255,255,0.08);
-    --shadow: 0 0 24px rgba(0,0,0,0.35);
+
+    --shadow:
+        0 0 24px rgba(0,0,0,0.35);
+
     --radius: 12px;
 }
 
-body {
-    margin: 0;
-    padding: 0;
-    background: var(--bg-dark);
-    color: var(--text-main);
-    font-family: var(--font-main);
+* {
+    box-sizing: border-box;
 }
 
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+
+    margin: 0;
+    padding: 0;
+
+    background: var(--bg-dark);
+
+    color: var(--text-main);
+
+    font-family: var(--font-main);
+
+    line-height: 1.6;
+}
+
+/*
+========================================
+TYPOGRAPHY
+========================================
+*/
+
+h1, h2, h3, h4 {
+    margin-top: 0;
+    letter-spacing: 0.04em;
+}
+
+h1 {
+    font-size: 2.5rem;
+}
+
+h2 {
+    font-size: 1.8rem;
+}
+
+p {
+    margin-top: 0;
+}
+
+/*
+========================================
+RULE BLOCKS
+========================================
+*/
+
 .rule-block {
+
     background: var(--panel-dark);
-    border: 1px solid var(--border);
-    border-left: 4px solid var(--green);
+
+    border:
+        1px solid var(--border);
+
+    border-left:
+        4px solid var(--green);
+
     border-radius: var(--radius);
+
     padding: 20px;
+
     margin-bottom: 24px;
+
     box-shadow: var(--shadow);
+}
+
+.rb-title {
+
+    font-size: 1.1rem;
+
+    font-weight: 700;
+
+    text-transform: uppercase;
+
+    letter-spacing: 0.08em;
+
+    margin-bottom: 16px;
+}
+
+.rb-sub {
+
+    font-size: 0.95rem;
+
+    font-weight: 600;
+
+    margin-top: 14px;
+
+    margin-bottom: 8px;
+
+    color: var(--green);
+}
+
+/*
+========================================
+LISTS
+========================================
+*/
+
+.rule-block ul,
+.rule-block ol {
+
+    margin: 0;
+
+    padding-left: 20px;
+}
+
+.rule-block li {
+    margin-bottom: 6px;
+}
+
+/*
+========================================
+TABLES
+========================================
+*/
+
+.table-standard {
+
+    width: 100%;
+
+    border-collapse: collapse;
+
+    margin-bottom: 24px;
+}
+
+.table-standard th,
+.table-standard td {
+
+    border:
+        1px solid var(--border);
+
+    padding: 10px;
+}
+
+.table-standard th {
+    background: var(--panel-light);
+}
+
+/*
+========================================
+INLINE CODE
+========================================
+*/
+
+.code-inline {
+
+    font-family: var(--font-mono);
+
+    background:
+        rgba(255,255,255,0.06);
+
+    padding: 2px 6px;
+
+    border-radius: 4px;
+}
+
+/*
+========================================
+LAYOUT UTILITIES
+========================================
+*/
+
+.container {
+
+    width: min(1100px, 92%);
+
+    margin-inline: auto;
+
+    padding-top: 40px;
+
+    padding-bottom: 80px;
+}
+
+.section-spacer {
+    margin-bottom: 64px;
+}
+
+/*
+========================================
+PANELS
+========================================
+*/
+
+.panel {
+
+    background: var(--panel-dark);
+
+    border:
+        1px solid var(--border);
+
+    border-radius: var(--radius);
+
+    padding: 24px;
+
+    margin-bottom: 24px;
+}
+
+/*
+========================================
+ERROR BLOCK
+========================================
+*/
+
+.load-error {
+
+    border-left-color: var(--red);
 }
