@@ -1116,17 +1116,18 @@ body::after {
 <!-- TABS -->
 <div class="page-tabs">
   <div class="tab-logo">OPERATIVE DOSSIER<span>DOC 14-C // UGD DIV IV</span></div>
-  <div class="tab active" onclick="switchTab(0)">■ CREATION GUIDE</div>
-  <div class="tab" onclick="switchTab(1)">■ PAGE 1 // OPERATIVE</div>
-  <div class="tab" onclick="switchTab(2)">■ PAGE 2 // FIELD NOTES</div>
+  <div class="tab active" onclick="switchTab(0)">■ PAGE 1 // OPERATIVE</div>
+  <div class="tab" onclick="switchTab(1)">■ PAGE 2 // FIELD NOTES</div>
+  <div class="tab" onclick="switchTab(2)">■ REQUISITION GUIDE</div>
+  <div class="tab" onclick="switchTab(3)">■ REFERENCE // CREATION</div>
   <div class="tab-spacer"></div>
   <div class="doc-id">YEAR 5 POST-RESET<br>INDIANA RECOVERY OP</div>
 </div>
 
 <!-- ══════════════════════════════════════
-     PAGE 0 — CREATION GUIDE
+     PAGE 3 — CREATION GUIDE (REFERENCE)
 ══════════════════════════════════════ -->
-<div class="page active" id="page0">
+<div class="page" id="page3">
 
   <div class="doc-header">
     <div class="dh-org">UNITED GLOBAL DIRECTORATE<br>FIELD OPERATIONS // DIV IV</div>
@@ -1164,6 +1165,8 @@ body::after {
               <div style="display:flex;flex-wrap:wrap;gap:5px;margin-top:4px;">
                 <span class="std-equip-item">UGD UNIFORM</span>
                 <span class="std-equip-item">SUBCUTANEOUS SPIKE IMPLANT</span>
+                <span class="std-equip-item">FLASHLIGHT</span>
+                <span class="std-equip-item">FIELD RADIO</span>
                 <span class="std-equip-item">FIELD LOADOUT (SEE REQUISITION)</span>
               </div>
             </div>
@@ -1293,23 +1296,23 @@ body::after {
 
       <div class="cg-panel" style="margin-bottom:0;">
         <div class="cg-panel-title">LOADOUT // REQUISITION PROCESS</div>
-        <p>Before departing UGD HQ, you will be issued standard equipment and may requisition field loadout items. Record your weapons, armor, and any special kit on <strong>Page 1</strong> in the Loadout Requisition section. When your dossier is complete, use <strong>↓ SAVE JSON</strong> below and send the file to your GM — this uploads your loadout to the UGD Mainframe and lets them track your equipment in the Combat Suite.</p>
+        <p>Before departing UGD HQ, you will be issued standard equipment and may requisition field loadout items. Record your weapons, armor, and any special kit on the <strong>OPERATIVE</strong> tab in the Loadout Requisition section. See the <strong>REQUISITION GUIDE</strong> tab for a full list of available items and their mechanical effects. When your dossier is complete, use <strong>↓ SAVE JSON</strong> below and send the file to your GM — this uploads your loadout to the UGD Mainframe and lets them track your equipment in the Combat Suite.</p>
       </div>
     </div>
 
   </div><!-- /sheet -->
 
   <div class="sheet-footer">
-    <span>UGD // SPIKE: THE REEVES TRIALS // DOC 14-C // CREATION GUIDE</span>
+    <span>UGD // SPIKE: THE REEVES TRIALS // DOC 14-C // CREATION REFERENCE</span>
     <span>■ CLASSIFIED // AUTHORIZED PERSONNEL ONLY ■</span>
   </div>
 
-</div><!-- /page0 -->
+</div><!-- /page3 -->
 
 <!-- ══════════════════════════════════════
-     PAGE 1 — OPERATIVE
+     PAGE 0 — OPERATIVE
 ══════════════════════════════════════ -->
-<div class="page" id="page1">
+<div class="page active" id="page0">
 
   <div class="doc-header">
     <div class="dh-org">UNITED GLOBAL DIRECTORATE<br>FIELD OPERATIONS // DIV IV</div>
@@ -1377,6 +1380,44 @@ body::after {
           </div>
         </div>
 
+        <!-- REACTIONS -->
+        <div class="reactions-section" style="margin-top:14px;">
+          <div class="section-label">REACTIONS <span>CLICK TO USE / LONG REST TO RESET</span></div>
+          <div class="reactions-box">
+            <div class="reactions-label">POOL</div>
+            <div class="reactions-pips">
+              <div class="reaction-pip-cs" id="rxnPip0" onclick="toggleReactionPip(0)" title="Reaction 1 — click to mark used"></div>
+              <div class="reaction-pip-cs" id="rxnPip1" onclick="toggleReactionPip(1)" title="Reaction 2 — click to mark used"></div>
+            </div>
+            <div class="reactions-count" id="rxnCount">2/2</div>
+            <div class="reactions-hint">
+              Overwatch · Counterattack · Protect · Brace<br>
+              Resets on <strong style="color:var(--text)">Long Rest</strong>
+            </div>
+            <button class="reactions-reset" onclick="resetReactionPips()">↺ LONG REST</button>
+          </div>
+        </div>
+
+        <!-- SPIKE SCALE -->
+        <div class="spike-section">
+          <div class="section-label">SPIKE SCALE <span>CLICK TO SET CURRENT LEVEL</span></div>
+          <div class="spike-current-label">
+            <span>CURRENT LEVEL</span>
+            <span id="spikeLevelName" style="color: var(--text-hi);">0 — SERENE</span>
+          </div>
+          <div class="spike-track" id="spikeTrack"></div>
+          <div class="spike-labels">
+            <div class="spike-lbl lbl-0">0<br>SERENE</div>
+            <div class="spike-lbl lbl-12">1–2<br>STABLE</div>
+            <div class="spike-lbl lbl-35">3–5<br>SHAKEN</div>
+            <div class="spike-lbl lbl-67">6–7<br>CRACKED</div>
+            <div class="spike-lbl lbl-89">8–9<br>OVRLOAD</div>
+            <div class="spike-lbl lbl-10">10<br>SPIKED</div>
+            <div class="spike-lbl lbl-11">11<br>CONSUMED</div>
+          </div>
+          <div class="spike-effect" id="spikeEffect">Baseline. No mechanical effect. The ideal operative state.</div>
+        </div>
+
         <!-- STANDARD EQUIPMENT -->
         <div class="section-label">STANDARD ISSUE EQUIPMENT</div>
         <div class="std-equip-block" style="margin-bottom:18px;">
@@ -1385,6 +1426,8 @@ body::after {
             <div style="display:flex;flex-wrap:wrap;gap:5px;margin-top:5px;">
               <span class="std-equip-item">UGD FIELD UNIFORM</span>
               <span class="std-equip-item">SUBCUTANEOUS SPIKE IMPLANT</span>
+              <span class="std-equip-item">FLASHLIGHT</span>
+              <span class="std-equip-item">FIELD RADIO</span>
             </div>
           </div>
         </div>
@@ -1503,44 +1546,6 @@ body::after {
           ■ UGD MAINFRAME UPLOAD // When dossier is complete, use ↓ SAVE JSON below and send the file to your GM. This logs your loadout and character state to the UGD Combat Suite.
         </div>
 
-        <!-- REACTIONS -->
-        <div class="reactions-section" style="margin-top:14px;">
-          <div class="section-label">REACTIONS <span>CLICK TO USE / LONG REST TO RESET</span></div>
-          <div class="reactions-box">
-            <div class="reactions-label">POOL</div>
-            <div class="reactions-pips">
-              <div class="reaction-pip-cs" id="rxnPip0" onclick="toggleReactionPip(0)" title="Reaction 1 — click to mark used"></div>
-              <div class="reaction-pip-cs" id="rxnPip1" onclick="toggleReactionPip(1)" title="Reaction 2 — click to mark used"></div>
-            </div>
-            <div class="reactions-count" id="rxnCount">2/2</div>
-            <div class="reactions-hint">
-              Overwatch · Counterattack · Protect · Brace<br>
-              Resets on <strong style="color:var(--text)">Long Rest</strong>
-            </div>
-            <button class="reactions-reset" onclick="resetReactionPips()">↺ LONG REST</button>
-          </div>
-        </div>
-
-        <!-- SPIKE SCALE -->
-        <div class="spike-section">
-          <div class="section-label">SPIKE SCALE <span>CLICK TO SET CURRENT LEVEL</span></div>
-          <div class="spike-current-label">
-            <span>CURRENT LEVEL</span>
-            <span id="spikeLevelName" style="color: var(--text-hi);">0 — SERENE</span>
-          </div>
-          <div class="spike-track" id="spikeTrack"></div>
-          <div class="spike-labels">
-            <div class="spike-lbl lbl-0">0<br>SERENE</div>
-            <div class="spike-lbl lbl-12">1–2<br>STABLE</div>
-            <div class="spike-lbl lbl-35">3–5<br>SHAKEN</div>
-            <div class="spike-lbl lbl-67">6–7<br>CRACKED</div>
-            <div class="spike-lbl lbl-89">8–9<br>OVRLOAD</div>
-            <div class="spike-lbl lbl-10">10<br>SPIKED</div>
-            <div class="spike-lbl lbl-11">11<br>CONSUMED</div>
-          </div>
-          <div class="spike-effect" id="spikeEffect">Baseline. No mechanical effect. The ideal operative state.</div>
-        </div>
-
       </div>
 
       <!-- RIGHT COLUMN -->
@@ -1602,9 +1607,9 @@ body::after {
 </div><!-- /page1 -->
 
 <!-- ══════════════════════════════════════
-     PAGE 2 — FIELD NOTES
+     PAGE 1 — FIELD NOTES
 ══════════════════════════════════════ -->
-<div class="page" id="page2">
+<div class="page" id="page1">
 
   <div class="doc-header">
     <div class="dh-org">UNITED GLOBAL DIRECTORATE<br>FIELD NOTES // DOC 14-C</div>
@@ -1684,7 +1689,135 @@ body::after {
     <span>■ CLASSIFIED // AUTHORIZED PERSONNEL ONLY ■</span>
   </div>
 
-</div><!-- /page2 -->
+</div><!-- /page2 field notes -->
+
+<!-- ══════════════════════════════════════
+     PAGE 2 — REQUISITION GUIDE
+══════════════════════════════════════ -->
+<div class="page" id="page2">
+
+  <div class="doc-header">
+    <div class="dh-org">UNITED GLOBAL DIRECTORATE<br>FIELD OPERATIONS // DIV IV</div>
+    <div class="dh-center">
+      <div class="dh-stamp">■ CLASSIFIED ■ REQUISITION CATALOGUE ■</div>
+      <div class="dh-title">SPIKE: THE REEVES TRIALS // YEAR 5 &nbsp;// &nbsp;AVAILABLE FIELD LOADOUT</div>
+    </div>
+    <div class="dh-org" style="text-align:right;">DOC 14-C<br>REQUISITION REF</div>
+  </div>
+
+  <div class="sheet">
+
+    <!-- WEAPONS -->
+    <div class="section-label">WEAPONS <span>SELECT FROM CATALOGUE — RECORD ON PAGE 1</span></div>
+
+    <div class="cg-grid" style="margin-bottom:18px;">
+
+      <div class="cg-panel">
+        <div class="cg-panel-title">LIGHT WEAPONS &nbsp;// &nbsp;+0 TO DAMAGE</div>
+        <p>Concealable, fast, mobile. Light weapons deal damage equal to the margin of success only — no modifier. Best suited for operatives who value speed and concealment over stopping power.</p>
+        <div class="std-equip-block" style="margin-bottom:0; background:transparent; border:none; padding:0; gap:6px; margin-top:8px;">
+          <div style="display:flex;flex-wrap:wrap;gap:5px;">
+            <span class="std-equip-item">KNIFE</span>
+            <span class="std-equip-item">PISTOL</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="cg-panel hi">
+        <div class="cg-panel-title hi">STANDARD WEAPONS &nbsp;// &nbsp;+2 TO DAMAGE</div>
+        <p>Reliable operational weapons. Damage equals margin of success + 2. The default field choice — balanced between mobility and lethality.</p>
+        <div class="std-equip-block" style="margin-bottom:0; background:transparent; border:none; padding:0; gap:6px; margin-top:8px;">
+          <div style="display:flex;flex-wrap:wrap;gap:5px;">
+            <span class="std-equip-item">RIFLE</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="cg-panel red">
+        <div class="cg-panel-title red">HEAVY WEAPONS &nbsp;// &nbsp;+4 TO DAMAGE</div>
+        <p>Slow, dangerous, high-impact. Damage equals margin of success + 4. Cannot move and attack in the same turn.</p>
+        <div class="std-equip-block" style="margin-bottom:0; background:transparent; border:none; padding:0; gap:6px; margin-top:8px;">
+          <div style="display:flex;flex-wrap:wrap;gap:5px;">
+            <span class="std-equip-item">SHOTGUN</span>
+            <span class="std-equip-item">SNIPER RIFLE</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ARMOR -->
+    <div class="section-label">ARMOR <span>SELECT ONE — RECORD ON PAGE 1</span></div>
+
+    <div class="cg-grid" style="margin-bottom:18px;">
+
+      <div class="cg-panel">
+        <div class="cg-panel-title">LIGHT ARMOR &nbsp;// &nbsp;−2 DAMAGE RECEIVED</div>
+        <p>Soft-plate concealed armor. Reduces all incoming damage by 2. No penalties to movement or skill checks.</p>
+      </div>
+
+      <div class="cg-panel amber">
+        <div class="cg-panel-title amber">MEDIUM ARMOR &nbsp;// &nbsp;−4 DAMAGE RECEIVED</div>
+        <p>Tactical hard-plate carrier. Reduces all incoming damage by 4. Imposes <strong>−1 to Mobility checks</strong> due to encumbrance.</p>
+      </div>
+
+      <div class="cg-panel red">
+        <div class="cg-panel-title red">HEAVY ARMOR &nbsp;// &nbsp;−6 DAMAGE RECEIVED</div>
+        <p>Full tactical rig. Reduces all incoming damage by 6. Imposes <strong>−1 to Mobility checks</strong> and <strong>−1 to AWARENESS checks</strong>. Extended movement costs +1 COMPOSURE instead of the standard rule.</p>
+      </div>
+
+    </div>
+
+    <!-- FIELD EQUIPMENT -->
+    <div class="section-label">FIELD EQUIPMENT <span>SELECT UP TO 3 ADDITIONAL ITEMS — RECORD ON PAGE 1</span></div>
+
+    <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:18px;">
+
+      <div class="cg-panel">
+        <div class="cg-panel-title">MEDKIT</div>
+        <p>Full trauma kit. On use: roll <strong>d10 + BODY</strong> — the result is the number of HP restored to the target. Requires an Action. Single use per kit.</p>
+      </div>
+
+      <div class="cg-panel">
+        <div class="cg-panel-title">BANDAGES</div>
+        <p>Basic wound dressing. Stabilises a downed operative (brings them to 1 HP). No roll required. Requires a Minor Action. Does not restore HP beyond stabilisation.</p>
+      </div>
+
+      <div class="cg-panel">
+        <div class="cg-panel-title">HACKING KIT</div>
+        <p>Portable intrusion hardware. Required for Computing checks against secured electronic systems, terminals, and locked doors. Without a kit, such checks cannot be attempted.</p>
+      </div>
+
+      <div class="cg-panel">
+        <div class="cg-panel-title">FLASHBANG</div>
+        <p>Disorientation grenade. On use: all targets in CLOSE range must make a <strong>d10 + AWARENESS vs TN 11</strong> check or suffer Disadvantage on all rolls until the end of their next turn. Requires an Action. Single use.</p>
+      </div>
+
+      <div class="cg-panel">
+        <div class="cg-panel-title">BREACH CHARGE</div>
+        <p>Shaped explosive for forced entry. Destroys a standard door, wall section, or lock. Requires an Action to place and a Minor Action to detonate. Can be set on a delay. Single use.</p>
+      </div>
+
+      <div class="cg-panel">
+        <div class="cg-panel-title">HANDCUFFS</div>
+        <p>Restraint device. A restrained target cannot take physical actions. Applying requires a successful <strong>Close Combat check vs TN 9</strong> on an incapacitated or willing target.</p>
+      </div>
+
+      <div class="cg-panel amber">
+        <div class="cg-panel-title amber">SPIKE WAND</div>
+        <p>Civilian-grade SPIKE diagnostic device. Reads the SPIKE level of a target at CLOSE or NEAR range. Requires a Minor Action. All UGD operatives carry a subcutaneous implant that reads their own level continuously — this wand is for evaluating others in the field when your implant's close-range scan is insufficient.</p>
+      </div>
+
+    </div>
+
+  </div><!-- /sheet -->
+
+  <div class="sheet-footer">
+    <span>UGD // SPIKE: THE REEVES TRIALS // DOC 14-C // REQUISITION CATALOGUE</span>
+    <span>■ CLASSIFIED // AUTHORIZED PERSONNEL ONLY ■</span>
+  </div>
+
+</div><!-- /page2 requisition -->
 
 <!-- SAVE / LOAD TOOLBAR -->
 <div class="save-toolbar">
