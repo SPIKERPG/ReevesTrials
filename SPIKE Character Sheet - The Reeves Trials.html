@@ -1843,7 +1843,7 @@ function buildAttrs() {
     box.innerHTML = `
       <div class="attr-name">${name}</div>
       <div class="attr-dots" id="dots-${i}"></div>
-      <div class="attr-val" id="val-${i}">0</div>
+      <div class="attr-val" id="val-${i}">${attrVals[i]}</div>
       <div class="attr-max">/ 3</div>`;
     row.appendChild(box);
     buildDots(i);
