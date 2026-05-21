@@ -99,16 +99,14 @@ body::after {
   transform: rotate(-.4deg);
 }
 
-.lock-title {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: clamp(44px, 11vw, 60px);
-  letter-spacing: .12em;
-  color: var(--text-hi);
-  line-height: .95;
-  margin-bottom: 4px;
+.lock-logo {
+  width: 200px;
+  height: 200px;
+  object-fit: contain;
+  mix-blend-mode: screen;
+  margin: 0 auto 8px;
+  display: block;
 }
-
-.lock-title span { color: var(--green); }
 
 .lock-sub {
   font-family: 'Share Tech Mono', monospace;
@@ -390,7 +388,7 @@ h1 span { color: var(--green); }
   <div class="lock-box">
     <div class="lock-stamp">■ CLASSIFIED ■ AUTHORIZED PERSONNEL ONLY ■</div>
 
-    <div class="lock-title">SPIKE<br><span>THE REEVES TRIALS</span></div>
+    <img class="lock-logo" src="SPIKE_-_The_Reeves_Trials.png" alt="SPIKE: The Reeves Trials">
     <div class="lock-sub">UGD FIELD OPERATIVE PORTAL</div>
 
     <hr class="lock-divider">
