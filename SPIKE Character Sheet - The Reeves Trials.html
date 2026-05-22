@@ -1914,16 +1914,16 @@ function updateComp() {
 
 // ── SKILLS ──────────────────────────────────────────────────────
 const SKILLS = [
-  { name: 'Firearms',      attr: 'BODY',      group: 'COMBAT'    },
+  { name: 'Firearms',      attr: 'AWARENESS', group: 'COMBAT'    },
   { name: 'Close Combat',  attr: 'BODY',      group: 'COMBAT'    },
   { name: 'Mobility',      attr: 'BODY',      group: 'PHYSICAL'  },
   { name: 'Stealth',       attr: 'BODY',      group: 'PHYSICAL'  },
-  { name: 'Survival',      attr: 'AWARENESS', group: 'PHYSICAL'  },
+  { name: 'Survival',      attr: 'BODY',      group: 'PHYSICAL'  },
   { name: 'Computing',     attr: 'TECH',      group: 'TECHNICAL' },
   { name: 'Engineering',   attr: 'TECH',      group: 'TECHNICAL' },
   { name: 'Medicine',      attr: 'MIND',      group: 'TECHNICAL' },
-  { name: 'Investigation', attr: 'MIND',      group: 'MENTAL'    },
-  { name: 'Awareness',     attr: 'AWARENESS', group: 'MENTAL'    },
+  { name: 'Investigation', attr: 'TECH',      group: 'MENTAL'    },
+  { name: 'Perception',    attr: 'AWARENESS', group: 'MENTAL'    },
   { name: 'Persuasion',    attr: 'MIND',      group: 'SOCIAL'    },
   { name: 'Intimidation',  attr: 'RESOLVE',   group: 'SOCIAL'    },
 ];
@@ -1972,7 +1972,7 @@ const SPIKE_DATA = [
   { val: 8,  cls: 'active-89', label: '8 — OVERLOADED', effect: 'Disadvantage on all social checks. Operative unreasonable in roleplay. SPIKE Save required hourly.' },
   { val: 9,  cls: 'active-89', label: '9 — OVERLOADED', effect: 'Disadvantage on all social checks. Operative unreasonable in roleplay. SPIKE Save required hourly.' },
   { val: 10, cls: 'active-10', label: '10 — SPIKED',   effect: 'Loss of character control. Roll Behavior Table (d20) at start of each turn. End of turn: d20 + RESOLVE vs TN 16.' },
-  { val: 11, cls: 'active-11', label: '11 — CONSUMED', effect: '1d6 True Damage per turn until HP 0. Then 1d4 RESOLVE damage per turn. End of turn: d20 + RESOLVE vs TN 18.' },
+  { val: 11, cls: 'active-11', label: '11 — CONSUMED', effect: '1d4 True Damage per turn until HP 0. Then 1d4 RESOLVE damage per turn. End of turn: d20 + RESOLVE vs TN 18.' },
 ];
 
 let currentSpike = 0;

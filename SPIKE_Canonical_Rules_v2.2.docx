@@ -1,0 +1,453 @@
+**SPIKE: THE REEVES TRIALS**
+
+CANONICAL RULES REFERENCE
+
+*Version 2.2  —  Authoritative Edition*
+
+## **Contents**
+
+1.  Operative Creation
+
+2.  Core Roll Protocol
+
+3.  Combat Operations
+
+4.  The SPIKE Scale
+
+5.  Skills
+
+6.  Traits
+
+7.  Emotional Flaws
+
+8.  Advancement
+
+9.  Requisition Catalogue
+
+# **1. Operative Creation**
+
+## **1.1 Attributes**
+
+Each operative has five attributes rated 0–3. Attributes drive all rolls and calculate vital statistics.
+
+| **Attribute** | **Covers** |
+| --- | --- |
+| BODY | Physical strength, endurance, toughness. Drives melee attacks, physical feats, and raw resilience. |
+| MIND | Reasoning, analysis, cognitive clarity. Drives deduction, problem-solving, and tactical thinking. |
+| TECH | Technical proficiency, systems, and equipment. Drives hacking, engineering, medicine, and investigation. |
+| AWARENESS | Perception, instinct, reading environments. Drives ranged attacks, detecting danger, and spatial judgment. |
+| RESOLVE | Emotional stability, willpower, composure. Drives SPIKE resistance saves and social endurance. |
+
+## **1.2 Attribute Generation**
+
+### **Step 1 — Assign the Base Array**
+
+Distribute the following five values across your five attributes in any order:
+
+**  3  —  2  —  2  —  1  —  1**
+
+### **Step 2 — Apply Specialisation Bonus**
+
+Add +1 to any two different attributes currently rated 2 or lower. No single attribute may exceed 3.
+
+### **Step 3 — Calculate Vitals**
+
+**HP** = 10 + BODY     **COMPOSURE** = 5 + RESOLVE
+
+## **1.3 Starting Skills**
+
+Choose 3 skills at creation. All skills begin Untrained. Selected skills become Trained (+2).
+
+Untrained: d10 + Attribute only. Trained: +2. Specialised (via advancement): +3.
+
+## **1.4 Standard Issue Equipment**
+
+All operatives receive the following at UGD HQ before deployment. No requisition required.
+
+- UGD field uniform
+
+- Subcutaneous SPIKE monitoring implant — reads own SPIKE level continuously; evaluates others at close range without a roll. Replaces handheld wand in the field.
+
+- Flashlight
+
+- Field radio
+
+*Additional loadout items are requisitioned separately. See Section 9: Requisition Catalogue.*
+
+# **2. Core Roll Protocol**
+
+## **2.1 The Core Roll**
+
+**d10 + ATTRIBUTE + SKILL  **≥  TARGET NUMBER (TN)
+
+Apply a skill bonus only when clearly relevant. Untrained rolls use attribute alone.
+
+## **2.2 Dice**
+
+| **Die** | **When Used** |
+| --- | --- |
+| d10 | All controlled actions — combat attacks, skill checks, movement, technical tasks. |
+| d20 | SPIKE and emotional rolls — instability saves, grounding attempts, behaviour table. |
+
+## **2.3 Target Numbers**
+
+| **TN** | **Difficulty** | **Typical Use** |
+| --- | --- | --- |
+| 7 | Routine | No pressure; relevant skill; clear environment. |
+| 9 | Standard | Default for most field actions and combat attacks. |
+| 11 | Challenging | Time pressure, partial obstruction, unfamiliar situation. |
+| 13 | Hard | Heavy cover, active interference, significant stakes. |
+| 15 | Very Hard | Expert-level barrier, hostile environment, life-or-death. |
+| 17 | Near-Impossible | Reserved for exceptional circumstances. |
+
+## **2.4 Advantage and Disadvantage**
+
+- Advantage: roll 2 dice of the relevant type; take the higher result.
+
+- Disadvantage: roll 2 dice of the relevant type; take the lower result.
+
+## **2.5 Critical Results (d10 only)**
+
+| **Result** | **Effect** |
+| --- | --- |
+| Natural 10 — Critical Success | Combat: double base damage before adding weapon modifier. Non-combat: significant narrative bonus at GM discretion. |
+| Natural 1 — Critical Fault | A complication arises — jam, noise, exposure, unintended consequence. Not an automatic total failure; something goes wrong. |
+
+## **2.6 Rests**
+
+| **Rest Type** | **Effect** |
+| --- | --- |
+| Short Rest | SPIKE −1. Roll Quick Recovery trait if applicable. |
+| Long Rest | HP and COMPOSURE restored to maximum. SPIKE −2. Reaction pool fully restored. |
+
+# **3. Combat Operations**
+
+## **3.1 Initiative**
+
+Roll **d10 + AWARENESS**. Act in descending order. Ties: player preference or GM call. Initiative is fixed for the encounter.
+
+## **3.2 Turn Structure**
+
+Each operative's turn consists of:
+
+- 1 Action — attack, assist, use a skill, technical task, grounding attempt.
+
+- 1 Minor Action — move 1 zone, draw a weapon, quick interaction.
+
+*Actions and Minor Actions may be used in any order within the turn.*
+
+## **3.3 Attack Resolution — Margin of Success**
+
+One roll determines both hit and damage.
+
+**d10 + ATTRIBUTE + SKILL  vs  ENEMY DEFENSE VALUE**
+
+If the total meets or exceeds the enemy's Defense Value, the attack lands. The margin (total minus Defense Value) becomes base damage.
+
+BASE DAMAGE   = roll total − Defense Value
+
+FINAL DAMAGE  = base damage + weapon modifier − armour
+
+- Natural 10: double the base damage before adding weapon modifier.
+
+- Natural 1: miss regardless of modifiers; introduce a complication. Minimum 0 damage on any hit.
+
+## **3.4 Engagement Zones**
+
+| **Zone** | **Range Description** | **Typical Weapons** |
+| --- | --- | --- |
+| CLOSE | Melee range — direct contact. | Melee weapons; pistols at disadvantage. |
+| NEAR | Pistol range. | Pistols, shotguns, SMGs. |
+| FAR | Rifle range. | Rifles, carbines. |
+| OUT OF REACH | Extreme distance. | Sniper rifles only. |
+
+## **3.5 Movement**
+
+| **Movement Type** | **Cost** | **Effect** |
+| --- | --- | --- |
+| Standard | Minor Action | Move 1 zone. No additional cost. |
+| Extended ×1 | Minor Action + −1 COMPOSURE | Move 2 zones. |
+| Extended ×2 | Full Action | Move 2 zones. No COMPOSURE penalty. |
+
+## **3.6 Weapons**
+
+| **Class** | **Damage Modifier** | **Effective Range** | **Examples** | **Restriction** |
+| --- | --- | --- | --- | --- |
+| Light | margin only (+0) | CLOSE / NEAR | Pistol, knife, baton. | — |
+| Standard | margin +2 | NEAR / FAR | Rifle, carbine, SMG. | — |
+| Heavy | margin +4 | FAR only | Sniper rifle, LMG. | Cannot move and attack on the same turn. |
+| Shotgun | margin +4 | CLOSE / NEAR only | Combat shotgun. | Heavy class. Effective range NEAR or closer. Cannot move and attack same turn. |
+
+*Shotgun is classified as Heavy (+4 damage) but is limited to CLOSE and NEAR range, unlike other Heavy weapons which operate at FAR.*
+
+## **3.7 Armour**
+
+| **Armour Class** | **Damage Reduction** | **Penalties** |
+| --- | --- | --- |
+| Light | −2 final damage | — No penalties. |
+| Medium | −4 final damage | −1 to all Mobility checks. |
+| Heavy | −6 final damage | −1 to all Mobility checks. −1 to all AWARENESS checks. Extended movement costs +1 COMPOSURE instead of the standard rule. |
+
+*Heavy armour imposes both a Mobility and an AWARENESS penalty. Operatives in heavy armour are slower and less perceptive.*
+
+## **3.8 Reactions**
+
+Each operative has 2 reactions per Long Rest. Reactions trigger outside your turn. They do not reset between encounters.
+
+| **Reaction** | **Trigger / Requirement** | **Effect** |
+| --- | --- | --- |
+| Overwatch | Must have used Aim as a Minor Action last turn. | Shoot any enemy who enters your line of sight. (Ranged only.) |
+| Counterattack | You are attacked in melee. | Make an immediate return strike. (Melee only.) |
+| Protect | An adjacent ally is targeted. | Interpose yourself — you take the hit instead. |
+| Brace | You are targeted by any attack. | Reduce final damage from the triggering hit by 2. |
+
+## **3.9 COMPOSURE Thresholds**
+
+- COMPOSURE 1: −1 to all BODY checks.
+
+- COMPOSURE 0: Immediate SPIKE Save (d20 + RESOLVE vs TN 14). All rolls suffer −1 until COMPOSURE is restored.
+
+# **4. The SPIKE Scale**
+
+SPIKE measures deviation from neurological Reset baseline. Rated 0–11. Rises in response to trauma, hostile environments, and SPIKE-inducing threats. Falls through rest and grounding. SPIKE is a medical condition — not a character flaw.
+
+## **4.1 Scale Reference**
+
+| **Level** | **Designation** | **Mechanical Effect** | **SPIKE Save** |
+| --- | --- | --- | --- |
+| 0 | SERENE | Baseline. No effect. The ideal operative state. | — |
+| 1–2 | STABLE | No mechanical effect. Nominal baseline. | — |
+| 3–5 | SHAKEN | −1 to all MIND rolls. | d20 + RESOLVE vs TN 9 when triggered. |
+| 6–7 | CRACKED | −1 to MIND and RESOLVE. Hallucinations possible. | Save required when triggered. |
+| 8–9 | OVERLOADED | Disadvantage on all social checks. Operative unreasonable in roleplay. | SPIKE Save required hourly. |
+| 10 | SPIKED | Loss of character control. Roll Behaviour Table (d20) at turn start. | d20 + RESOLVE vs TN 16 at end of turn. Nat 20: SPIKE −2. Nat 1: SPIKE +1. |
+| 11 | CONSUMED | 1d4 True Damage per turn until HP 0; then 1d4 RESOLVE damage per turn until 0. Death follows. | d20 + RESOLVE vs TN 18 at end of turn. Nat 1: damage rolls at Advantage. |
+
+*True Damage at CONSUMED bypasses armour.*
+
+## **4.2 Lowering SPIKE**
+
+| **Method** | **Effect** |
+| --- | --- |
+| Short Rest | SPIKE −1. |
+| Long Rest | SPIKE −2. |
+| Grounding Action | Once per encounter. Action + d20 + MIND vs TN 13. Success: SPIKE −1. An ally at SPIKE 4 or lower may grant Advantage. |
+
+## **4.3 Assisting a SPIKED Operative**
+
+Requires an Action and meaningful roleplay (logic, routine, calm instruction).
+
+**d20 + MIND  vs  TN 14**
+
+| **Result** | **Effect** |
+| --- | --- |
+| Success | Target gains Advantage on their next SPIKE Save. |
+| Failure | SPIKED operative lashes out — 1d4 damage to the helper. |
+| Critical Failure | Both make RESOLVE Save vs TN 12. Target has Disadvantage on their next SPIKE Save. |
+
+## **4.4 SPIKE Resonance**
+
+When two characters’ SPIKE levels differ by 4 or more, the lower-SPIKE individual experiences instability in proximity. Both suffer Disadvantage on social checks while the gap persists. Log all resonance events on mission return.
+
+## **4.5 Behaviour Table (SPIKE 10) — Roll d20 at start of each turn**
+
+| **Roll** | **Behaviour** | **Effect** |
+| --- | --- | --- |
+| 1 | Shatter Point | Immediate SPIKE Save. Success: act normally. Fail: +1 SPIKE (risks CONSUMED). |
+| 2 | Emotional Bleed | All CLOSE allies make SPIKE Save vs TN 14 or +1 SPIKE. −1 to all your rolls this turn. |
+| 3 | Misplaced Trust | Latch onto nearest creature as ally regardless of reality. If they harm you: +1 SPIKE. |
+| 4 | Violent Outburst | Attack nearest creature using full Action. If no target in range: move toward nearest. |
+| 5 | Paranoid Break | All others treated as hostile until end of turn. Cannot benefit from Assist. |
+| 6 | Panic Response | Use movement to flee perceived danger. Cannot move toward enemies. |
+| 7 | Reckless Advance | Must move toward nearest threat. Advantage on next attack; all attacks against you have Advantage. |
+| 8 | Disassociation | −2 to all rolls this turn. Cannot take Reactions. |
+| 9 | Freeze | Lose Action. May take Minor Action only. |
+| 10 | Collapse | Fall prone. Lose Action. Minor Action only. Gain +1 COMPOSURE at end of turn. |
+| 11 | Sensory Overload | Disadvantage all rolls. Must reposition away from stimuli. If unable: −2 all rolls. |
+| 12 | Erratic Action | Roll d10: 1–3 target wrong creature; 4–6 drop or mishandle item; 7–10 act normally. |
+| 13 | Echo Loop | Repeat last meaningful action. If impossible: lose Action. |
+| 14 | Target Lock | Advantage vs one chosen target; Disadvantage vs all others. Must pursue chosen target. |
+| 15 | Compulsive Fixation | GM assigns fixation. Must focus on it this turn. +1 to related actions. |
+| 16 | Emotional Surge | +2 to next attack roll. If the attack misses: +1 SPIKE. |
+| 17 | Control Snap | SPIKE Save. Success: act normally. Fail: +1 SPIKE and −2 to all rolls this turn. |
+| 18 | Hyper-Focus | GM defines one task. +2 to related rolls. Cannot take unrelated actions. |
+| 19 | Moment of Clarity | Act normally this turn. SPIKE −1. |
+| 20 | Fractured Clarity | Advantage on all rolls this turn. SPIKE −1 for this turn only, then resets. |
+
+# **5. Skills**
+
+Skills add +2 (Trained) or +3 (Specialised) to the relevant roll. Untrained: attribute only. Choose 3 at creation; additional skills gained through advancement.
+
+| **Category** | **Skill** | **Attribute** | **Description** |
+| --- | --- | --- | --- |
+| COMBAT | Firearms | AWARENESS | Guns, ranged attacks, aimed fire. |
+| COMBAT | Close Combat | BODY | Brawling, melee, grappling. |
+| PHYSICAL | Mobility | BODY | Running, climbing, dodging, parkour. |
+| PHYSICAL | Stealth | AWARENESS | Sneaking, hiding, silent movement. |
+| PHYSICAL | Survival | BODY | Tracking, navigation, scavenging. |
+| TECHNICAL | Computing | TECH | Hacking, systems access, data retrieval. |
+| TECHNICAL | Engineering | TECH | Repair, machinery, fabrication. |
+| TECHNICAL | Medicine | TECH | First aid, trauma care, stabilisation. |
+| MENTAL | Investigation | TECH | Clues, deduction, pattern recognition. |
+| MENTAL | Awareness | AWARENESS | Noticing danger, reading environments, detecting concealment. |
+| SOCIAL | Persuasion | MIND | Convincing, diplomacy, trust-building. |
+| SOCIAL | Intimidation | MIND | Threats, dominance, coercion. |
+
+*Investigation is driven by TECH (analysis, pattern recognition, memory). Awareness is driven by AWARENESS (environmental reading, instinct). These are distinct skills.*
+
+*Note: the Awareness skill shares its name with the AWARENESS attribute. In play, context makes the distinction clear — the skill applies to active perception checks, the attribute is the stat rolled.*
+
+# **6. Traits**
+
+Traits are passive abilities gained at milestones. Characters begin with none. Maximum 6 traits per operative. No trait may be taken twice.
+
+## **6.1 Combat Traits**
+
+| **Trait** | **Effect** |
+| --- | --- |
+| Steady Aim | Ignore movement penalties when making ranged attacks. |
+| Close Quarters Fighter | +1 to Close Combat rolls at CLOSE range. |
+| Quick Draw | Drawing a weapon costs no Minor Action. |
+| Combat Instinct | +1 to all Initiative rolls. |
+| Suppressive Fire | On a successful Firearms attack, the target suffers −1 to their next roll. |
+| Relentless | Downing an enemy grants +1 to your next action. |
+| Last Stand | At 0 HP (not yet dead): +1 to all rolls until stabilised. |
+
+## **6.2 Mental Traits**
+
+| **Trait** | **Effect** |
+| --- | --- |
+| Pattern Recognition | +1 to Investigation when analysing repeating clues. |
+| Cold Reader | +1 to detect lies or hidden intent. |
+| Focused Mind | +1 to SPIKE Saves per scene. |
+| Rapid Analysis | Once per encounter, ask the GM one tactical question for a truthful hint. |
+| Memory Recall | Automatically remember all previously encountered details. |
+| Problem Solver | +1 to TECH or MIND rolls when under time pressure. |
+| Unshakable Logic | Advantage on checks to resist paranoia or hallucinations. |
+
+## **6.3 Social Traits**
+
+| **Trait** | **Effect** |
+| --- | --- |
+| Silver Tongue | +1 to Persuasion in calm, non-hostile situations. |
+| Intimidating Presence | +1 to Intimidation when asserting dominance. |
+| Disarming | First social interaction in a scene ignores hostility penalty. |
+| Trust Builder | Allies gain +1 to their first roll after you assist them. |
+| Commanding Voice | Once per encounter, one Persuasion or Intimidation roll affects multiple targets. |
+
+## **6.4 Physical Traits**
+
+| **Trait** | **Effect** |
+| --- | --- |
+| Agile | +1 to all Mobility checks. |
+| Silent Steps | +1 to Stealth when not in direct line of sight. |
+| Endurance | +2 to maximum HP. |
+| Quick Recovery | Roll +1d6 additional HP during a Short Rest. Once per day. |
+| Sure Footing | Ignore difficult terrain penalties. |
+| Climber | Advantage on all climbing or vertical movement checks. |
+| Sprint Burst | Once per encounter, move +1 extra zone for free. |
+
+## **6.5 Technical Traits**
+
+| **Trait** | **Effect** |
+| --- | --- |
+| Hacker's Edge | +1 to Computing when actively breaching systems. |
+| Field Engineer | Repair simple devices without tools. |
+| Jury Rig | Once per session, temporarily repair a broken item. |
+| Efficient Operator | Reduce time required for technical actions by half. |
+| Drone Familiarity | +1 when interacting with or controlling drone units. |
+| Systems Insight | Ask one question about any device or system per scene. |
+| Backup Plan | Once per session, declare you prepared for a situation (GM approval required). |
+
+# **7. Emotional Flaws**
+
+Emotional Flaws are narrative scars acquired through play when a character suffers extreme trauma. Roleplay-first: they shape how an operative carries what they have been through. The examples below are a starting list; GM and player may define others.
+
+## **7.1 Triggering a Flaw**
+
+| **Option** | **Mechanic** | **Reward / Cost** |
+| --- | --- | --- |
+| Lean In | Act according to the flaw's impulse. | +1 to the roll OR +1 COMPOSURE. |
+| Resist | d10 + RESOLVE vs TN 9. Success: act normally. Failure: −1 to roll or +1 SPIKE (GM choice). | Nothing on success. Penalty on failure. |
+
+## **7.2 Flaw Reference**
+
+| **Flaw** | **Trigger** | **Effect** | **Lean-In Benefit** |
+| --- | --- | --- | --- |
+| Fear of Attachment | Forming or relying on close bonds. | −1 to social rolls involving trust. | +1 when acting independently. |
+| Bottled Rage | Frustration, disrespect, loss of control. | Risk of aggressive response. | +1 to Close Combat. |
+| Emotional Numbness | High-stress or emotional situations. | −1 to social connection rolls. | Immune to first COMPOSURE loss per scene. |
+| Paranoia | Uncertainty, hidden information. | Difficulty trusting others. | +1 to Awareness checks. |
+| Survivor's Guilt | Others being harmed or at risk. | Hesitation or self-sacrifice pressure. | +1 when actively protecting others. |
+| Control Fixation | Chaotic or unpredictable situations. | Must attempt to control outcomes. | +1 to planning or preparation actions. |
+
+# **8. Advancement**
+
+## **8.1 Milestone Progression**
+
+Advancement is milestone-based. The GM signals when the party reaches one. At each milestone, the operative chooses one:
+
+| **Option** | **Effect** |
+| --- | --- |
+| Gain a New Skill | Add any untrained skill at Trained level (+2). |
+| Specialise a Skill | Upgrade a Trained skill (+2) to Specialised (+3). |
+| Gain a Trait | Select any trait from Section 6. Maximum 6 traits per operative. |
+| Increase Max COMPOSURE | +1 to maximum COMPOSURE. Subject to GM-set campaign cap. |
+| Reduce an Emotional Flaw | Rare. Requires meaningful narrative resolution across multiple sessions and explicit GM approval. |
+
+## **8.2 Other Progression**
+
+- Knowledge — what the party uncovers stays with them. Information is currency.
+
+- Access — credentials, clearance codes, and bypassed security open doors force cannot.
+
+- Equipment — better tools recovered in the field or requisitioned from the Directorate.
+
+- Allies — contacts who owe the team something may be worth more than any weapon.
+
+# **9. Requisition Catalogue**
+
+Before departing UGD HQ, operatives may requisition field loadout items from the catalogue below. Record all selections on the Operative Dossier (Doc 14-C) and export the JSON file to your GM to log equipment to the UGD Mainframe.
+
+## **9.1 Weapons**
+
+Select up to 2 weapons. Record weapon name, class, range, and any notes on the Operative Dossier.
+
+| **Class** | **Weapons** | **Damage Modifier** | **Effective Range** | **Notes** |
+| --- | --- | --- | --- | --- |
+| Light | Pistol, Knife | margin only (+0) | CLOSE / NEAR | Concealable, fast, mobile. Best suited for speed and concealment over stopping power. |
+| Standard | Rifle | margin +2 | NEAR / FAR | Reliable operational weapon. Balanced between mobility and lethality. |
+| Heavy | Sniper Rifle, LMG | margin +4 | FAR only | Slow, high-impact. Cannot move and attack on the same turn. |
+| Shotgun | Combat Shotgun | margin +4 | CLOSE / NEAR only | Heavy class. High stopping power at close range. Cannot move and attack on the same turn. |
+
+## **9.2 Armour**
+
+Select one armour type, or none. Record armour type and armour value on the Operative Dossier.
+
+| **Class** | **Damage Reduction** | **Penalties** | **Description** |
+| --- | --- | --- | --- |
+| Light | −2 final damage | None. | Soft-plate concealed armour. No mobility or awareness penalties. |
+| Medium | −4 final damage | −1 to Mobility checks. | Tactical hard-plate carrier. Imposes encumbrance penalty to movement. |
+| Heavy | −6 final damage | −1 to Mobility checks. −1 to AWARENESS checks. Extended movement costs +1 COMPOSURE. | Full tactical rig. Maximum protection; significant mobility and perception penalties. |
+
+## **9.3 Field Equipment**
+
+Select up to 3 additional items. Record on the Operative Dossier under Additional Equipment.
+
+| **Item** | **Action Cost** | **Effect** | **Uses** |
+| --- | --- | --- | --- |
+| Medkit | Action | Roll d10 + BODY. The result is the number of HP restored to the target. | Single use per kit. |
+| Bandages | Minor Action | Stabilise a downed operative (brings them to 1 HP). Does not restore HP beyond stabilisation. No roll required. | Single use. |
+| Hacking Kit | — (required) | Required for all Computing checks against secured electronic systems, terminals, and locked doors. Without a kit, such checks cannot be attempted. | Unlimited. Consumed only on GM discretion for extreme use. |
+| Flashbang | Action | All targets in CLOSE range must make d10 + AWARENESS vs TN 11 or suffer Disadvantage on all rolls until the end of their next turn. | Single use. |
+| Breach Charge | Action to place; Minor Action to detonate | Destroys a standard door, wall section, or lock. Can be set on a delay. | Single use. |
+| Handcuffs | Action (on incapacitated or willing target) | Restrained target cannot take physical actions. Requires successful Close Combat check vs TN 9 to apply. | Reusable. |
+| SPIKE Wand | Minor Action | Reads the SPIKE level of a target at CLOSE or NEAR range. Supplements the operative's subcutaneous implant for evaluating others when close-range implant scan is insufficient. | Unlimited. |
+
+*The subcutaneous SPIKE implant issued to all operatives reads the operative**'**s own level continuously. The SPIKE Wand is for field evaluation of others, not self-monitoring.*
+
+*Medkit and Bandages serve different functions: Medkit restores HP; Bandages only stabilise (1 HP). Carry both for full trauma coverage.*
+
+*SPIKE: The Reeves Trials — Canonical Rules Reference v2.1*
+
+*Authoritative edition. Supersedes all prior rule summaries and the ChatGPT-generated draft (SPIKE_Canonical_Rules_Revised.docx).*
