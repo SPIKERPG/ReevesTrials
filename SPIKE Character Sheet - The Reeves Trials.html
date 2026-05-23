@@ -1294,9 +1294,26 @@ body::after {
         </div>
       </div>
 
-      <div class="cg-panel" style="margin-bottom:0;">
+      <div class="cg-panel" style="margin-bottom:10px;">
         <div class="cg-panel-title">LOADOUT // REQUISITION PROCESS</div>
-        <p>Before departing UGD HQ, you will be issued standard equipment and may requisition field loadout items. Record your weapons, armor, and any special kit on the <strong>OPERATIVE</strong> tab in the Loadout Requisition section. See the <strong>REQUISITION GUIDE</strong> tab for a full list of available items and their mechanical effects. When your dossier is complete, use <strong>↓ SAVE JSON</strong> below and send the file to your GM — this uploads your loadout to the UGD Mainframe and lets them track your equipment in the Combat Suite.</p>
+        <p style="margin-bottom:6px;">Before departing UGD HQ, you will be issued standard equipment and may requisition a field loadout. <strong>Weapon allowance — choose one package:</strong> two light weapons &nbsp;|&nbsp; one standard weapon + knife &nbsp;|&nbsp; one heavy weapon (no second weapon). Plus one armour type (or none) and up to three field equipment items.</p>
+        <p>Record your selections on the <strong>OPERATIVE</strong> tab. See the <strong>REQUISITION GUIDE</strong> tab for the full catalogue and mechanical effects. When complete, use <strong>↓ SAVE JSON</strong> and send the file to your GM to log your loadout to the UGD Mainframe.</p>
+      </div>
+
+      <div class="cg-panel red" style="margin-bottom:0;">
+        <div class="cg-panel-title red">EMOTIONAL FLAWS // MECHANICS</div>
+        <p style="margin-bottom:8px;">Flaws are not chosen at creation — they are acquired during play when a character suffers extreme trauma. When a flaw is triggered, you must declare <strong>Lean In</strong> or <strong>Resist</strong> before any dice are rolled.</p>
+        <div class="cg-grid" style="margin-bottom:8px;">
+          <div class="cg-panel" style="background:rgba(0,0,0,.25); border-left-color:var(--green-dim); margin-bottom:0;">
+            <div class="cg-panel-title">LEAN INTO IT</div>
+            <p style="margin-bottom:0;">Act according to the flaw's impulse. No roll required. Gain <strong>+1 to the triggering roll</strong> OR <strong>+1 COMPOSURE</strong> (your choice).</p>
+          </div>
+          <div class="cg-panel red" style="background:rgba(0,0,0,.25); margin-bottom:0;">
+            <div class="cg-panel-title red">RESIST IT</div>
+            <p style="margin-bottom:0;">Roll <span style="font-family:'Share Tech Mono',monospace;font-size:11px;background:rgba(0,0,0,.3);padding:1px 4px;">d10 + RESOLVE vs TN 9</span>. <strong>Success:</strong> act normally. <strong>Failure:</strong> −1 to roll OR +1 SPIKE (GM's choice).</p>
+          </div>
+        </div>
+        <p style="margin-bottom:0;font-size:12px;color:var(--text-dim);">Flaws can only be reduced through meaningful narrative resolution across multiple sessions, with explicit GM approval. See the REFERENCE // CREATION tab for the full flaw list.</p>
       </div>
     </div>
 
@@ -1708,7 +1725,11 @@ body::after {
   <div class="sheet">
 
     <!-- WEAPONS -->
-    <div class="section-label">WEAPONS <span>SELECT FROM CATALOGUE — RECORD ON PAGE 1</span></div>
+    <div class="section-label">WEAPONS <span>TWO LIGHT — OR — STANDARD + KNIFE — OR — ONE HEAVY</span></div>
+
+    <div class="loadout-upload-hint" style="margin-bottom:14px;">
+      ■ WEAPON ALLOWANCE // Select one package: <strong>two light weapons</strong> (e.g. pistol + knife) &nbsp;|&nbsp; <strong>one standard weapon + knife</strong> &nbsp;|&nbsp; <strong>one heavy weapon only</strong> (no second weapon)
+    </div>
 
     <div class="cg-grid" style="margin-bottom:18px;">
 
@@ -1795,8 +1816,8 @@ body::after {
       </div>
 
       <div class="cg-panel">
-        <div class="cg-panel-title">BREACH CHARGE</div>
-        <p>Shaped explosive for forced entry. Destroys a standard door, wall section, or lock. Requires an Action to place and a Minor Action to detonate. Can be set on a delay. Single use.</p>
+        <div class="cg-panel-title">BREACH CHARGE &nbsp;<span style="color:var(--green);font-weight:400;">× 3 PER PACK</span></div>
+        <p>Shaped explosive for forced entry. Destroys a standard door, wall section, or lock. Requires an Action to place and a Minor Action to detonate. Can be set on a delay. Issued as a pack of three charges.</p>
       </div>
 
       <div class="cg-panel">
@@ -1917,12 +1938,13 @@ const SKILLS = [
   { name: 'Firearms',      attr: 'AWARENESS', group: 'COMBAT'    },
   { name: 'Close Combat',  attr: 'BODY',      group: 'COMBAT'    },
   { name: 'Mobility',      attr: 'BODY',      group: 'PHYSICAL'  },
-  { name: 'Stealth',       attr: 'BODY',      group: 'PHYSICAL'  },
+  { name: 'Stealth',       attr: 'AWARENESS', group: 'PHYSICAL'  },
   { name: 'Survival',      attr: 'BODY',      group: 'PHYSICAL'  },
   { name: 'Computing',     attr: 'TECH',      group: 'TECHNICAL' },
   { name: 'Engineering',   attr: 'TECH',      group: 'TECHNICAL' },
-  { name: 'Medicine',      attr: 'MIND',      group: 'TECHNICAL' },
-  { name: 'Investigation', attr: 'TECH',      group: 'MENTAL'    },
+  { name: 'Medicine',      attr: 'TECH',      group: 'TECHNICAL' },
+  { name: 'History',       attr: 'MIND',      group: 'MENTAL'    },
+  { name: 'Investigation', attr: 'MIND',      group: 'MENTAL'    },
   { name: 'Perception',    attr: 'AWARENESS', group: 'MENTAL'    },
   { name: 'Persuasion',    attr: 'MIND',      group: 'SOCIAL'    },
   { name: 'Intimidation',  attr: 'RESOLVE',   group: 'SOCIAL'    },
