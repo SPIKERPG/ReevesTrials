@@ -1,6 +1,87 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+	<script>
+// ── SPIKE Network Sync Shim ────────────────────────────
+// Drop this into every HTML page. It replaces BroadcastChannel
+// with a WebSocket-backed version that works across devices.
+
+(function() {
+  const WS_URL = `ws://${location.host}`;
+  let ws;
+  let reconnectTimer;
+  const listeners = new Map(); // channelName → Set of handlers
+
+  function connect() {
+    ws = new WebSocket(WS_URL);
+
+    ws.onopen = () => {
+      console.log('[SPIKE sync] WebSocket connected');
+      clearTimeout(reconnectTimer);
+    };
+
+    ws.onmessage = (event) => {
+      try {
+        const msg = JSON.parse(event.data);
+        // Route to the right channel listeners
+        if (msg._channel && listeners.has(msg._channel)) {
+          for (const fn of listeners.get(msg._channel)) {
+            fn({ data: msg });
+          }
+        }
+      } catch(e) {}
+    };
+
+    ws.onclose = () => {
+      console.log('[SPIKE sync] Disconnected — reconnecting in 3s');
+      reconnectTimer = setTimeout(connect, 3000);
+    };
+
+    ws.onerror = () => ws.close();
+  }
+
+  connect();
+
+  // Override BroadcastChannel so existing code works unchanged
+  window._OriginalBroadcastChannel = window.BroadcastChannel;
+
+  window.BroadcastChannel = class {
+    constructor(channelName) {
+      this._name = channelName;
+      this._handlers = new Set();
+      if (!listeners.has(channelName)) listeners.set(channelName, new Set());
+    }
+
+    postMessage(data) {
+      const msg = { ...data, _channel: this._name };
+      // Also fire locally (same-tab BroadcastChannel behaviour)
+      if (this.onmessage) this.onmessage({ data });
+      // Send over WebSocket
+      if (ws && ws.readyState === WebSocket.OPEN) {
+        ws.send(JSON.stringify(msg));
+      }
+    }
+
+    set onmessage(fn) {
+      // Remove old handler if any
+      if (this._msgHandler) {
+        listeners.get(this._name)?.delete(this._msgHandler);
+      }
+      this._msgHandler = fn;
+      if (fn) listeners.get(this._name).add(fn);
+    }
+
+    get onmessage() { return this._msgHandler; }
+
+    close() {
+      if (this._msgHandler) {
+        listeners.get(this._name)?.delete(this._msgHandler);
+      }
+    }
+  };
+
+})();
+</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SPIKE: The Reeves Trials — Operative Dossier</title>
@@ -1302,15 +1383,15 @@ body::after {
 
       <div class="cg-panel red" style="margin-bottom:0;">
         <div class="cg-panel-title red">EMOTIONAL FLAWS // MECHANICS</div>
-        <p style="margin-bottom:8px;">Flaws are not chosen at creation — they are acquired during play when a character suffers extreme trauma. When a flaw is triggered, you must declare <strong>Lean In</strong> or <strong>Resist</strong> before any dice are rolled.</p>
+        <p style="margin-bottom:8px;">Flaws are not chosen at creation — they are acquired during play when a character suffers extreme trauma. A flaw is a persistent lens through which the character processes stress — a pattern formed under pressure that hasn't been dismantled. When a flaw triggers, you must declare <strong>Lean In</strong> or <strong>Resist</strong> before any dice are rolled. You cannot wait to see the outcome first.</p>
         <div class="cg-grid" style="margin-bottom:8px;">
           <div class="cg-panel" style="background:rgba(0,0,0,.25); border-left-color:var(--green-dim); margin-bottom:0;">
             <div class="cg-panel-title">LEAN INTO IT</div>
-            <p style="margin-bottom:0;">Act according to the flaw's impulse. No roll required. Gain <strong>+1 to the triggering roll</strong> OR <strong>+1 COMPOSURE</strong> (your choice).</p>
+            <p style="margin-bottom:0;">Act according to the flaw's impulse. No roll required. Gain <strong>+1 to the triggering roll</strong> OR <strong>+1 COMPOSURE</strong> (your choice). Leaning in is not failure — it is characterisation.</p>
           </div>
           <div class="cg-panel red" style="background:rgba(0,0,0,.25); margin-bottom:0;">
             <div class="cg-panel-title red">RESIST IT</div>
-            <p style="margin-bottom:0;">Roll <span style="font-family:'Share Tech Mono',monospace;font-size:11px;background:rgba(0,0,0,.3);padding:1px 4px;">d10 + RESOLVE vs TN 9</span>. <strong>Success:</strong> act normally. <strong>Failure:</strong> −1 to roll OR +1 SPIKE (GM's choice).</p>
+            <p style="margin-bottom:0;">Roll <span style="font-family:'Share Tech Mono',monospace;font-size:11px;background:rgba(0,0,0,.3);padding:1px 4px;">d10 + RESOLVE vs TN 9</span>. <strong>Success:</strong> act normally. <strong>Failure:</strong> −1 to roll OR +1 SPIKE (GM's choice). The flaw remains either way.</p>
           </div>
         </div>
         <p style="margin-bottom:0;font-size:12px;color:var(--text-dim);">Flaws can only be reduced through meaningful narrative resolution across multiple sessions, with explicit GM approval. See the REFERENCE // CREATION tab for the full flaw list.</p>
@@ -1986,15 +2067,15 @@ const SPIKE_DATA = [
   { val: 0,  cls: 'active-0',  label: '0 — SERENE',    effect: 'Baseline. No mechanical effect. The ideal operative state.' },
   { val: 1,  cls: 'active-12', label: '1 — STABLE',    effect: 'No mechanical effect. Nominal baseline.' },
   { val: 2,  cls: 'active-12', label: '2 — STABLE',    effect: 'No mechanical effect. Nominal baseline.' },
-  { val: 3,  cls: 'active-35', label: '3 — SHAKEN',    effect: '−1 to all MIND rolls. Eligible for SPIKE Saves (d20 vs TN 9) when triggered.' },
-  { val: 4,  cls: 'active-35', label: '4 — SHAKEN',    effect: '−1 to all MIND rolls. Eligible for SPIKE Saves (d20 vs TN 9) when triggered.' },
-  { val: 5,  cls: 'active-35', label: '5 — SHAKEN',    effect: '−1 to all MIND rolls. Eligible for SPIKE Saves (d20 vs TN 9) when triggered.' },
-  { val: 6,  cls: 'active-67', label: '6 — CRACKED',   effect: '−1 to MIND and RESOLVE. Hallucinations possible. Saving Throw required when triggered.' },
-  { val: 7,  cls: 'active-67', label: '7 — CRACKED',   effect: '−1 to MIND and RESOLVE. Hallucinations possible. Saving Throw required when triggered.' },
-  { val: 8,  cls: 'active-89', label: '8 — OVERLOADED', effect: 'Disadvantage on all social checks. Operative unreasonable in roleplay. SPIKE Save required hourly.' },
-  { val: 9,  cls: 'active-89', label: '9 — OVERLOADED', effect: 'Disadvantage on all social checks. Operative unreasonable in roleplay. SPIKE Save required hourly.' },
-  { val: 10, cls: 'active-10', label: '10 — SPIKED',   effect: 'Loss of character control. Roll Behavior Table (d20) at start of each turn. End of turn: d20 + RESOLVE vs TN 16.' },
-  { val: 11, cls: 'active-11', label: '11 — CONSUMED', effect: '1d4 True Damage per turn until HP 0. Then 1d4 RESOLVE damage per turn. End of turn: d20 + RESOLVE vs TN 18.' },
+  { val: 3,  cls: 'active-35', label: '3 — SHAKEN',    effect: '−1 to all MIND rolls. SPIKE Save required when triggered: d20 + RESOLVE vs TN 9. Success holds your level; failure raises SPIKE by 1.' },
+  { val: 4,  cls: 'active-35', label: '4 — SHAKEN',    effect: '−1 to all MIND rolls. SPIKE Save required when triggered: d20 + RESOLVE vs TN 9. Success holds your level; failure raises SPIKE by 1.' },
+  { val: 5,  cls: 'active-35', label: '5 — SHAKEN',    effect: '−1 to all MIND rolls. SPIKE Save required when triggered: d20 + RESOLVE vs TN 9. Success holds your level; failure raises SPIKE by 1.' },
+  { val: 6,  cls: 'active-67', label: '6 — CRACKED',   effect: '−1 to MIND and RESOLVE. Hallucinations possible. Save required when triggered: d20 + RESOLVE vs TN 9. Success holds; failure raises SPIKE by 1.' },
+  { val: 7,  cls: 'active-67', label: '7 — CRACKED',   effect: '−1 to MIND and RESOLVE. Hallucinations possible. Save required when triggered: d20 + RESOLVE vs TN 9. Success holds; failure raises SPIKE by 1.' },
+  { val: 8,  cls: 'active-89', label: '8 — OVERLOADED', effect: 'Disadvantage on all social checks. Operative unreasonable in roleplay. SPIKE Save required when triggered and once per hour of sustained exposure: d20 + RESOLVE vs TN 9.' },
+  { val: 9,  cls: 'active-89', label: '9 — OVERLOADED', effect: 'Disadvantage on all social checks. Operative unreasonable in roleplay. SPIKE Save required when triggered and once per hour of sustained exposure: d20 + RESOLVE vs TN 9.' },
+  { val: 10, cls: 'active-10', label: '10 — SPIKED',   effect: 'Loss of character control. Roll Behavior Table (d20) at start of each turn. End of turn: d20 + RESOLVE vs TN 16. Nat 20: SPIKE −2. Nat 1: SPIKE +1.' },
+  { val: 11, cls: 'active-11', label: '11 — CONSUMED', effect: '1d4 True Damage per turn until HP 0. Then 1d4 RESOLVE damage per turn until 0. Death follows. End of turn: d20 + RESOLVE vs TN 18. Nat 1: damage rolls at Advantage.' },
 ];
 
 let currentSpike = 0;
