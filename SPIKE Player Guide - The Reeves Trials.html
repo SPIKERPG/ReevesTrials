@@ -659,6 +659,15 @@ main {
   font-weight: 700;
   color: var(--text-hi);
   font-size: 14px;
+  display: block;
+}
+
+.bhv-desc {
+  font-size: 12px;
+  color: var(--text-dim);
+  font-style: italic;
+  line-height: 1.45;
+  margin-top: 2px;
 }
 
 /* ─── REACTIONS ─── */
@@ -925,6 +934,53 @@ p, li, td, .step-text, .trait-fx, .flaw-body,
     grid-template-columns: repeat(7, 1fr) !important;
     flex-direction: unset !important;
   }
+}
+
+/* ══════════════════════════════════════
+   PRINT STYLES
+══════════════════════════════════════ */
+@media print {
+  * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+
+  body {
+    background: #fff !important;
+    color: #111 !important;
+  }
+
+  body::after { display: none !important; }
+
+  .header-band, .header-main { display: none !important; }
+
+  .section { page-break-inside: avoid; break-inside: avoid; }
+
+  .section-head { color: #111 !important; border-color: #999 !important; }
+  .sh-num, .sh-title { color: #222 !important; }
+  .sh-line { background: #999 !important; }
+
+  .panel {
+    background: #f5f5f5 !important;
+    border-left-color: #888 !important;
+    color: #111 !important;
+    page-break-inside: avoid; break-inside: avoid;
+  }
+
+  .panel-title { color: #111 !important; }
+  .panel-title.red, .panel-title.amber, .panel-title.hi { color: #333 !important; }
+
+  .dim, .text-dim, [class*="dim"] { color: #555 !important; }
+
+  .data-table { border-color: #ccc !important; }
+  .data-table th { background: #ddd !important; color: #111 !important; border-color: #ccc !important; }
+  .data-table td { color: #111 !important; border-color: #ccc !important; }
+  .bhv-desc { color: #555 !important; }
+
+  .die-block { background: #eee !important; border-color: #aaa !important; }
+  .die-face { background: #ddd !important; color: #111 !important; border-color: #aaa !important; }
+
+  a { color: #111 !important; text-decoration: none !important; }
+
+  /* Make sticky nav non-sticky so it doesn't repeat */
+  .header-main { position: static !important; }
 }
 
 </style>
@@ -1525,36 +1581,36 @@ p, li, td, .step-text, .trait-fx, .flaw-body,
 
   <div class="panel red mbr">
     <div class="panel-title red">BEHAVIOR TABLE — SPIKED (LEVEL 10) // ROLL d20 AT START OF TURN</div>
-    <p style="font-size:13px; margin-bottom:12px;" class="dim">You lose voluntary control. The result determines your action — how you fulfill it is your roleplay. The GM tells you the mechanical effect after your roll.</p>
+    <p style="font-size:13px; margin-bottom:12px;" class="dim">You lose voluntary control. The result determines your action — how you fulfill it is your roleplay. The GM resolves the mechanical effect after your roll.</p>
     <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
       <table class="data-table">
         <thead><tr><th>ROLL</th><th>BEHAVIOR</th></tr></thead>
         <tbody>
-          <tr><td class="bhv-roll">1</td><td><span class="bhv-name">SHATTER POINT</span></td></tr>
-          <tr><td class="bhv-roll">2</td><td><span class="bhv-name">EMOTIONAL BLEED</span></td></tr>
-          <tr><td class="bhv-roll">3</td><td><span class="bhv-name">MISPLACED TRUST</span></td></tr>
-          <tr><td class="bhv-roll">4</td><td><span class="bhv-name">VIOLENT OUTBURST</span></td></tr>
-          <tr><td class="bhv-roll">5</td><td><span class="bhv-name">PARANOID BREAK</span></td></tr>
-          <tr><td class="bhv-roll">6</td><td><span class="bhv-name">PANIC RESPONSE</span></td></tr>
-          <tr><td class="bhv-roll">7</td><td><span class="bhv-name">RECKLESS ADVANCE</span></td></tr>
-          <tr><td class="bhv-roll">8</td><td><span class="bhv-name">DISASSOCIATION</span></td></tr>
-          <tr><td class="bhv-roll">9</td><td><span class="bhv-name">FREEZE</span></td></tr>
-          <tr><td class="bhv-roll">10</td><td><span class="bhv-name">COLLAPSE</span></td></tr>
+          <tr><td class="bhv-roll">1</td><td><span class="bhv-name">SHATTER POINT</span><div class="bhv-desc">Something cracks. You feel it before you understand it.</div></td></tr>
+          <tr><td class="bhv-roll">2</td><td><span class="bhv-name">EMOTIONAL BLEED</span><div class="bhv-desc">The feeling escapes containment. Others nearby begin to feel it too.</div></td></tr>
+          <tr><td class="bhv-roll">3</td><td><span class="bhv-name">MISPLACED TRUST</span><div class="bhv-desc">Someone is safe. You know this with absolute certainty. You cannot explain why.</div></td></tr>
+          <tr><td class="bhv-roll">4</td><td><span class="bhv-name">VIOLENT OUTBURST</span><div class="bhv-desc">The nearest presence becomes a threat. Your body responds before your mind can.</div></td></tr>
+          <tr><td class="bhv-roll">5</td><td><span class="bhv-name">PARANOID BREAK</span><div class="bhv-desc">Everyone is complicit. The logic is airtight. You cannot be argued out of it.</div></td></tr>
+          <tr><td class="bhv-roll">6</td><td><span class="bhv-name">PANIC RESPONSE</span><div class="bhv-desc">Distance is the only answer. Your legs know this even if you don't.</div></td></tr>
+          <tr><td class="bhv-roll">7</td><td><span class="bhv-name">RECKLESS ADVANCE</span><div class="bhv-desc">The threat is in front of you. Closing the distance feels like the only rational response.</div></td></tr>
+          <tr><td class="bhv-roll">8</td><td><span class="bhv-name">DISASSOCIATION</span><div class="bhv-desc">You are watching yourself from somewhere slightly behind your own eyes.</div></td></tr>
+          <tr><td class="bhv-roll">9</td><td><span class="bhv-name">FREEZE</span><div class="bhv-desc">Nothing moves. You are aware of everything and can act on none of it.</div></td></tr>
+          <tr><td class="bhv-roll">10</td><td><span class="bhv-name">COLLAPSE</span><div class="bhv-desc">Your body makes the decision your mind wouldn't.</div></td></tr>
         </tbody>
       </table>
       <table class="data-table">
         <thead><tr><th>ROLL</th><th>BEHAVIOR</th></tr></thead>
         <tbody>
-          <tr><td class="bhv-roll">11</td><td><span class="bhv-name">SENSORY OVERLOAD</span></td></tr>
-          <tr><td class="bhv-roll">12</td><td><span class="bhv-name">ERRATIC ACTION</span></td></tr>
-          <tr><td class="bhv-roll">13</td><td><span class="bhv-name">ECHO LOOP</span></td></tr>
-          <tr><td class="bhv-roll">14</td><td><span class="bhv-name">TARGET LOCK</span></td></tr>
-          <tr><td class="bhv-roll">15</td><td><span class="bhv-name">COMPULSIVE FIXATION</span></td></tr>
-          <tr><td class="bhv-roll">16</td><td><span class="bhv-name">EMOTIONAL SURGE</span></td></tr>
-          <tr><td class="bhv-roll">17</td><td><span class="bhv-name">CONTROL SNAP</span></td></tr>
-          <tr><td class="bhv-roll">18</td><td><span class="bhv-name">HYPER-FOCUS</span></td></tr>
-          <tr><td class="bhv-roll">19</td><td><span class="bhv-name">MOMENT OF CLARITY</span></td></tr>
-          <tr><td class="bhv-roll">20</td><td><span class="bhv-name">FRACTURED CLARITY</span></td></tr>
+          <tr><td class="bhv-roll">11</td><td><span class="bhv-name">SENSORY OVERLOAD</span><div class="bhv-desc">Everything is too much. The volume of the world is wrong.</div></td></tr>
+          <tr><td class="bhv-roll">12</td><td><span class="bhv-name">ERRATIC ACTION</span><div class="bhv-desc">The gap between intention and execution opens without warning.</div></td></tr>
+          <tr><td class="bhv-roll">13</td><td><span class="bhv-name">ECHO LOOP</span><div class="bhv-desc">You return to what you were doing. The logic of continuation is overwhelming.</div></td></tr>
+          <tr><td class="bhv-roll">14</td><td><span class="bhv-name">TARGET LOCK</span><div class="bhv-desc">One thing is the problem. You are certain. Everything else recedes.</div></td></tr>
+          <tr><td class="bhv-roll">15</td><td><span class="bhv-name">COMPULSIVE FIXATION</span><div class="bhv-desc">There is something that must be done. You cannot leave it unfinished.</div></td></tr>
+          <tr><td class="bhv-roll">16</td><td><span class="bhv-name">EMOTIONAL SURGE</span><div class="bhv-desc">Something breaks through. Whatever it is, it isn't nothing.</div></td></tr>
+          <tr><td class="bhv-roll">17</td><td><span class="bhv-name">CONTROL SNAP</span><div class="bhv-desc">You almost have it. The effort to hold on is visible to everyone around you.</div></td></tr>
+          <tr><td class="bhv-roll">18</td><td><span class="bhv-name">HYPER-FOCUS</span><div class="bhv-desc">One task becomes the entire world. The rest is irrelevant noise.</div></td></tr>
+          <tr><td class="bhv-roll">19</td><td><span class="bhv-name">MOMENT OF CLARITY</span><div class="bhv-desc">The noise goes quiet. For a moment you are entirely yourself.</div></td></tr>
+          <tr><td class="bhv-roll">20</td><td><span class="bhv-name">FRACTURED CLARITY</span><div class="bhv-desc">Something shifts. The effect is real. It will not last.</div></td></tr>
         </tbody>
       </table>
     </div>

@@ -316,6 +316,40 @@ body::after {
 .f-input:focus { border-bottom-color: var(--green-dim); }
 .f-input::placeholder { color: var(--text-dim); font-weight: 300; font-size: 13px; }
 
+/* ─── TOKEN COLOR PICKER ─── */
+.token-color-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+.token-color-label {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 8px;
+  letter-spacing: .18em;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.token-swatch {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: border-color .15s, transform .1s;
+  flex-shrink: 0;
+}
+.token-swatch:hover { transform: scale(1.18); }
+.token-swatch.selected { border-color: var(--text-hi); box-shadow: 0 0 0 1px rgba(255,255,255,.25); }
+.token-color-value {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 8px;
+  letter-spacing: .1em;
+  color: var(--green);
+  margin-left: 4px;
+}
+
 /* ─── IDENTITY ROW ─── */
 .identity-row {
   display: grid;
@@ -1443,6 +1477,18 @@ body::after {
       </div>
     </div>
 
+    <!-- TOKEN COLOR -->
+    <div class="token-color-row">
+      <span class="token-color-label">MAP TOKEN COLOR</span>
+      <div class="token-swatch" data-color="#1e8896" title="TEAL"   style="background:#1e8896;"></div>
+      <div class="token-swatch" data-color="#7a9a28" title="OLIVE"  style="background:#7a9a28;"></div>
+      <div class="token-swatch" data-color="#b87820" title="AMBER"  style="background:#b87820;"></div>
+      <div class="token-swatch" data-color="#8c68c0" title="VIOLET" style="background:#8c68c0;"></div>
+      <div class="token-swatch" data-color="#3878b8" title="COBALT" style="background:#3878b8;"></div>
+      <div class="token-swatch" data-color="#c07030" title="COPPER" style="background:#c07030;"></div>
+      <span class="token-color-value" id="tokenColorLabel">TEAL</span>
+    </div>
+
     <div class="two-col">
       <!-- LEFT COLUMN -->
       <div>
@@ -2015,6 +2061,27 @@ function updateComp() {
 }
 
 // ── SKILLS ──────────────────────────────────────────────────────
+// ── TOKEN COLOR ─────────────────────────────────────────────────────────────
+const TOKEN_COLOR_NAMES = {
+  '#1e8896': 'TEAL', '#7a9a28': 'OLIVE', '#b87820': 'AMBER',
+  '#8c68c0': 'VIOLET', '#3878b8': 'COBALT', '#c07030': 'COPPER',
+};
+let selectedTokenColor = '#1e8896';
+
+function initTokenColorPicker() {
+  document.querySelectorAll('.token-swatch').forEach(sw => {
+    if (sw.dataset.color === selectedTokenColor) sw.classList.add('selected');
+    sw.addEventListener('click', () => {
+      document.querySelectorAll('.token-swatch').forEach(s => s.classList.remove('selected'));
+      sw.classList.add('selected');
+      selectedTokenColor = sw.dataset.color;
+      document.getElementById('tokenColorLabel').textContent = TOKEN_COLOR_NAMES[selectedTokenColor] ?? selectedTokenColor;
+      autoSave();
+    });
+  });
+  document.getElementById('tokenColorLabel').textContent = TOKEN_COLOR_NAMES[selectedTokenColor] ?? selectedTokenColor;
+}
+
 const SKILLS = [
   { name: 'Firearms',      attr: 'AWARENESS', group: 'COMBAT'    },
   { name: 'Close Combat',  attr: 'BODY',      group: 'COMBAT'    },
@@ -2166,7 +2233,7 @@ function gatherState() {
   const compRange = document.getElementById('compRange');
 
   return {
-    version: 3,
+    version: 4,
     savedAt: new Date().toISOString(),
     attrVals: [...attrVals],
     skillState: [...skillState],
@@ -2179,6 +2246,7 @@ function gatherState() {
     hpMax:      parseInt(hpRange.max),
     compCurrent: parseInt(compRange.value),
     compMax:    parseInt(compRange.max),
+    tokenColor: selectedTokenColor,
   };
 }
 
@@ -2200,6 +2268,15 @@ function applyState(state) {
 
   // Loadout (version 3+)
   if (state.loadout) applyLoadout(state.loadout);
+
+  // Token color (version 4+)
+  if (state.tokenColor && TOKEN_COLOR_NAMES[state.tokenColor]) {
+    selectedTokenColor = state.tokenColor;
+    document.querySelectorAll('.token-swatch').forEach(sw => {
+      sw.classList.toggle('selected', sw.dataset.color === selectedTokenColor);
+    });
+    document.getElementById('tokenColorLabel').textContent = TOKEN_COLOR_NAMES[selectedTokenColor];
+  }
 
   // HP / Composure
   const hpSlider   = document.getElementById('hpRange');
@@ -2295,6 +2372,7 @@ buildSpikeTrack();
 updateHP();
 updateComp();
 renderReactionPips();
+initTokenColorPicker();
 
 try {
   const saved = localStorage.getItem('spike_autosave');
