@@ -1,87 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<script>
-// ── SPIKE Network Sync Shim ────────────────────────────
-// Drop this into every HTML page. It replaces BroadcastChannel
-// with a WebSocket-backed version that works across devices.
-
-(function() {
-  const WS_URL = `ws://${location.host}`;
-  let ws;
-  let reconnectTimer;
-  const listeners = new Map(); // channelName → Set of handlers
-
-  function connect() {
-    ws = new WebSocket(WS_URL);
-
-    ws.onopen = () => {
-      console.log('[SPIKE sync] WebSocket connected');
-      clearTimeout(reconnectTimer);
-    };
-
-    ws.onmessage = (event) => {
-      try {
-        const msg = JSON.parse(event.data);
-        // Route to the right channel listeners
-        if (msg._channel && listeners.has(msg._channel)) {
-          for (const fn of listeners.get(msg._channel)) {
-            fn({ data: msg });
-          }
-        }
-      } catch(e) {}
-    };
-
-    ws.onclose = () => {
-      console.log('[SPIKE sync] Disconnected — reconnecting in 3s');
-      reconnectTimer = setTimeout(connect, 3000);
-    };
-
-    ws.onerror = () => ws.close();
-  }
-
-  connect();
-
-  // Override BroadcastChannel so existing code works unchanged
-  window._OriginalBroadcastChannel = window.BroadcastChannel;
-
-  window.BroadcastChannel = class {
-    constructor(channelName) {
-      this._name = channelName;
-      this._handlers = new Set();
-      if (!listeners.has(channelName)) listeners.set(channelName, new Set());
-    }
-
-    postMessage(data) {
-      const msg = { ...data, _channel: this._name };
-      // Also fire locally (same-tab BroadcastChannel behaviour)
-      if (this.onmessage) this.onmessage({ data });
-      // Send over WebSocket
-      if (ws && ws.readyState === WebSocket.OPEN) {
-        ws.send(JSON.stringify(msg));
-      }
-    }
-
-    set onmessage(fn) {
-      // Remove old handler if any
-      if (this._msgHandler) {
-        listeners.get(this._name)?.delete(this._msgHandler);
-      }
-      this._msgHandler = fn;
-      if (fn) listeners.get(this._name).add(fn);
-    }
-
-    get onmessage() { return this._msgHandler; }
-
-    close() {
-      if (this._msgHandler) {
-        listeners.get(this._name)?.delete(this._msgHandler);
-      }
-    }
-  };
-
-})();
-</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SPIKE: The Reeves Trials — Operative Dossier</title>
@@ -167,7 +86,6 @@ body::after {
   white-space: nowrap;
   flex-shrink: 0;
 }
-
 .tab-logo span { color: var(--green); font-size: 9px; display: block; letter-spacing: .25em; font-family: 'Share Tech Mono', monospace; }
 
 .tab {
@@ -184,7 +102,6 @@ body::after {
   white-space: nowrap;
   flex-shrink: 0;
 }
-
 .tab:hover { color: var(--text); }
 .tab.active { color: var(--green); border-bottom-color: var(--green); background: rgba(122,154,40,.06); }
 
@@ -215,87 +132,16 @@ body::after {
   justify-content: space-between;
   gap: 12px;
 }
-
-.dh-org {
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 8px;
-  letter-spacing: .22em;
-  color: var(--text-dim);
-  line-height: 1.7;
-}
-
+.dh-org { font-family: 'Share Tech Mono', monospace; font-size: 8px; letter-spacing: .22em; color: var(--text-dim); line-height: 1.7; }
 .dh-center { text-align: center; }
+.dh-stamp { font-family: 'Share Tech Mono', monospace; font-size: 7.5px; letter-spacing: .28em; color: var(--red-bright); border: 1px solid var(--red); padding: 2px 10px; display: inline-block; margin-bottom: 4px; transform: rotate(-.5deg); }
+.dh-title { font-family: 'Share Tech Mono', monospace; font-size: 11px; letter-spacing: .4em; color: var(--text-dim); }
 
-.dh-stamp {
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 7.5px;
-  letter-spacing: .28em;
-  color: var(--red-bright);
-  border: 1px solid var(--red);
-  padding: 2px 10px;
-  display: inline-block;
-  margin-bottom: 4px;
-  transform: rotate(-.5deg);
-}
-
-.dh-title {
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 11px;
-  letter-spacing: .4em;
-  color: var(--text-dim);
-}
-
-/* ─── SHEET BODY WRAPPER ─── */
-.sheet {
-  border: 1px solid var(--border-hi);
-  background: var(--surface2);
-  padding: 18px;
-}
-
-.sheet-title-bar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding-bottom: 10px;
-  margin-bottom: 14px;
-  border-bottom: 1px solid var(--border-hi);
-}
-
-.stb-left {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 22px;
-  letter-spacing: .35em;
-  color: var(--text-hi);
-  line-height: 1;
-}
-
-.stb-left span {
-  display: block;
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 7.5px;
-  letter-spacing: .2em;
-  color: var(--green);
-  margin-top: 2px;
-}
-
-.stb-right {
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 8px;
-  letter-spacing: .14em;
-  color: var(--text-dim);
-  text-align: right;
-  line-height: 1.7;
-}
+/* ─── SHEET ─── */
+.sheet { border: 1px solid var(--border-hi); background: var(--surface2); padding: 18px; }
 
 /* ─── FIELD LABEL ─── */
-.field-label {
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 7.5px;
-  letter-spacing: .2em;
-  color: var(--text-dim);
-  margin-bottom: 3px;
-  display: block;
-}
+.field-label { font-family: 'Share Tech Mono', monospace; font-size: 7.5px; letter-spacing: .2em; color: var(--text-dim); margin-bottom: 3px; display: block; }
 
 /* ─── TEXT INPUT ─── */
 .f-input {
@@ -312,51 +158,36 @@ body::after {
   transition: border-color .15s;
   caret-color: var(--green);
 }
-
 .f-input:focus { border-bottom-color: var(--green-dim); }
 .f-input::placeholder { color: var(--text-dim); font-weight: 300; font-size: 13px; }
-
-/* ─── TOKEN COLOR PICKER ─── */
-.token-color-row {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 18px;
-}
-.token-color-label {
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 8px;
-  letter-spacing: .18em;
-  color: var(--text-dim);
-  text-transform: uppercase;
-  white-space: nowrap;
-}
-.token-swatch {
-  width: 22px;
-  height: 22px;
-  border-radius: 50%;
-  cursor: pointer;
-  border: 2px solid transparent;
-  transition: border-color .15s, transform .1s;
-  flex-shrink: 0;
-}
-.token-swatch:hover { transform: scale(1.18); }
-.token-swatch.selected { border-color: var(--text-hi); box-shadow: 0 0 0 1px rgba(255,255,255,.25); }
-.token-color-value {
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 8px;
-  letter-spacing: .1em;
-  color: var(--green);
-  margin-left: 4px;
-}
+.f-input[readonly] { color: var(--text-dim); cursor: default; }
 
 /* ─── IDENTITY ROW ─── */
 .identity-row {
   display: grid;
   grid-template-columns: 2fr 1.2fr 1.2fr 2fr;
   gap: 14px;
-  margin-bottom: 18px;
+  margin-bottom: 10px;
 }
+
+/* ─── TOKEN COLOR ROW ─── */
+.token-color-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 18px;
+  flex-wrap: wrap;
+}
+.token-swatch {
+  width: 20px; height: 20px;
+  border: 2px solid transparent;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: transform .1s, border-color .12s;
+}
+.token-swatch:hover { transform: scale(1.2); }
+.token-swatch.selected { border-color: var(--text-hi); box-shadow: 0 0 6px rgba(255,255,255,.25); }
+.token-color-name { font-family: 'Share Tech Mono', monospace; font-size: 8px; letter-spacing: .14em; color: var(--text-dim); }
 
 /* ─── SECTION LABEL ─── */
 .section-label {
@@ -371,847 +202,197 @@ body::after {
   align-items: center;
   justify-content: space-between;
 }
-
 .section-label span { color: var(--text-dim); font-size: 7px; }
+.attr-budget { font-family: 'Share Tech Mono', monospace; font-size: 7.5px; color: var(--text-dim); transition: color .2s; }
 
 /* ─── ATTRIBUTES ─── */
-.attr-row {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 8px;
-  margin-bottom: 18px;
-}
-
-.attr-box {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-top: 2px solid var(--green-dim);
-  padding: 10px 8px 8px;
-  text-align: center;
-}
-
-.attr-name {
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 8px;
-  letter-spacing: .16em;
-  color: var(--green);
-  margin-bottom: 8px;
-}
-
-.attr-dots {
-  display: flex;
-  justify-content: center;
-  gap: 5px;
-  margin-bottom: 6px;
-}
-
-.dot {
-  width: 14px;
-  height: 14px;
-  border-radius: 50%;
-  border: 1px solid var(--border-hi);
-  background: transparent;
-  cursor: pointer;
-  transition: all .12s;
-}
-
+.attr-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-bottom: 18px; }
+.attr-box { background: var(--surface); border: 1px solid var(--border); border-top: 2px solid var(--green-dim); padding: 10px 8px 8px; text-align: center; }
+.attr-name { font-family: 'Share Tech Mono', monospace; font-size: 8px; letter-spacing: .16em; color: var(--green); margin-bottom: 8px; }
+.attr-dots { display: flex; justify-content: center; gap: 5px; margin-bottom: 6px; }
+.dot { width: 14px; height: 14px; border-radius: 50%; border: 1px solid var(--border-hi); background: transparent; cursor: pointer; transition: all .12s; }
 .dot.filled { background: var(--green); border-color: var(--green); box-shadow: 0 0 6px rgba(122,154,40,.4); }
 .dot:hover:not(.filled) { border-color: var(--green-dim); background: var(--green-pale); }
-
-.attr-val {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 22px;
-  color: var(--text-hi);
-  line-height: 1;
-}
-
+.attr-val { font-family: 'Bebas Neue', sans-serif; font-size: 22px; color: var(--text-hi); line-height: 1; }
 .attr-max { font-size: 10px; color: var(--text-dim); }
 
 /* ─── VITALS ─── */
-.vitals-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-  margin-bottom: 18px;
-}
-
-.vital-box {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  padding: 10px 12px;
-}
-
-.vital-name {
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 7.5px;
-  letter-spacing: .18em;
-  color: var(--green);
-  margin-bottom: 6px;
-}
-
-.vital-formula {
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 9px;
-  color: var(--text-dim);
-  margin-bottom: 8px;
-}
-
-.vital-header {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  margin-bottom: 2px;
-}
-
-.vital-numbers {
-  font-family: 'Bebas Neue', sans-serif;
-  line-height: 1;
-  letter-spacing: .04em;
-}
-
+.vitals-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 18px; }
+.vital-box { background: var(--surface); border: 1px solid var(--border); padding: 10px 12px; }
+.vital-name { font-family: 'Share Tech Mono', monospace; font-size: 7.5px; letter-spacing: .18em; color: var(--green); margin-bottom: 6px; }
+.vital-formula { font-family: 'Share Tech Mono', monospace; font-size: 9px; color: var(--text-dim); margin-bottom: 8px; }
+.vital-header { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 2px; }
+.vital-numbers { font-family: 'Bebas Neue', sans-serif; line-height: 1; letter-spacing: .04em; }
 .vital-cur  { font-size: 30px; color: var(--text-hi); }
 .vital-sep  { font-size: 14px; color: var(--text-dim); margin: 0 2px; }
 .vital-max-num { font-size: 16px; color: var(--text-dim); }
 
 /* ─── RANGE SLIDER ─── */
 .vital-range {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 100%;
-  height: 10px;
-  outline: none;
-  cursor: pointer;
-  margin: 10px 0 4px;
-  border: 1px solid var(--border-hi);
-  border-radius: 0;
-  background: linear-gradient(
-    to right,
-    var(--range-fill) 0%,
-    var(--range-fill) var(--fill-pct, 100%),
-    var(--border) var(--fill-pct, 100%),
-    var(--border) 100%
-  );
+  -webkit-appearance: none; appearance: none;
+  width: 100%; height: 10px; outline: none; cursor: pointer;
+  margin: 10px 0 4px; border: 1px solid var(--border-hi); border-radius: 0;
+  background: linear-gradient(to right, var(--range-fill) 0%, var(--range-fill) var(--fill-pct, 100%), var(--border) var(--fill-pct, 100%), var(--border) 100%);
 }
-.vital-range::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  width: 16px;
-  height: 22px;
-  background: var(--range-fill);
-  cursor: pointer;
-  border: 2px solid var(--surface2);
-}
-.vital-range::-moz-range-thumb {
-  width: 16px;
-  height: 22px;
-  background: var(--range-fill);
-  cursor: pointer;
-  border: 2px solid var(--surface2);
-  border-radius: 0;
-}
+.vital-range::-webkit-slider-thumb { -webkit-appearance: none; width: 16px; height: 22px; background: var(--range-fill); cursor: pointer; border: 2px solid var(--surface2); }
+.vital-range::-moz-range-thumb { width: 16px; height: 22px; background: var(--range-fill); cursor: pointer; border: 2px solid var(--surface2); border-radius: 0; }
 .hp-range   { --range-fill: var(--green-dim); }
 .comp-range { --range-fill: var(--amber); }
 
 /* ─── SKILL GROUP LABEL ─── */
-.skill-group-label {
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 7.5px;
-  letter-spacing: .22em;
-  color: var(--green-dim);
-  padding: 8px 8px 3px;
-  border-bottom: 1px solid var(--border);
-  margin-bottom: 3px;
-}
+.skill-group-label { font-family: 'Share Tech Mono', monospace; font-size: 7.5px; letter-spacing: .22em; color: var(--green-dim); padding: 8px 8px 3px; border-bottom: 1px solid var(--border); margin-bottom: 3px; }
 
 /* ─── SKILLS ─── */
 .skills-section { margin-bottom: 18px; }
-
 .skill-list { display: flex; flex-direction: column; gap: 4px; }
-
-.skill-row {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 5px 8px;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  cursor: pointer;
-  transition: border-color .12s;
-  user-select: none;
-}
-
+.skill-row { display: flex; align-items: center; gap: 8px; padding: 5px 8px; background: var(--surface); border: 1px solid var(--border); cursor: pointer; transition: border-color .12s; user-select: none; }
 .skill-row:hover { border-color: var(--border-hi); }
 .skill-row.trained { border-left: 2px solid var(--green-dim); }
 .skill-row.specialized { border-left: 2px solid var(--green); }
-
-.sk-toggle {
-  width: 14px;
-  height: 14px;
-  border: 1px solid var(--border-hi);
-  flex-shrink: 0;
-  transition: all .12s;
-}
-
-.skill-row.trained .sk-toggle,
-.skill-row.specialized .sk-toggle {
-  background: var(--green-dim);
-  border-color: var(--green-dim);
-}
-
+.sk-toggle { width: 14px; height: 14px; border: 1px solid var(--border-hi); flex-shrink: 0; transition: all .12s; }
+.skill-row.trained .sk-toggle, .skill-row.specialized .sk-toggle { background: var(--green-dim); border-color: var(--green-dim); }
 .skill-row.specialized .sk-toggle { background: var(--green); border-color: var(--green); }
-
-.sk-name {
-  flex: 1;
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--text);
-  transition: color .12s;
-}
-
-.skill-row.trained .sk-name,
-.skill-row.specialized .sk-name { color: var(--text-hi); }
-
-.sk-attr {
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 7.5px;
-  letter-spacing: .1em;
-  color: var(--text-dim);
-}
-
-.sk-bonus {
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 11px;
-  font-weight: 700;
-  color: var(--text-dim);
-  width: 28px;
-  text-align: right;
-  transition: color .12s;
-}
-
+.sk-name { flex: 1; font-size: 14px; font-weight: 600; color: var(--text); transition: color .12s; }
+.skill-row.trained .sk-name, .skill-row.specialized .sk-name { color: var(--text-hi); }
+.sk-attr { font-family: 'Share Tech Mono', monospace; font-size: 7.5px; letter-spacing: .1em; color: var(--text-dim); }
+.sk-bonus { font-family: 'Share Tech Mono', monospace; font-size: 11px; font-weight: 700; color: var(--text-dim); width: 28px; text-align: right; transition: color .12s; }
 .skill-row.trained .sk-bonus { color: var(--green); }
 .skill-row.specialized .sk-bonus { color: var(--text-hi); }
-
-.skill-hint {
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 7px;
-  letter-spacing: .12em;
-  color: var(--text-dim);
-  margin-top: 5px;
-}
+.skill-hint { font-family: 'Share Tech Mono', monospace; font-size: 7px; letter-spacing: .12em; color: var(--text-dim); margin-top: 5px; }
 
 /* ─── REACTIONS ─── */
 .reactions-section { margin-bottom: 18px; }
-
-.reactions-box {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-left: 2px solid var(--amber);
-  padding: 9px 12px;
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  flex-wrap: wrap;
-}
-
-.reactions-label {
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 7.5px;
-  letter-spacing: .18em;
-  color: var(--amber);
-  white-space: nowrap;
-}
-
-.reactions-pips {
-  display: flex;
-  gap: 6px;
-  align-items: center;
-}
-
-.reaction-pip-cs {
-  width: 18px;
-  height: 18px;
-  border: 1px solid var(--amber);
-  background: rgba(184,120,32,.22);
-  cursor: pointer;
-  transition: all .12s;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-
-.reaction-pip-cs::after {
-  content: '';
-  width: 8px;
-  height: 8px;
-  background: var(--amber);
-  opacity: 0;
-  transition: opacity .12s;
-}
-
-.reaction-pip-cs.used {
-  background: var(--surface);
-  border-color: var(--border-hi);
-}
-
+.reactions-box { background: var(--surface); border: 1px solid var(--border); border-left: 2px solid var(--amber); padding: 9px 12px; display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+.reactions-label { font-family: 'Share Tech Mono', monospace; font-size: 7.5px; letter-spacing: .18em; color: var(--amber); white-space: nowrap; }
+.reactions-pips { display: flex; gap: 6px; align-items: center; }
+.reaction-pip-cs { width: 18px; height: 18px; border: 1px solid var(--amber); background: rgba(184,120,32,.22); cursor: pointer; transition: all .12s; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.reaction-pip-cs::after { content: ''; width: 8px; height: 8px; background: var(--amber); opacity: 0; transition: opacity .12s; }
+.reaction-pip-cs.used { background: var(--surface); border-color: var(--border-hi); }
 .reaction-pip-cs.used::after { opacity: 0; }
 .reaction-pip-cs:not(.used)::after { opacity: 1; }
 .reaction-pip-cs:hover { border-color: var(--amber); opacity: .75; }
-
-.reactions-count {
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 13px;
-  font-weight: 700;
-  color: var(--amber);
-  min-width: 24px;
-}
-
-.reactions-hint {
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 7px;
-  letter-spacing: .1em;
-  color: var(--text-dim);
-  flex: 1;
-  line-height: 1.4;
-}
-
-.reactions-reset {
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 7px;
-  letter-spacing: .14em;
-  color: var(--text-dim);
-  border: 1px solid var(--border-hi);
-  background: transparent;
-  padding: 3px 8px;
-  cursor: pointer;
-  transition: all .12s;
-  white-space: nowrap;
-}
+.reactions-count { font-family: 'Share Tech Mono', monospace; font-size: 13px; font-weight: 700; color: var(--amber); min-width: 24px; }
+.reactions-hint { font-family: 'Share Tech Mono', monospace; font-size: 7px; letter-spacing: .1em; color: var(--text-dim); flex: 1; line-height: 1.4; }
+.reactions-reset { font-family: 'Share Tech Mono', monospace; font-size: 7px; letter-spacing: .14em; color: var(--text-dim); border: 1px solid var(--border-hi); background: transparent; padding: 3px 8px; cursor: pointer; transition: all .12s; white-space: nowrap; }
 .reactions-reset:hover { color: var(--amber); border-color: var(--amber); }
 
 /* ─── SPIKE SCALE ─── */
 .spike-section { margin-bottom: 18px; }
-
-.spike-track {
-  display: flex;
-  gap: 0;
-  margin-bottom: 8px;
-}
-
-.spike-pip {
-  flex: 1;
-  height: 28px;
-  border: 1px solid var(--border);
-  border-right: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 9px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all .12s;
-  color: var(--text-dim);
-}
-
+.spike-track { display: flex; gap: 0; margin-bottom: 8px; }
+.spike-pip { flex: 1; height: 28px; border: 1px solid var(--border); border-right: none; display: flex; align-items: center; justify-content: center; font-family: 'Share Tech Mono', monospace; font-size: 9px; font-weight: 700; cursor: pointer; transition: all .12s; color: var(--text-dim); }
 .spike-pip:last-child { border-right: 1px solid var(--border); }
 .spike-pip:hover { background: rgba(122,154,40,.08); color: var(--text); }
-
-.spike-pip.active-0  { background: rgba(90,154,90,.15);  color: #5a9a5a; border-color: rgba(90,154,90,.3); }
+.spike-pip.active-0  { background: rgba(90,154,90,.15);   color: #5a9a5a; border-color: rgba(90,154,90,.3); }
 .spike-pip.active-12 { background: rgba(122,176,122,.12); color: #7ab07a; border-color: rgba(122,176,122,.25); }
-.spike-pip.active-35 { background: rgba(200,184,64,.1); color: #c8b840; border-color: rgba(200,184,64,.25); }
-.spike-pip.active-67 { background: rgba(200,120,32,.12); color: #c87820; border-color: rgba(200,120,32,.3); }
-.spike-pip.active-89 { background: rgba(208,72,32,.14); color: #d04820; border-color: rgba(208,72,32,.3); }
-.spike-pip.active-10 { background: rgba(192,48,48,.18); color: #c03030; border-color: rgba(192,48,48,.4); }
-.spike-pip.active-11 { background: rgba(138,8,8,.25);   color: #9a1010; border-color: rgba(138,8,8,.5); }
-
-.spike-labels {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 3px;
-  margin-bottom: 6px;
-}
-
-.spike-lbl {
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 6.5px;
-  letter-spacing: .08em;
-  text-align: center;
-  padding: 2px 0;
-  line-height: 1.3;
-}
-
-.lbl-0  { color: #5a9a5a; }
-.lbl-12 { color: #7ab07a; }
-.lbl-35 { color: #c8b840; }
-.lbl-67 { color: #c87820; }
-.lbl-89 { color: #d04820; }
-.lbl-10 { color: #c03030; }
-.lbl-11 { color: #9a1010; }
-
-.spike-effect {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  padding: 6px 10px;
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 8px;
-  letter-spacing: .08em;
-  color: var(--text-dim);
-  min-height: 28px;
-  transition: all .2s;
-  line-height: 1.5;
-}
-
-.spike-current-label {
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 7px;
-  letter-spacing: .14em;
-  color: var(--text-dim);
-  margin-bottom: 4px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
+.spike-pip.active-35 { background: rgba(200,184,64,.1);   color: #c8b840; border-color: rgba(200,184,64,.25); }
+.spike-pip.active-67 { background: rgba(200,120,32,.12);  color: #c87820; border-color: rgba(200,120,32,.3); }
+.spike-pip.active-89 { background: rgba(208,72,32,.14);   color: #d04820; border-color: rgba(208,72,32,.3); }
+.spike-pip.active-10 { background: rgba(192,48,48,.18);   color: #c03030; border-color: rgba(192,48,48,.4); }
+.spike-pip.active-11 { background: rgba(138,8,8,.25);     color: #9a1010; border-color: rgba(138,8,8,.5); }
+.spike-labels { display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; margin-bottom: 6px; }
+.spike-lbl { font-family: 'Share Tech Mono', monospace; font-size: 6.5px; letter-spacing: .08em; text-align: center; padding: 2px 0; line-height: 1.3; }
+.lbl-0  { color: #5a9a5a; } .lbl-12 { color: #7ab07a; } .lbl-35 { color: #c8b840; }
+.lbl-67 { color: #c87820; } .lbl-89 { color: #d04820; } .lbl-10 { color: #c03030; } .lbl-11 { color: #9a1010; }
+.spike-effect { background: var(--surface); border: 1px solid var(--border); padding: 6px 10px; font-family: 'Share Tech Mono', monospace; font-size: 8px; letter-spacing: .08em; color: var(--text-dim); min-height: 28px; transition: all .2s; line-height: 1.5; }
+.spike-current-label { font-family: 'Share Tech Mono', monospace; font-size: 7px; letter-spacing: .14em; color: var(--text-dim); margin-bottom: 4px; display: flex; align-items: center; justify-content: space-between; }
 
 /* ─── TRAITS ─── */
 .traits-section { margin-bottom: 18px; }
-
-.trait-slots {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 8px;
-}
-
-.trait-slot {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-top: 2px solid var(--border-hi);
-  padding: 10px;
-}
-
-.trait-slot-num {
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 7px;
-  letter-spacing: .18em;
-  color: var(--text-dim);
-  margin-bottom: 6px;
-}
+.trait-slots { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+.trait-slot { background: var(--surface); border: 1px solid var(--border); border-top: 2px solid var(--border-hi); padding: 10px; }
+.trait-slot-num { font-family: 'Share Tech Mono', monospace; font-size: 7px; letter-spacing: .18em; color: var(--text-dim); margin-bottom: 6px; }
 
 /* ─── FLAWS ─── */
-.flaws-section {}
+.flaw-slots { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.flaw-slot { background: var(--surface); border: 1px solid var(--border); border-left: 2px solid var(--red); padding: 10px; }
+.flaw-slot-num { font-family: 'Share Tech Mono', monospace; font-size: 7px; letter-spacing: .18em; color: var(--red-bright); margin-bottom: 6px; }
+.flaw-trigger-label { font-family: 'Share Tech Mono', monospace; font-size: 7px; letter-spacing: .14em; color: var(--text-dim); margin-top: 8px; margin-bottom: 3px; }
 
-.flaw-slots {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
-}
+/* ─── LOADOUT ─── */
+.loadout-section { margin-bottom: 18px; }
+.loadout-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px; }
+.loadout-item-block { background: var(--surface); border: 1px solid var(--border); border-top: 2px solid var(--border-hi); padding: 10px; }
+.loadout-item-num { font-family: 'Share Tech Mono', monospace; font-size: 7px; letter-spacing: .18em; color: var(--text-dim); margin-bottom: 6px; }
+.loadout-row { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 8px; margin-bottom: 6px; }
+.loadout-note { grid-column: 1 / -1; }
+.loadout-upload-hint { font-family: 'Share Tech Mono', monospace; font-size: 7.5px; letter-spacing: .14em; color: var(--amber); background: rgba(184,120,32,.06); border: 1px solid var(--amber-dim); border-left: 2px solid var(--amber); padding: 7px 10px; line-height: 1.6; margin-top: 4px; }
 
-.flaw-slot {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-left: 2px solid var(--red);
-  padding: 10px;
-}
+/* ─── STD EQUIP ─── */
+.std-equip-block { background: var(--surface); border: 1px solid var(--border); border-left: 2px solid var(--green-dim); padding: 9px 12px; margin-bottom: 10px; display: flex; flex-wrap: wrap; gap: 10px; align-items: flex-start; }
+.std-equip-label { font-family: 'Share Tech Mono', monospace; font-size: 7px; letter-spacing: .18em; color: var(--green); margin-bottom: 4px; }
+.std-equip-item { font-family: 'Share Tech Mono', monospace; font-size: 8.5px; letter-spacing: .08em; color: var(--text-dim); border: 1px solid var(--border-hi); padding: 3px 8px; white-space: nowrap; }
 
-.flaw-slot-num {
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 7px;
-  letter-spacing: .18em;
-  color: var(--red-bright);
-  margin-bottom: 6px;
-}
-
-.flaw-trigger-label {
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 7px;
-  letter-spacing: .14em;
-  color: var(--text-dim);
-  margin-top: 8px;
-  margin-bottom: 3px;
-}
-
-/* ─── LOADOUT SECTION ─── */
-.loadout-section {
-  margin-bottom: 18px;
-}
-
-.loadout-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
-  margin-bottom: 10px;
-}
-
-.loadout-item-block {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-top: 2px solid var(--border-hi);
-  padding: 10px;
-}
-
-.loadout-item-num {
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 7px;
-  letter-spacing: .18em;
-  color: var(--text-dim);
-  margin-bottom: 6px;
-}
-
-.loadout-row {
-  display: grid;
-  grid-template-columns: 2fr 1fr 1fr;
-  gap: 8px;
-  margin-bottom: 6px;
-}
-
-.loadout-note {
-  grid-column: 1 / -1;
-}
-
-.loadout-stat-box {
-  background: var(--surface2);
-  border: 1px solid var(--border-hi);
-  border-left: 2px solid var(--green-dim);
-  padding: 8px 10px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-
-.loadout-stat {
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 8px;
-  letter-spacing: .1em;
-  color: var(--text-dim);
-  white-space: nowrap;
-}
-
-.loadout-stat strong {
-  color: var(--text-hi);
-  font-size: 11px;
-  display: block;
-  margin-bottom: 1px;
-}
-
-.loadout-upload-hint {
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 7.5px;
-  letter-spacing: .14em;
-  color: var(--amber);
-  background: rgba(184,120,32,.06);
-  border: 1px solid var(--amber-dim);
-  border-left: 2px solid var(--amber);
-  padding: 7px 10px;
-  line-height: 1.6;
-  margin-top: 4px;
-}
-
-/* ─── STANDARD EQUIPMENT BLOCK ─── */
-.std-equip-block {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-left: 2px solid var(--green-dim);
-  padding: 9px 12px;
-  margin-bottom: 10px;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  align-items: flex-start;
-}
-
-.std-equip-label {
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 7px;
-  letter-spacing: .18em;
-  color: var(--green);
-  margin-bottom: 4px;
-}
-
-.std-equip-item {
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 8.5px;
-  letter-spacing: .08em;
-  color: var(--text-dim);
-  border: 1px solid var(--border-hi);
-  padding: 3px 8px;
-  white-space: nowrap;
-}
-
-/* ─── PAGE 2 NOTES ─── */
-.notes-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-  margin-bottom: 10px;
-}
-
-.note-block {
-  background: var(--surface);
-  border: 1px solid var(--border);
-}
-
+/* ─── FIELD NOTES ─── */
+.notes-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+.note-block { background: var(--surface); border: 1px solid var(--border); }
 .note-block.full { grid-column: 1 / -1; }
 .note-block.tall .note-area { min-height: 140px; }
 .note-block.xtall .note-area { min-height: 180px; }
-
-.note-head {
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 7.5px;
-  letter-spacing: .18em;
-  color: var(--green);
-  padding: 6px 10px;
-  border-bottom: 1px solid var(--border);
-  background: rgba(0,0,0,.15);
-}
-
-.note-area {
-  width: 100%;
-  min-height: 100px;
-  background: transparent;
-  border: none;
-  resize: none;
-  color: var(--text);
-  font-family: 'Barlow Condensed', sans-serif;
-  font-size: 14px;
-  padding: 8px 10px;
-  outline: none;
-  line-height: 1.55;
-  caret-color: var(--green);
-}
-
+.note-head { font-family: 'Share Tech Mono', monospace; font-size: 7.5px; letter-spacing: .18em; color: var(--green); padding: 6px 10px; border-bottom: 1px solid var(--border); background: rgba(0,0,0,.15); }
+.note-area { width: 100%; min-height: 100px; background: transparent; border: none; resize: none; color: var(--text); font-family: 'Barlow Condensed', sans-serif; font-size: 14px; padding: 8px 10px; outline: none; line-height: 1.55; caret-color: var(--green); }
 .note-area::placeholder { color: var(--text-dim); font-size: 12.5px; font-weight: 300; }
 
-/* ─── CREATION GUIDE STYLES ─── */
-.cg-section {
-  margin-bottom: 20px;
-}
-
-.cg-head {
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 8.5px;
-  letter-spacing: .22em;
-  color: var(--green);
-  padding-bottom: 7px;
-  border-bottom: 1px solid var(--border-hi);
-  margin-bottom: 12px;
-}
-
-.cg-panel {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-left: 3px solid var(--green-dim);
-  padding: 14px 16px;
-  margin-bottom: 10px;
-}
-
+/* ─── CREATION GUIDE ─── */
+.cg-section { margin-bottom: 20px; }
+.cg-head { font-family: 'Share Tech Mono', monospace; font-size: 8.5px; letter-spacing: .22em; color: var(--green); padding-bottom: 7px; border-bottom: 1px solid var(--border-hi); margin-bottom: 12px; }
+.cg-panel { background: var(--surface); border: 1px solid var(--border); border-left: 3px solid var(--green-dim); padding: 14px 16px; margin-bottom: 10px; }
 .cg-panel.amber { border-left-color: var(--amber-dim); }
 .cg-panel.red   { border-left-color: var(--red); }
 .cg-panel.hi    { border-left-color: var(--green); border-color: var(--border-hi); }
-
-.cg-panel-title {
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 7.5px;
-  letter-spacing: .2em;
-  color: var(--green);
-  margin-bottom: 8px;
-}
+.cg-panel-title { font-family: 'Share Tech Mono', monospace; font-size: 7.5px; letter-spacing: .2em; color: var(--green); margin-bottom: 8px; }
 .cg-panel-title.amber { color: var(--amber); }
 .cg-panel-title.red   { color: var(--red-bright); }
 .cg-panel-title.hi    { color: var(--text-hi); }
-
-.cg-panel p {
-  font-size: 13.5px;
-  color: var(--text);
-  line-height: 1.6;
-  margin-bottom: 8px;
-}
+.cg-panel p { font-size: 13.5px; color: var(--text); line-height: 1.6; margin-bottom: 8px; }
 .cg-panel p:last-child { margin-bottom: 0; }
 .cg-panel strong { color: var(--text-hi); }
 .cg-panel em { color: var(--text-dim); font-style: italic; }
-
-.cg-panel ul {
-  padding-left: 16px;
-  margin-top: 6px;
-}
-
-.cg-panel li {
-  font-size: 13px;
-  margin-bottom: 6px;
-  line-height: 1.5;
-  color: var(--text);
-}
-
-.cg-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-  margin-bottom: 10px;
-}
-
-.step-item {
-  display: flex;
-  gap: 12px;
-  margin-bottom: 10px;
-  align-items: flex-start;
-}
-
-.step-n {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 28px;
-  color: var(--green-dim);
-  line-height: 1;
-  min-width: 20px;
-  flex-shrink: 0;
-}
-
-.step-body {}
-
-.step-label {
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 8px;
-  letter-spacing: .18em;
-  color: var(--text-hi);
-  margin-bottom: 3px;
-}
-
-.step-text {
-  font-size: 13.5px;
-  color: var(--text);
-  line-height: 1.55;
-}
-
-.array-row {
-  display: inline-flex;
-  gap: 0;
-  background: var(--surface2);
-  border: 1px solid var(--border);
-  margin: 6px 0 3px;
-}
-
-.arr-n {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 26px;
-  color: var(--text-hi);
-  padding: 3px 12px;
-  border-right: 1px solid var(--border);
-  line-height: 1;
-}
+.cg-panel ul { padding-left: 16px; margin-top: 6px; }
+.cg-panel li { font-size: 13px; margin-bottom: 6px; line-height: 1.5; color: var(--text); }
+.cg-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+.step-item { display: flex; gap: 12px; margin-bottom: 10px; align-items: flex-start; }
+.step-n { font-family: 'Bebas Neue', sans-serif; font-size: 28px; color: var(--green-dim); line-height: 1; min-width: 20px; flex-shrink: 0; }
+.step-label { font-family: 'Share Tech Mono', monospace; font-size: 8px; letter-spacing: .18em; color: var(--text-hi); margin-bottom: 3px; }
+.step-text { font-size: 13.5px; color: var(--text); line-height: 1.55; }
+.array-row { display: inline-flex; gap: 0; background: var(--surface2); border: 1px solid var(--border); margin: 6px 0 3px; }
+.arr-n { font-family: 'Bebas Neue', sans-serif; font-size: 26px; color: var(--text-hi); padding: 3px 12px; border-right: 1px solid var(--border); line-height: 1; }
 .arr-n:last-child { border-right: none; }
-
-.tip-item {
-  padding: 8px 12px;
-  border-left: 2px solid var(--green-dim);
-  margin-bottom: 7px;
-  background: rgba(0,0,0,.18);
-}
-
-.tip-label {
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 7px;
-  letter-spacing: .16em;
-  color: var(--green);
-  margin-bottom: 3px;
-}
-
+.tip-item { padding: 8px 12px; border-left: 2px solid var(--green-dim); margin-bottom: 7px; background: rgba(0,0,0,.18); }
+.tip-label { font-family: 'Share Tech Mono', monospace; font-size: 7px; letter-spacing: .16em; color: var(--green); margin-bottom: 3px; }
 .tip-text { font-size: 13px; line-height: 1.5; color: var(--text); }
-
-.storm-notice {
-  background: rgba(138,32,32,.06);
-  border: 1px solid rgba(138,32,32,.3);
-  border-left: 3px solid var(--red-bright);
-  padding: 10px 14px;
-  margin-bottom: 12px;
-}
-
-.storm-notice-label {
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 7.5px;
-  letter-spacing: .2em;
-  color: var(--red-bright);
-  margin-bottom: 5px;
-}
-
-.storm-notice p {
-  font-size: 13px;
-  color: var(--text);
-  line-height: 1.55;
-  margin-bottom: 0;
-}
+.storm-notice { background: rgba(138,32,32,.06); border: 1px solid rgba(138,32,32,.3); border-left: 3px solid var(--red-bright); padding: 10px 14px; margin-bottom: 12px; }
+.storm-notice-label { font-family: 'Share Tech Mono', monospace; font-size: 7.5px; letter-spacing: .2em; color: var(--red-bright); margin-bottom: 5px; }
+.storm-notice p { font-size: 13px; color: var(--text); line-height: 1.55; margin-bottom: 0; }
 
 /* ─── FOOTER ─── */
-.sheet-footer {
-  border: 1px solid var(--border-hi);
-  border-top: none;
-  background: var(--surface);
-  padding: 6px 16px;
-  display: flex;
-  justify-content: space-between;
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 7.5px;
-  letter-spacing: .12em;
-  color: var(--text-dim);
-}
+.sheet-footer { border: 1px solid var(--border-hi); border-top: none; background: var(--surface); padding: 6px 16px; display: flex; justify-content: space-between; font-family: 'Share Tech Mono', monospace; font-size: 7.5px; letter-spacing: .12em; color: var(--text-dim); }
 
-/* ─── TWO-COL LAYOUT ─── */
-.two-col {
-  display: grid;
-  grid-template-columns: 1fr 1.1fr;
-  gap: 16px;
-  margin-bottom: 0;
-}
+/* ─── TWO-COL ─── */
+.two-col { display: grid; grid-template-columns: 1fr 1.1fr; gap: 16px; }
 
 /* ─── SAVE TOOLBAR ─── */
-.save-toolbar {
-  position: fixed;
-  bottom: 0; left: 0; right: 0;
-  background: var(--surface);
-  border-top: 1px solid var(--border-hi);
-  padding: 8px 20px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  z-index: 600;
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 8px;
-  letter-spacing: .14em;
-}
-
+.save-toolbar { position: fixed; bottom: 0; left: 0; right: 0; background: var(--surface); border-top: 1px solid var(--border-hi); padding: 8px 20px; display: flex; align-items: center; gap: 10px; z-index: 600; font-family: 'Share Tech Mono', monospace; font-size: 8px; letter-spacing: .14em; }
 .save-toolbar-label { color: var(--text-dim); white-space: nowrap; }
-
-.save-btn {
-  background: var(--green-dim);
-  border: 1px solid var(--green);
-  color: var(--text-hi);
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 8px;
-  letter-spacing: .2em;
-  padding: 5px 14px;
-  cursor: pointer;
-  transition: all .15s;
-  white-space: nowrap;
-}
-
+.save-btn { background: var(--green-dim); border: 1px solid var(--green); color: var(--text-hi); font-family: 'Share Tech Mono', monospace; font-size: 8px; letter-spacing: .2em; padding: 5px 14px; cursor: pointer; transition: all .15s; white-space: nowrap; }
 .save-btn:hover { background: var(--green); color: var(--bg); }
 .save-btn.load-btn { background: transparent; border-color: var(--border-hi); color: var(--text-dim); }
 .save-btn.load-btn:hover { border-color: var(--green-dim); color: var(--text); }
 .save-btn.reset-btn { background: transparent; border-color: var(--red); color: var(--red-bright); }
 .save-btn.reset-btn:hover { background: var(--red); color: var(--text-hi); }
-
-.save-status {
-  flex: 1; text-align: right;
-  color: var(--text-dim); font-size: 7.5px; letter-spacing: .12em;
-  transition: color .3s;
-}
+.save-status { flex: 1; text-align: right; color: var(--text-dim); font-size: 7.5px; letter-spacing: .12em; transition: color .3s; }
 .save-status.ok   { color: var(--green); }
 .save-status.warn { color: var(--amber); }
 
+/* ─── RESET MODAL ─── */
+.reset-modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.72); z-index: 1000; display: flex; align-items: center; justify-content: center; }
+.reset-modal { background: var(--surface); border: 1px solid var(--border-hi); border-top: 2px solid var(--red-bright); padding: 22px 26px; width: 340px; font-family: 'Share Tech Mono', monospace; }
+.reset-modal-title { font-size: 11px; letter-spacing: .22em; color: var(--red-bright); margin-bottom: 10px; }
+.reset-modal-msg { font-size: 9px; letter-spacing: .1em; color: var(--text); line-height: 1.7; margin-bottom: 18px; }
+.reset-modal-btns { display: flex; gap: 8px; }
+
 /* ─── MOBILE ─── */
 @media (max-width: 700px) {
-  .identity-row, .two-col, .cg-grid, .attr-row,
-  .vitals-row, .trait-slots, .flaw-slots,
-  .loadout-grid, .notes-grid {
-    grid-template-columns: 1fr !important;
-  }
+  .identity-row, .two-col, .cg-grid, .attr-row, .vitals-row, .trait-slots, .flaw-slots, .loadout-grid, .notes-grid { grid-template-columns: 1fr !important; }
   .attr-row { grid-template-columns: repeat(3,1fr) !important; }
   .loadout-row { grid-template-columns: 1fr 1fr !important; }
   .page-tabs { position: static; }
@@ -1243,7 +424,6 @@ body::after {
      PAGE 3 — CREATION GUIDE (REFERENCE)
 ══════════════════════════════════════ -->
 <div class="page" id="page3">
-
   <div class="doc-header">
     <div class="dh-org">UNITED GLOBAL DIRECTORATE<br>FIELD OPERATIONS // DIV IV</div>
     <div class="dh-center">
@@ -1252,25 +432,20 @@ body::after {
     </div>
     <div class="dh-org" style="text-align:right;">DOC 14-C<br>CREATION GUIDE</div>
   </div>
-
   <div class="sheet">
 
-    <!-- CONTEXT -->
     <div class="cg-section">
       <div class="cg-head">■ THE WORLD YOU ARE ENTERING</div>
-
       <div class="storm-notice">
         <div class="storm-notice-label">⚠ CURRENT THREAT CONDITION // SPIKE STORM EVENT</div>
         <p>Approximately one week before this briefing, a SPIKE Storm of unprecedented scale swept the global population. Casualties confirmed. Origin unknown. This event — the first of its kind in five years of post-Reset peace — is the reason you are standing in this briefing room. The UGD has expedited this commission. Treat elevated SPIKE readings in the field as a priority concern.</p>
       </div>
-
       <div class="cg-panel">
         <div class="cg-panel-title">WORLD SUMMARY // YEAR 5 POST-RESET</div>
         <p>World War III ended not with a treaty but with a silence. After years of cascading collapse — war, famine, pandemic, societal breakdown — a global neurological intervention known as <strong>the Reset</strong> stabilized the surviving population's emotional baseline. SPIKE ended. Rebuilding began.</p>
         <p>You live in a world that works. The UGD administers global governance. Nations no longer exist — only districts. Communications have just been restored. Basic needs are met. It is stable, functional, and at peace. <strong>You are grateful for this.</strong> Everyone is. The Reset is not questioned. It is the foundation on which everything rests.</p>
         <p>Your character knows they feel things — mild preferences, mild discomforts, purpose, care. What they don't know is what it felt like before. They have no reference point for what they are missing. <em>Neither does anyone else.</em></p>
       </div>
-
       <div class="cg-grid">
         <div class="cg-panel">
           <div class="cg-panel-title">STANDARD OPERATIVE EQUIPMENT</div>
@@ -1286,7 +461,7 @@ body::after {
               </div>
             </div>
           </div>
-          <p style="font-size:12px;color:var(--text-dim);margin-top:10px;margin-bottom:0;line-height:1.5;">The <strong style="color:var(--text);">subcutaneous SPIKE implant</strong> reads your own SPIKE level continuously and can evaluate others at close range — replacing the need for a handheld wand in the field. Wands remain in civilian use. Record your implant as part of your standard kit; no stat entry required.</p>
+          <p style="font-size:12px;color:var(--text-dim);margin-top:10px;margin-bottom:0;line-height:1.5;">The <strong style="color:var(--text);">subcutaneous SPIKE implant</strong> reads your own SPIKE level continuously and can evaluate others at close range. Wands remain in civilian use. Record your implant as part of your standard kit; no stat entry required.</p>
         </div>
         <div class="cg-panel amber">
           <div class="cg-panel-title amber">WHAT YOUR CHARACTER FEELS</div>
@@ -1303,78 +478,52 @@ body::after {
       </div>
     </div>
 
-    <!-- WHO IS YOUR CHARACTER -->
     <div class="cg-section">
       <div class="cg-head">■ WHO IS YOUR CHARACTER</div>
-
       <div class="cg-panel hi">
         <div class="cg-panel-title hi">PLAYING AS YOURSELF (ENCOURAGED)</div>
         <p>You are welcome — even encouraged — to play a version of yourself, post-Reset. This is not required, but it is a powerful entry point into the game's central theme. If your character is essentially you, the emotional flatness becomes immediately personal and legible. You know exactly what you'd remember. You know exactly what you can no longer feel.</p>
         <ul>
-          <li><strong>You keep your real skills and knowledge.</strong> Your actual job, hobbies, and areas of expertise map directly to skill selection. A doctor takes Medicine. A programmer takes Computing. A soldier takes Firearms and Mobility.</li>
+          <li><strong>You keep your real skills and knowledge.</strong> Your actual job, hobbies, and areas of expertise map directly to skill selection.</li>
           <li><strong>Your emotional connections still exist as facts, not feelings.</strong> You know you loved someone. You have records proving it. You cannot locate the feeling of it.</li>
           <li><strong>Your backstory is real but experienced as though it belongs to someone else</strong> — like reading an account of your own life in a file.</li>
         </ul>
       </div>
-
       <div class="cg-panel">
         <div class="cg-panel-title">ORIGIN // FROM ANYWHERE IN THE WORLD</div>
-        <p>Your operative can originate from any region of the former world. Nations no longer exist — only UGD administrative districts. But geography, language, and local habit survived the Reset intact. Cultural identity persists as a set of facts and reflexes, even without the felt connection to them.</p>
+        <p>Your operative can originate from any region of the former world. Nations no longer exist — only UGD administrative districts. But geography, language, and local habit survived the Reset intact.</p>
         <ul>
           <li>Language still exists. Local customs persist as <em>habit</em> rather than felt tradition.</li>
           <li>Food preferences remain. You still make your coffee a certain way without knowing why.</li>
-          <li>Regional expertise is valid: if you grew up near the sea, you have familiarity with coastal environments. If you grew up in a city, you navigate urban space differently than a rural operative.</li>
-          <li>You arrived at UGD HQ in Copenhagen via whatever means are available in Year 5. The UGD arranges travel for commissioned operatives.</li>
+          <li>Regional expertise is valid: if you grew up near the sea, you have familiarity with coastal environments.</li>
+          <li>You arrived at UGD HQ in Copenhagen via whatever means are available in Year 5.</li>
         </ul>
       </div>
     </div>
 
-    <!-- BUILDING A BACKSTORY -->
     <div class="cg-section">
       <div class="cg-head">■ BUILDING A BACKSTORY THAT FITS THE WORLD</div>
-
       <div class="cg-panel hi">
         <div class="cg-panel-title hi">THE CORE CHALLENGE</div>
-        <p>Your character has a past that was emotionally full. They lost people. They loved people. They did things they would have been proud of, or ashamed of, or both. <strong>All of that is still in them as information.</strong> None of it aches. The Reset converted autobiographical memory into semantic memory — facts without connection. Trauma, passion, deep love: known but not felt.</p>
+        <p>Your character has a past that was emotionally full. They lost people. They loved people. They did things they would have been proud of, or ashamed of, or both. <strong>All of that is still in them as information.</strong> None of it aches. The Reset converted autobiographical memory into semantic memory — facts without connection.</p>
         <p>The craft challenge is writing a backstory that was vivid before the Reset and is now experienced as reading about a stranger who happened to share your name and face.</p>
       </div>
-
       <div class="cg-grid">
         <div>
-          <div class="tip-item">
-            <div class="tip-label">TIP // WRITE IN PAST TENSE, THIRD PERSON</div>
-            <div class="tip-text">Draft your backstory as if describing someone else's life you've read about. "She was a field medic during the Collapse. She lost her unit outside Warsaw. She kept working anyway." Then put yourself in that person's shoes — with all the facts and none of the weight.</div>
-          </div>
-          <div class="tip-item">
-            <div class="tip-label">TIP // INCLUDE ONE PERSON YOU LOVED</div>
-            <div class="tip-text">You know this fact. You have evidence — photographs, journal entries, records. You can describe them accurately. You cannot locate what it felt like to see them walk into a room. That gap is the dramatic material.</div>
-          </div>
-          <div class="tip-item">
-            <div class="tip-label">TIP // INCLUDE ONE THING YOU LOST</div>
-            <div class="tip-text">A home. A livelihood. A future you had planned. You know this happened. You know, factually, that it should feel like something. It registers instead as a note in a file: <em>significant loss, pre-Reset period.</em></div>
-          </div>
+          <div class="tip-item"><div class="tip-label">TIP // WRITE IN PAST TENSE, THIRD PERSON</div><div class="tip-text">Draft your backstory as if describing someone else's life you've read about. "She was a field medic during the Collapse. She lost her unit outside Warsaw. She kept working anyway." Then put yourself in that person's shoes — with all the facts and none of the weight.</div></div>
+          <div class="tip-item"><div class="tip-label">TIP // INCLUDE ONE PERSON YOU LOVED</div><div class="tip-text">You know this fact. You have evidence — photographs, journal entries, records. You can describe them accurately. You cannot locate what it felt like to see them walk into a room. That gap is the dramatic material.</div></div>
+          <div class="tip-item"><div class="tip-label">TIP // INCLUDE ONE THING YOU LOST</div><div class="tip-text">A home. A livelihood. A future you had planned. You know this happened. You know, factually, that it should feel like something. It registers instead as a note in a file: <em>significant loss, pre-Reset period.</em></div></div>
         </div>
         <div>
-          <div class="tip-item">
-            <div class="tip-label">TIP // INCLUDE A SURVIVING SKILL OR HABIT</div>
-            <div class="tip-text">Muscle memory survived the Reset intact. Professional training survived. If you were a cook, you still cook well, automatically, without pleasure. If you were a runner, you still run — it's just exercise now, not release. One deeply ingrained skill or habit that runs on autopilot.</div>
-          </div>
-          <div class="tip-item">
-            <div class="tip-label">TIP // INCLUDE ONE THING YOU AVOID</div>
-            <div class="tip-text">Something you steer around without knowing why. A particular piece of music. A specific kind of weather. A word. You can't explain the avoidance. You've learned not to examine it too closely. This is a ghost of something the Reset couldn't fully reach. It will matter when your SPIKE rises.</div>
-          </div>
-          <div class="tip-item">
-            <div class="tip-label">TIP // BACKSTORY SHARING IS OPTIONAL</div>
-            <div class="tip-text">Your character has no particular reason to share their history with strangers. In a Reset world, personal history is exchanged like logistical information — when it's relevant, not as bonding. Let your backstory emerge in play, slowly, through what you avoid and what you reach for.</div>
-          </div>
+          <div class="tip-item"><div class="tip-label">TIP // INCLUDE A SURVIVING SKILL OR HABIT</div><div class="tip-text">Muscle memory survived the Reset intact. If you were a cook, you still cook well, automatically, without pleasure. If you were a runner, you still run — it's just exercise now, not release.</div></div>
+          <div class="tip-item"><div class="tip-label">TIP // INCLUDE ONE THING YOU AVOID</div><div class="tip-text">Something you steer around without knowing why. A particular piece of music. A specific kind of weather. A word. You can't explain the avoidance. This is a ghost of something the Reset couldn't fully reach. It will matter when your SPIKE rises.</div></div>
+          <div class="tip-item"><div class="tip-label">TIP // BACKSTORY SHARING IS OPTIONAL</div><div class="tip-text">Your character has no particular reason to share their history with strangers. In a Reset world, personal history is exchanged like logistical information — when it's relevant, not as bonding.</div></div>
         </div>
       </div>
     </div>
 
-    <!-- ATTR QUICK REF -->
     <div class="cg-section">
       <div class="cg-head">■ CREATION QUICK REFERENCE</div>
-
       <div class="cg-grid">
         <div>
           <div class="cg-panel">
@@ -1384,9 +533,7 @@ body::after {
               <div class="step-body">
                 <div class="step-label">ASSIGN BASE ARRAY</div>
                 <div class="step-text">Distribute across five attributes in any order:
-                  <div class="array-row">
-                    <div class="arr-n">3</div><div class="arr-n">2</div><div class="arr-n">2</div><div class="arr-n">1</div><div class="arr-n">1</div>
-                  </div>
+                  <div class="array-row"><div class="arr-n">3</div><div class="arr-n">2</div><div class="arr-n">2</div><div class="arr-n">1</div><div class="arr-n">1</div></div>
                 </div>
               </div>
             </div>
@@ -1408,44 +555,39 @@ body::after {
           </div>
         </div>
       </div>
-
       <div class="cg-panel" style="margin-bottom:10px;">
         <div class="cg-panel-title">LOADOUT // REQUISITION PROCESS</div>
         <p style="margin-bottom:6px;">Before departing UGD HQ, you will be issued standard equipment and may requisition a field loadout. <strong>Weapon allowance — choose one package:</strong> two light weapons &nbsp;|&nbsp; one standard weapon + knife &nbsp;|&nbsp; one heavy weapon (no second weapon). Plus one armour type (or none) and up to three field equipment items.</p>
-        <p>Record your selections on the <strong>OPERATIVE</strong> tab. See the <strong>REQUISITION GUIDE</strong> tab for the full catalogue and mechanical effects. When complete, use <strong>↓ SAVE JSON</strong> and send the file to your GM to log your loadout to the UGD Mainframe.</p>
+        <p>Record your selections on the <strong>OPERATIVE</strong> tab. See the <strong>REQUISITION GUIDE</strong> tab for the full catalogue. When complete, use <strong>↓ SAVE JSON</strong> and send the file to your GM.</p>
       </div>
-
       <div class="cg-panel red" style="margin-bottom:0;">
         <div class="cg-panel-title red">EMOTIONAL FLAWS // MECHANICS</div>
-        <p style="margin-bottom:8px;">Flaws are not chosen at creation — they are acquired during play when a character suffers extreme trauma. A flaw is a persistent lens through which the character processes stress — a pattern formed under pressure that hasn't been dismantled. When a flaw triggers, you must declare <strong>Lean In</strong> or <strong>Resist</strong> before any dice are rolled. You cannot wait to see the outcome first.</p>
+        <p style="margin-bottom:8px;">Flaws are not chosen at creation — they are acquired during play when a character suffers extreme trauma. When a flaw triggers, you must declare <strong>Lean In</strong> or <strong>Resist</strong> before any dice are rolled.</p>
         <div class="cg-grid" style="margin-bottom:8px;">
           <div class="cg-panel" style="background:rgba(0,0,0,.25); border-left-color:var(--green-dim); margin-bottom:0;">
             <div class="cg-panel-title">LEAN INTO IT</div>
-            <p style="margin-bottom:0;">Act according to the flaw's impulse. No roll required. Gain <strong>+1 to the triggering roll</strong> OR <strong>+1 COMPOSURE</strong> (your choice). Leaning in is not failure — it is characterisation.</p>
+            <p style="margin-bottom:0;">Act according to the flaw's impulse. No roll required. Gain <strong>+1 to the triggering roll</strong> OR <strong>+1 COMPOSURE</strong> (your choice).</p>
           </div>
           <div class="cg-panel red" style="background:rgba(0,0,0,.25); margin-bottom:0;">
             <div class="cg-panel-title red">RESIST IT</div>
-            <p style="margin-bottom:0;">Roll <span style="font-family:'Share Tech Mono',monospace;font-size:11px;background:rgba(0,0,0,.3);padding:1px 4px;">d10 + RESOLVE vs TN 9</span>. <strong>Success:</strong> act normally. <strong>Failure:</strong> −1 to roll OR +1 SPIKE (GM's choice). The flaw remains either way.</p>
+            <p style="margin-bottom:0;">Roll <span style="font-family:'Share Tech Mono',monospace;font-size:11px;background:rgba(0,0,0,.3);padding:1px 4px;">d10 + RESOLVE vs TN 9</span>. <strong>Success:</strong> act normally. <strong>Failure:</strong> −1 to roll OR +1 SPIKE (GM's choice).</p>
           </div>
         </div>
-        <p style="margin-bottom:0;font-size:12px;color:var(--text-dim);">Flaws can only be reduced through meaningful narrative resolution across multiple sessions, with explicit GM approval. See the REFERENCE // CREATION tab for the full flaw list.</p>
+        <p style="margin-bottom:0;font-size:12px;color:var(--text-dim);">Flaws can only be reduced through meaningful narrative resolution across multiple sessions, with explicit GM approval.</p>
       </div>
     </div>
 
   </div><!-- /sheet -->
-
   <div class="sheet-footer">
     <span>UGD // SPIKE: THE REEVES TRIALS // DOC 14-C // CREATION REFERENCE</span>
     <span>■ CLASSIFIED // AUTHORIZED PERSONNEL ONLY ■</span>
   </div>
-
 </div><!-- /page3 -->
 
 <!-- ══════════════════════════════════════
      PAGE 0 — OPERATIVE
 ══════════════════════════════════════ -->
 <div class="page active" id="page0">
-
   <div class="doc-header">
     <div class="dh-org">UNITED GLOBAL DIRECTORATE<br>FIELD OPERATIONS // DIV IV</div>
     <div class="dh-center">
@@ -1461,32 +603,27 @@ body::after {
     <div class="identity-row">
       <div>
         <span class="field-label">OPERATIVE NAME</span>
-        <input class="f-input" type="text" placeholder="Full designation">
+        <input class="f-input" type="text" id="opName" placeholder="Full designation">
       </div>
       <div>
         <span class="field-label">CALLSIGN</span>
-        <input class="f-input" type="text" placeholder="Field callsign">
+        <input class="f-input" type="text" id="opCallsign" placeholder="Field callsign">
       </div>
       <div>
         <span class="field-label">UGD ID #</span>
-        <input class="f-input" type="text" placeholder="ID-00000">
+        <input class="f-input" type="text" id="opId" placeholder="ID-00000">
       </div>
       <div>
         <span class="field-label">BACKGROUND / ORIGIN</span>
-        <input class="f-input" type="text" placeholder="Pre-Reset occupation or region of origin">
+        <input class="f-input" type="text" id="opOrigin" placeholder="Pre-Reset occupation or region of origin">
       </div>
     </div>
 
     <!-- TOKEN COLOR -->
     <div class="token-color-row">
-      <span class="token-color-label">MAP TOKEN COLOR</span>
-      <div class="token-swatch" data-color="#1e8896" title="TEAL"   style="background:#1e8896;"></div>
-      <div class="token-swatch" data-color="#7a9a28" title="OLIVE"  style="background:#7a9a28;"></div>
-      <div class="token-swatch" data-color="#b87820" title="AMBER"  style="background:#b87820;"></div>
-      <div class="token-swatch" data-color="#8c68c0" title="VIOLET" style="background:#8c68c0;"></div>
-      <div class="token-swatch" data-color="#3878b8" title="COBALT" style="background:#3878b8;"></div>
-      <div class="token-swatch" data-color="#c07030" title="COPPER" style="background:#c07030;"></div>
-      <span class="token-color-value" id="tokenColorLabel">TEAL</span>
+      <span class="field-label" style="margin-bottom:0; white-space:nowrap;">MAP TOKEN</span>
+      <div id="tokenSwatches" style="display:flex; gap:6px; align-items:center;"></div>
+      <span class="token-color-name" id="tokenColorName"></span>
     </div>
 
     <div class="two-col">
@@ -1494,10 +631,8 @@ body::after {
       <div>
 
         <!-- ATTRIBUTES -->
-        <div class="section-label">ATTRIBUTES <span>MAX 3 PER ATTRIBUTE</span></div>
-        <div class="attr-row" id="attrRow">
-          <!-- generated by JS -->
-        </div>
+        <div class="section-label">ATTRIBUTES <span>MAX 3 PER ATTRIBUTE</span> <span class="attr-budget" id="attrBudget">0 / 11 PTS</span></div>
+        <div class="attr-row" id="attrRow"></div>
 
         <!-- VITALS -->
         <div class="section-label">VITALS</div>
@@ -1530,14 +665,11 @@ body::after {
           <div class="reactions-box">
             <div class="reactions-label">POOL</div>
             <div class="reactions-pips">
-              <div class="reaction-pip-cs" id="rxnPip0" onclick="toggleReactionPip(0)" title="Reaction 1 — click to mark used"></div>
-              <div class="reaction-pip-cs" id="rxnPip1" onclick="toggleReactionPip(1)" title="Reaction 2 — click to mark used"></div>
+              <div class="reaction-pip-cs" id="rxnPip0" onclick="toggleReactionPip(0)" title="Reaction 1"></div>
+              <div class="reaction-pip-cs" id="rxnPip1" onclick="toggleReactionPip(1)" title="Reaction 2"></div>
             </div>
             <div class="reactions-count" id="rxnCount">2/2</div>
-            <div class="reactions-hint">
-              Overwatch · Counterattack · Protect · Brace<br>
-              Resets on <strong style="color:var(--text)">Long Rest</strong>
-            </div>
+            <div class="reactions-hint">Overwatch · Counterattack · Protect · Brace<br>Resets on <strong style="color:var(--text)">Long Rest</strong></div>
             <button class="reactions-reset" onclick="resetReactionPips()">↺ LONG REST</button>
           </div>
         </div>
@@ -1580,31 +712,29 @@ body::after {
         <div class="section-label loadout-section">LOADOUT REQUISITION <span>LOG TO UGD MAINFRAME — SEND JSON TO GM</span></div>
 
         <div class="loadout-grid">
+
+          <!-- WEAPON SLOT 01 -->
           <div class="loadout-item-block">
             <div class="loadout-item-num">WEAPON SLOT 01</div>
             <div class="loadout-row">
               <div>
-                <span class="field-label">WEAPON NAME</span>
-                <input class="f-input" type="text" id="w1name" placeholder="e.g. Service Pistol">
+                <span class="field-label">WEAPON</span>
+                <select class="f-input" id="w1name" onchange="autoWeapon('w1')" style="appearance:none;cursor:pointer;font-size:13px;">
+                  <option value="">— Select Weapon</option>
+                  <option value="Knife">Knife</option>
+                  <option value="Pistol">Pistol</option>
+                  <option value="Rifle">Rifle</option>
+                  <option value="Shotgun">Shotgun</option>
+                  <option value="Sniper Rifle">Sniper Rifle</option>
+                </select>
               </div>
               <div>
                 <span class="field-label">CLASS</span>
-                <select class="f-input" id="w1class" style="appearance:none;cursor:pointer;font-size:13px;">
-                  <option value="">— Select</option>
-                  <option value="Light (+0)">Light (+0)</option>
-                  <option value="Standard (+2)">Standard (+2)</option>
-                  <option value="Heavy (+4)">Heavy (+4)</option>
-                </select>
+                <input class="f-input" type="text" id="w1class" readonly placeholder="—" style="font-size:12px;">
               </div>
               <div>
                 <span class="field-label">RANGE</span>
-                <select class="f-input" id="w1range" style="appearance:none;cursor:pointer;font-size:13px;">
-                  <option value="">— Select</option>
-                  <option value="CLOSE">CLOSE</option>
-                  <option value="NEAR">NEAR</option>
-                  <option value="FAR">FAR</option>
-                  <option value="ANY">ANY</option>
-                </select>
+                <input class="f-input" type="text" id="w1range" readonly placeholder="—" style="font-size:12px;">
               </div>
             </div>
             <div class="loadout-note">
@@ -1613,31 +743,28 @@ body::after {
             </div>
           </div>
 
+          <!-- WEAPON SLOT 02 -->
           <div class="loadout-item-block">
             <div class="loadout-item-num">WEAPON SLOT 02</div>
             <div class="loadout-row">
               <div>
-                <span class="field-label">WEAPON NAME</span>
-                <input class="f-input" type="text" id="w2name" placeholder="e.g. Assault Rifle">
+                <span class="field-label">WEAPON</span>
+                <select class="f-input" id="w2name" onchange="autoWeapon('w2')" style="appearance:none;cursor:pointer;font-size:13px;">
+                  <option value="">— Select Weapon</option>
+                  <option value="Knife">Knife</option>
+                  <option value="Pistol">Pistol</option>
+                  <option value="Rifle">Rifle</option>
+                  <option value="Shotgun">Shotgun</option>
+                  <option value="Sniper Rifle">Sniper Rifle</option>
+                </select>
               </div>
               <div>
                 <span class="field-label">CLASS</span>
-                <select class="f-input" id="w2class" style="appearance:none;cursor:pointer;font-size:13px;">
-                  <option value="">— Select</option>
-                  <option value="Light (+0)">Light (+0)</option>
-                  <option value="Standard (+2)">Standard (+2)</option>
-                  <option value="Heavy (+4)">Heavy (+4)</option>
-                </select>
+                <input class="f-input" type="text" id="w2class" readonly placeholder="—" style="font-size:12px;">
               </div>
               <div>
                 <span class="field-label">RANGE</span>
-                <select class="f-input" id="w2range" style="appearance:none;cursor:pointer;font-size:13px;">
-                  <option value="">— Select</option>
-                  <option value="CLOSE">CLOSE</option>
-                  <option value="NEAR">NEAR</option>
-                  <option value="FAR">FAR</option>
-                  <option value="ANY">ANY</option>
-                </select>
+                <input class="f-input" type="text" id="w2range" readonly placeholder="—" style="font-size:12px;">
               </div>
             </div>
             <div class="loadout-note">
@@ -1646,12 +773,13 @@ body::after {
             </div>
           </div>
 
+          <!-- ARMOR -->
           <div class="loadout-item-block">
             <div class="loadout-item-num">ARMOR</div>
             <div class="loadout-row" style="grid-template-columns:1fr 1fr;">
               <div>
                 <span class="field-label">ARMOR TYPE</span>
-                <select class="f-input" id="armorType" style="appearance:none;cursor:pointer;font-size:13px;">
+                <select class="f-input" id="armorType" onchange="autoArmorValue()" style="appearance:none;cursor:pointer;font-size:13px;">
                   <option value="">— None</option>
                   <option value="Light (−2 dmg)">Light (−2 dmg)</option>
                   <option value="Medium (−4 dmg, −1 Mob)">Medium (−4 dmg, −1 Mob)</option>
@@ -1660,7 +788,7 @@ body::after {
               </div>
               <div>
                 <span class="field-label">ARMOR VALUE</span>
-                <input class="f-input" type="text" id="armorValue" placeholder="0" style="font-family:'Share Tech Mono',monospace;">
+                <input class="f-input" type="text" id="armorValue" readonly value="0" style="font-family:'Share Tech Mono',monospace;">
               </div>
             </div>
             <div class="loadout-note">
@@ -1669,28 +797,57 @@ body::after {
             </div>
           </div>
 
+          <!-- ADDITIONAL EQUIPMENT -->
           <div class="loadout-item-block">
             <div class="loadout-item-num">ADDITIONAL EQUIPMENT</div>
             <div style="margin-bottom:6px;">
               <span class="field-label">ITEM 01</span>
-              <input class="f-input" type="text" id="eq1" placeholder="e.g. Medkit, Flashbang, Hacking Kit">
+              <select class="f-input" id="eq1" style="appearance:none;cursor:pointer;font-size:13px;">
+                <option value="">— Select Item</option>
+                <option>Medkit</option>
+                <option>Bandages</option>
+                <option>Hacking Kit</option>
+                <option>Flashbang</option>
+                <option>Breach Charge (×3)</option>
+                <option>Handcuffs</option>
+                <option>SPIKE Wand</option>
+              </select>
             </div>
             <div style="margin-bottom:6px;">
               <span class="field-label">ITEM 02</span>
-              <input class="f-input" type="text" id="eq2" placeholder="">
+              <select class="f-input" id="eq2" style="appearance:none;cursor:pointer;font-size:13px;">
+                <option value="">— Select Item</option>
+                <option>Medkit</option>
+                <option>Bandages</option>
+                <option>Hacking Kit</option>
+                <option>Flashbang</option>
+                <option>Breach Charge (×3)</option>
+                <option>Handcuffs</option>
+                <option>SPIKE Wand</option>
+              </select>
             </div>
             <div>
               <span class="field-label">ITEM 03</span>
-              <input class="f-input" type="text" id="eq3" placeholder="">
+              <select class="f-input" id="eq3" style="appearance:none;cursor:pointer;font-size:13px;">
+                <option value="">— Select Item</option>
+                <option>Medkit</option>
+                <option>Bandages</option>
+                <option>Hacking Kit</option>
+                <option>Flashbang</option>
+                <option>Breach Charge (×3)</option>
+                <option>Handcuffs</option>
+                <option>SPIKE Wand</option>
+              </select>
             </div>
           </div>
-        </div>
+
+        </div><!-- /loadout-grid -->
 
         <div class="loadout-upload-hint">
           ■ UGD MAINFRAME UPLOAD // When dossier is complete, use ↓ SAVE JSON below and send the file to your GM. This logs your loadout and character state to the UGD Combat Suite.
         </div>
 
-      </div>
+      </div><!-- /left col -->
 
       <!-- RIGHT COLUMN -->
       <div>
@@ -1706,12 +863,12 @@ body::after {
         <div class="traits-section">
           <div class="section-label">TRAITS <span>GAINED VIA ADVANCEMENT // MAX 6</span></div>
           <div class="trait-slots">
-            <div class="trait-slot"><div class="trait-slot-num">TRAIT 01</div><input class="f-input" type="text" placeholder="Trait name"><div class="field-label" style="margin-top:6px;">EFFECT</div><input class="f-input" type="text" placeholder="Mechanical effect"></div>
-            <div class="trait-slot"><div class="trait-slot-num">TRAIT 02</div><input class="f-input" type="text" placeholder="Trait name"><div class="field-label" style="margin-top:6px;">EFFECT</div><input class="f-input" type="text" placeholder="Mechanical effect"></div>
-            <div class="trait-slot"><div class="trait-slot-num">TRAIT 03</div><input class="f-input" type="text" placeholder="Trait name"><div class="field-label" style="margin-top:6px;">EFFECT</div><input class="f-input" type="text" placeholder="Mechanical effect"></div>
-            <div class="trait-slot"><div class="trait-slot-num">TRAIT 04</div><input class="f-input" type="text" placeholder="Trait name"><div class="field-label" style="margin-top:6px;">EFFECT</div><input class="f-input" type="text" placeholder="Mechanical effect"></div>
-            <div class="trait-slot"><div class="trait-slot-num">TRAIT 05</div><input class="f-input" type="text" placeholder="Trait name"><div class="field-label" style="margin-top:6px;">EFFECT</div><input class="f-input" type="text" placeholder="Mechanical effect"></div>
-            <div class="trait-slot"><div class="trait-slot-num">TRAIT 06</div><input class="f-input" type="text" placeholder="Trait name"><div class="field-label" style="margin-top:6px;">EFFECT</div><input class="f-input" type="text" placeholder="Mechanical effect"></div>
+            <div class="trait-slot"><div class="trait-slot-num">TRAIT 01</div><input class="f-input" type="text" id="trait1name" placeholder="Trait name"><div class="field-label" style="margin-top:6px;">EFFECT</div><input class="f-input" type="text" id="trait1effect" placeholder="Mechanical effect"></div>
+            <div class="trait-slot"><div class="trait-slot-num">TRAIT 02</div><input class="f-input" type="text" id="trait2name" placeholder="Trait name"><div class="field-label" style="margin-top:6px;">EFFECT</div><input class="f-input" type="text" id="trait2effect" placeholder="Mechanical effect"></div>
+            <div class="trait-slot"><div class="trait-slot-num">TRAIT 03</div><input class="f-input" type="text" id="trait3name" placeholder="Trait name"><div class="field-label" style="margin-top:6px;">EFFECT</div><input class="f-input" type="text" id="trait3effect" placeholder="Mechanical effect"></div>
+            <div class="trait-slot"><div class="trait-slot-num">TRAIT 04</div><input class="f-input" type="text" id="trait4name" placeholder="Trait name"><div class="field-label" style="margin-top:6px;">EFFECT</div><input class="f-input" type="text" id="trait4effect" placeholder="Mechanical effect"></div>
+            <div class="trait-slot"><div class="trait-slot-num">TRAIT 05</div><input class="f-input" type="text" id="trait5name" placeholder="Trait name"><div class="field-label" style="margin-top:6px;">EFFECT</div><input class="f-input" type="text" id="trait5effect" placeholder="Mechanical effect"></div>
+            <div class="trait-slot"><div class="trait-slot-num">TRAIT 06</div><input class="f-input" type="text" id="trait6name" placeholder="Trait name"><div class="field-label" style="margin-top:6px;">EFFECT</div><input class="f-input" type="text" id="trait6effect" placeholder="Mechanical effect"></div>
           </div>
         </div>
 
@@ -1721,40 +878,37 @@ body::after {
           <div class="flaw-slots">
             <div class="flaw-slot">
               <div class="flaw-slot-num">EMOTIONAL FLAW 01</div>
-              <input class="f-input" type="text" placeholder="Flaw name">
+              <input class="f-input" type="text" id="flaw1name" placeholder="Flaw name">
               <div class="flaw-trigger-label">TRIGGER</div>
-              <input class="f-input" type="text" placeholder="What causes it">
+              <input class="f-input" type="text" id="flaw1trigger" placeholder="What causes it">
               <div class="flaw-trigger-label">EFFECT</div>
-              <input class="f-input" type="text" placeholder="Mechanical / narrative effect">
+              <input class="f-input" type="text" id="flaw1effect" placeholder="Mechanical / narrative effect">
             </div>
             <div class="flaw-slot">
               <div class="flaw-slot-num">EMOTIONAL FLAW 02</div>
-              <input class="f-input" type="text" placeholder="Flaw name">
+              <input class="f-input" type="text" id="flaw2name" placeholder="Flaw name">
               <div class="flaw-trigger-label">TRIGGER</div>
-              <input class="f-input" type="text" placeholder="What causes it">
+              <input class="f-input" type="text" id="flaw2trigger" placeholder="What causes it">
               <div class="flaw-trigger-label">EFFECT</div>
-              <input class="f-input" type="text" placeholder="Mechanical / narrative effect">
+              <input class="f-input" type="text" id="flaw2effect" placeholder="Mechanical / narrative effect">
             </div>
           </div>
         </div>
 
-      </div>
+      </div><!-- /right col -->
     </div><!-- /two-col -->
 
   </div><!-- /sheet -->
-
   <div class="sheet-footer">
     <span>UGD // SPIKE: THE REEVES TRIALS // DOC 14-C // PAGE 1 OF 2</span>
     <span>■ CLASSIFIED // AUTHORIZED PERSONNEL ONLY ■</span>
   </div>
-
-</div><!-- /page1 -->
+</div><!-- /page0 -->
 
 <!-- ══════════════════════════════════════
      PAGE 1 — FIELD NOTES
 ══════════════════════════════════════ -->
 <div class="page" id="page1">
-
   <div class="doc-header">
     <div class="dh-org">UNITED GLOBAL DIRECTORATE<br>FIELD NOTES // DOC 14-C</div>
     <div class="dh-center">
@@ -1763,83 +917,52 @@ body::after {
     </div>
     <div class="dh-org" style="text-align:right;">DOC 14-C<br>PAGE 2 OF 2</div>
   </div>
-
   <div class="sheet">
 
     <div class="section-label">OPERATIVE &amp; PARTY</div>
     <div class="notes-grid" style="margin-bottom:10px;">
-      <div class="note-block tall">
-        <div class="note-head">OPERATIVE BACKGROUND / HISTORY</div>
-        <textarea class="note-area" placeholder="Background, history, pre-Reset life, significant events..."></textarea>
-      </div>
-      <div class="note-block tall">
-        <div class="note-head">PARTY MEMBERS</div>
-        <textarea class="note-area" placeholder="Names, callsigns, roles, notes on relationships..."></textarea>
-      </div>
+      <div class="note-block tall"><div class="note-head">OPERATIVE BACKGROUND / HISTORY</div><textarea class="note-area" placeholder="Background, history, pre-Reset life, significant events..."></textarea></div>
+      <div class="note-block tall"><div class="note-head">PARTY MEMBERS</div><textarea class="note-area" placeholder="Names, callsigns, roles, notes on relationships..."></textarea></div>
     </div>
 
     <div class="section-label">CONTACTS &amp; FACTIONS</div>
     <div class="notes-grid" style="margin-bottom:10px;">
-      <div class="note-block">
-        <div class="note-head">KNOWN CONTACTS</div>
-        <textarea class="note-area" placeholder="Names, affiliations, disposition toward party..."></textarea>
-      </div>
-      <div class="note-block">
-        <div class="note-head">FACTIONS &amp; ORGANIZATIONS</div>
-        <textarea class="note-area" placeholder="Known groups, their goals, your standing with them..."></textarea>
-      </div>
+      <div class="note-block"><div class="note-head">KNOWN CONTACTS</div><textarea class="note-area" placeholder="Names, affiliations, disposition toward party..."></textarea></div>
+      <div class="note-block"><div class="note-head">FACTIONS &amp; ORGANIZATIONS</div><textarea class="note-area" placeholder="Known groups, their goals, your standing with them..."></textarea></div>
     </div>
 
     <div class="section-label">LOCATIONS</div>
     <div class="notes-grid" style="margin-bottom:10px;">
-      <div class="note-block full">
-        <div class="note-head">DISCOVERED &amp; VISITED LOCATIONS</div>
-        <textarea class="note-area" style="min-height:80px;" placeholder="RE-01 areas accessed, notable features, hazards, persons encountered on-site..."></textarea>
-      </div>
+      <div class="note-block full"><div class="note-head">DISCOVERED &amp; VISITED LOCATIONS</div><textarea class="note-area" style="min-height:80px;" placeholder="RE-01 areas accessed, notable features, hazards, persons encountered on-site..."></textarea></div>
     </div>
 
     <div class="section-label">INTELLIGENCE &amp; EVIDENCE</div>
     <div class="notes-grid" style="margin-bottom:10px;">
-      <div class="note-block">
-        <div class="note-head">RESEARCH LOGS &amp; DOCUMENTS</div>
-        <textarea class="note-area" placeholder="Recovered documents, log entries, data, findings..."></textarea>
-      </div>
-      <div class="note-block">
-        <div class="note-head">EVIDENCE &amp; ITEMS</div>
-        <textarea class="note-area" placeholder="Physical evidence, equipment, anomalous objects..."></textarea>
-      </div>
+      <div class="note-block"><div class="note-head">RESEARCH LOGS &amp; DOCUMENTS</div><textarea class="note-area" placeholder="Recovered documents, log entries, data, findings..."></textarea></div>
+      <div class="note-block"><div class="note-head">EVIDENCE &amp; ITEMS</div><textarea class="note-area" placeholder="Physical evidence, equipment, anomalous objects..."></textarea></div>
     </div>
 
     <div class="section-label">SPIKE EVENTS</div>
     <div class="notes-grid" style="margin-bottom:10px;">
-      <div class="note-block full">
-        <div class="note-head">NOTABLE SPIKE EVENTS</div>
-        <textarea class="note-area" style="min-height:80px;" placeholder="Significant SPIKE escalations, triggers, behaviors, outcomes — yours and observed..."></textarea>
-      </div>
+      <div class="note-block full"><div class="note-head">NOTABLE SPIKE EVENTS</div><textarea class="note-area" style="min-height:80px;" placeholder="Significant SPIKE escalations, triggers, behaviors, outcomes — yours and observed..."></textarea></div>
     </div>
 
     <div class="section-label">OPEN QUESTIONS &amp; THREADS</div>
     <div class="notes-grid">
-      <div class="note-block full xtall">
-        <div class="note-head">UNANSWERED QUESTIONS / LOOSE THREADS</div>
-        <textarea class="note-area" style="min-height:120px;" placeholder="What don't you know? What doesn't add up? What needs following up?"></textarea>
-      </div>
+      <div class="note-block full xtall"><div class="note-head">UNANSWERED QUESTIONS / LOOSE THREADS</div><textarea class="note-area" style="min-height:120px;" placeholder="What don't you know? What doesn't add up? What needs following up?"></textarea></div>
     </div>
 
   </div><!-- /sheet -->
-
   <div class="sheet-footer">
     <span>UGD // SPIKE: THE REEVES TRIALS // DOC 14-C // PAGE 2 OF 2</span>
     <span>■ CLASSIFIED // AUTHORIZED PERSONNEL ONLY ■</span>
   </div>
-
-</div><!-- /page2 field notes -->
+</div><!-- /page1 -->
 
 <!-- ══════════════════════════════════════
      PAGE 2 — REQUISITION GUIDE
 ══════════════════════════════════════ -->
 <div class="page" id="page2">
-
   <div class="doc-header">
     <div class="dh-org">UNITED GLOBAL DIRECTORATE<br>FIELD OPERATIONS // DIV IV</div>
     <div class="dh-center">
@@ -1848,125 +971,64 @@ body::after {
     </div>
     <div class="dh-org" style="text-align:right;">DOC 14-C<br>REQUISITION REF</div>
   </div>
-
   <div class="sheet">
 
-    <!-- WEAPONS -->
     <div class="section-label">WEAPONS <span>TWO LIGHT — OR — STANDARD + KNIFE — OR — ONE HEAVY</span></div>
-
     <div class="loadout-upload-hint" style="margin-bottom:14px;">
       ■ WEAPON ALLOWANCE // Select one package: <strong>two light weapons</strong> (e.g. pistol + knife) &nbsp;|&nbsp; <strong>one standard weapon + knife</strong> &nbsp;|&nbsp; <strong>one heavy weapon only</strong> (no second weapon)
     </div>
 
     <div class="cg-grid" style="margin-bottom:18px;">
-
       <div class="cg-panel">
         <div class="cg-panel-title">LIGHT WEAPONS &nbsp;// &nbsp;+0 TO DAMAGE</div>
-        <p>Concealable, fast, mobile. Light weapons deal damage equal to the margin of success only — no modifier. Best suited for operatives who value speed and concealment over stopping power.</p>
-        <div class="std-equip-block" style="margin-bottom:0; background:transparent; border:none; padding:0; gap:6px; margin-top:8px;">
-          <div style="display:flex;flex-wrap:wrap;gap:5px;">
-            <span class="std-equip-item">KNIFE</span>
-            <span class="std-equip-item">PISTOL</span>
-          </div>
+        <p>Concealable, fast, mobile. Light weapons deal damage equal to the margin of success only — no modifier.</p>
+        <div style="display:flex;flex-wrap:wrap;gap:5px;margin-top:8px;">
+          <span class="std-equip-item">KNIFE</span>
+          <span class="std-equip-item">PISTOL</span>
         </div>
       </div>
-
       <div class="cg-panel hi">
         <div class="cg-panel-title hi">STANDARD WEAPONS &nbsp;// &nbsp;+2 TO DAMAGE</div>
-        <p>Reliable operational weapons. Damage equals margin of success + 2. The default field choice — balanced between mobility and lethality.</p>
-        <div class="std-equip-block" style="margin-bottom:0; background:transparent; border:none; padding:0; gap:6px; margin-top:8px;">
-          <div style="display:flex;flex-wrap:wrap;gap:5px;">
-            <span class="std-equip-item">RIFLE</span>
-          </div>
+        <p>Reliable operational weapons. Damage equals margin of success + 2. Balanced between mobility and lethality.</p>
+        <div style="display:flex;flex-wrap:wrap;gap:5px;margin-top:8px;">
+          <span class="std-equip-item">RIFLE</span>
         </div>
       </div>
-
       <div class="cg-panel red">
         <div class="cg-panel-title red">HEAVY WEAPONS &nbsp;// &nbsp;+4 TO DAMAGE</div>
         <p>Slow, dangerous, high-impact. Damage equals margin of success + 4. Cannot move and attack in the same turn.</p>
-        <div class="std-equip-block" style="margin-bottom:0; background:transparent; border:none; padding:0; gap:6px; margin-top:8px;">
-          <div style="display:flex;flex-wrap:wrap;gap:5px;">
-            <span class="std-equip-item">SHOTGUN <span style="font-size:9px;color:var(--amber);font-family:'Share Tech Mono',monospace;letter-spacing:.08em;">CLOSE / NEAR ONLY</span></span>
-            <span class="std-equip-item">SNIPER RIFLE</span>
-          </div>
+        <div style="display:flex;flex-wrap:wrap;gap:5px;margin-top:8px;">
+          <span class="std-equip-item">SHOTGUN <span style="font-size:9px;color:var(--amber);font-family:'Share Tech Mono',monospace;letter-spacing:.08em;">CLOSE / NEAR ONLY</span></span>
+          <span class="std-equip-item">SNIPER RIFLE</span>
         </div>
-        <p style="font-size:12px;color:var(--text-dim);margin-top:8px;margin-bottom:0;">The shotgun is Heavy (+4) but limited to CLOSE and NEAR range. All other heavy weapons operate at FAR.</p>
+        <p style="font-size:12px;color:var(--text-dim);margin-top:8px;margin-bottom:0;">The shotgun is Heavy (+4) but limited to CLOSE and NEAR range.</p>
       </div>
-
     </div>
 
-    <!-- ARMOR -->
     <div class="section-label">ARMOR <span>SELECT ONE — RECORD ON PAGE 1</span></div>
-
     <div class="cg-grid" style="margin-bottom:18px;">
-
-      <div class="cg-panel">
-        <div class="cg-panel-title">LIGHT ARMOR &nbsp;// &nbsp;−2 DAMAGE RECEIVED</div>
-        <p>Soft-plate concealed armor. Reduces all incoming damage by 2. No penalties to movement or skill checks.</p>
-      </div>
-
-      <div class="cg-panel amber">
-        <div class="cg-panel-title amber">MEDIUM ARMOR &nbsp;// &nbsp;−4 DAMAGE RECEIVED</div>
-        <p>Tactical hard-plate carrier. Reduces all incoming damage by 4. Imposes <strong>−1 to Mobility checks</strong> due to encumbrance.</p>
-      </div>
-
-      <div class="cg-panel red">
-        <div class="cg-panel-title red">HEAVY ARMOR &nbsp;// &nbsp;−6 DAMAGE RECEIVED</div>
-        <p>Full tactical rig. Reduces all incoming damage by 6. Imposes <strong>−1 to Mobility checks</strong> and <strong>−1 to AWARENESS checks</strong>. Extended movement costs +1 COMPOSURE instead of the standard rule.</p>
-      </div>
-
+      <div class="cg-panel"><div class="cg-panel-title">LIGHT ARMOR &nbsp;// &nbsp;−2 DAMAGE RECEIVED</div><p>Soft-plate concealed armor. Reduces all incoming damage by 2. No penalties to movement or skill checks.</p></div>
+      <div class="cg-panel amber"><div class="cg-panel-title amber">MEDIUM ARMOR &nbsp;// &nbsp;−4 DAMAGE RECEIVED</div><p>Tactical hard-plate carrier. Reduces all incoming damage by 4. Imposes <strong>−1 to Mobility checks</strong> due to encumbrance.</p></div>
+      <div class="cg-panel red"><div class="cg-panel-title red">HEAVY ARMOR &nbsp;// &nbsp;−6 DAMAGE RECEIVED</div><p>Full tactical rig. Reduces all incoming damage by 6. Imposes <strong>−1 to Mobility checks</strong> and <strong>−1 to AWARENESS checks</strong>. Extended movement costs +1 COMPOSURE.</p></div>
     </div>
 
-    <!-- FIELD EQUIPMENT -->
     <div class="section-label">FIELD EQUIPMENT <span>SELECT UP TO 3 ADDITIONAL ITEMS — RECORD ON PAGE 1</span></div>
-
     <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:18px;">
-
-      <div class="cg-panel">
-        <div class="cg-panel-title">MEDKIT</div>
-        <p>Full trauma kit. On use: roll <strong>d10 + BODY</strong> — the result is the number of HP restored to the target. Requires an Action. Single use per kit.</p>
-      </div>
-
-      <div class="cg-panel">
-        <div class="cg-panel-title">BANDAGES</div>
-        <p>Basic wound dressing. Stabilises a downed operative (brings them to 1 HP). No roll required. Requires a Minor Action. Does not restore HP beyond stabilisation.</p>
-      </div>
-
-      <div class="cg-panel">
-        <div class="cg-panel-title">HACKING KIT</div>
-        <p>Portable intrusion hardware. Required for Computing checks against secured electronic systems, terminals, and locked doors. Without a kit, such checks cannot be attempted.</p>
-      </div>
-
-      <div class="cg-panel">
-        <div class="cg-panel-title">FLASHBANG</div>
-        <p>Disorientation grenade. On use: all targets in CLOSE range must make a <strong>d10 + AWARENESS vs TN 11</strong> check or suffer Disadvantage on all rolls until the end of their next turn. Requires an Action. Single use.</p>
-      </div>
-
-      <div class="cg-panel">
-        <div class="cg-panel-title">BREACH CHARGE &nbsp;<span style="color:var(--green);font-weight:400;">× 3 PER PACK</span></div>
-        <p>Shaped explosive for forced entry. Destroys a standard door, wall section, or lock. Requires an Action to place and a Minor Action to detonate. Can be set on a delay. Issued as a pack of three charges.</p>
-      </div>
-
-      <div class="cg-panel">
-        <div class="cg-panel-title">HANDCUFFS</div>
-        <p>Restraint device. A restrained target cannot take physical actions. Applying requires a successful <strong>Close Combat check vs TN 9</strong> on an incapacitated or willing target.</p>
-      </div>
-
-      <div class="cg-panel amber">
-        <div class="cg-panel-title amber">SPIKE WAND</div>
-        <p>Civilian-grade SPIKE diagnostic device. Reads the SPIKE level of a target at CLOSE or NEAR range. Requires a Minor Action. All UGD operatives carry a subcutaneous implant that reads their own level continuously — this wand is for evaluating others in the field when your implant's close-range scan is insufficient.</p>
-      </div>
-
+      <div class="cg-panel"><div class="cg-panel-title">MEDKIT</div><p>Full trauma kit. On use: roll <strong>d10 + BODY</strong> — the result is the number of HP restored to the target. Requires an Action. Single use per kit.</p></div>
+      <div class="cg-panel"><div class="cg-panel-title">BANDAGES</div><p>Basic wound dressing. Stabilises a downed operative (brings them to 1 HP). No roll required. Requires a Minor Action. Does not restore HP beyond stabilisation.</p></div>
+      <div class="cg-panel"><div class="cg-panel-title">HACKING KIT</div><p>Portable intrusion hardware. Required for Computing checks against secured electronic systems, terminals, and locked doors. Without a kit, such checks cannot be attempted.</p></div>
+      <div class="cg-panel"><div class="cg-panel-title">FLASHBANG</div><p>Disorientation grenade. On use: all targets in CLOSE range must make a <strong>d10 + AWARENESS vs TN 11</strong> check or suffer Disadvantage on all rolls until the end of their next turn. Requires an Action. Single use.</p></div>
+      <div class="cg-panel"><div class="cg-panel-title">BREACH CHARGE &nbsp;<span style="color:var(--green);font-weight:400;">× 3 PER PACK</span></div><p>Shaped explosive for forced entry. Destroys a standard door, wall section, or lock. Requires an Action to place and a Minor Action to detonate. Issued as a pack of three charges.</p></div>
+      <div class="cg-panel"><div class="cg-panel-title">HANDCUFFS</div><p>Restraint device. A restrained target cannot take physical actions. Applying requires a successful <strong>Close Combat check vs TN 9</strong> on an incapacitated or willing target.</p></div>
+      <div class="cg-panel amber"><div class="cg-panel-title amber">SPIKE WAND</div><p>Civilian-grade SPIKE diagnostic device. Reads the SPIKE level of a target at CLOSE or NEAR range. Requires a Minor Action. All operatives carry a subcutaneous implant — this wand is for evaluating others when your implant's close-range scan is insufficient.</p></div>
     </div>
 
   </div><!-- /sheet -->
-
   <div class="sheet-footer">
     <span>UGD // SPIKE: THE REEVES TRIALS // DOC 14-C // REQUISITION CATALOGUE</span>
     <span>■ CLASSIFIED // AUTHORIZED PERSONNEL ONLY ■</span>
   </div>
-
-</div><!-- /page2 requisition -->
+</div><!-- /page2 -->
 
 <!-- SAVE / LOAD TOOLBAR -->
 <div class="save-toolbar">
@@ -1974,12 +1036,93 @@ body::after {
   <button class="save-btn" onclick="saveToFile()">↓ SAVE JSON</button>
   <button class="save-btn load-btn" onclick="document.getElementById('loadInput').click()">↑ LOAD JSON</button>
   <input type="file" id="loadInput" accept=".json" style="display:none" onchange="loadFromFile(event)">
-  <button class="save-btn reset-btn" onclick="resetSheet()">✕ RESET</button>
+  <button class="save-btn reset-btn" onclick="openResetModal()">✕ RESET</button>
   <span class="save-status" id="saveStatus">UNSAVED</span>
 </div>
 
+<!-- RESET CONFIRMATION MODAL -->
+<div class="reset-modal-overlay" id="resetModalOverlay" style="display:none;">
+  <div class="reset-modal">
+    <div class="reset-modal-title">■ RESET DOSSIER</div>
+    <div class="reset-modal-msg">All field data will be cleared and cannot be recovered. Any unsaved changes will be lost.</div>
+    <div class="reset-modal-btns">
+      <button class="save-btn reset-btn" onclick="executeReset()">CONFIRM RESET</button>
+      <button class="save-btn load-btn" onclick="closeResetModal()">CANCEL</button>
+    </div>
+  </div>
+</div>
+
 <script>
-// ── ATTRIBUTES ──────────────────────────────────────────────────
+// ── WEAPON CATALOG ───────────────────────────────────────────────
+const WEAPON_CATALOG = {
+  '':             { cls: '',              range: '' },
+  'Knife':        { cls: 'Light (+0)',    range: 'CLOSE' },
+  'Pistol':       { cls: 'Light (+0)',    range: 'NEAR'  },
+  'Rifle':        { cls: 'Standard (+2)', range: 'FAR'   },
+  'Shotgun':      { cls: 'Heavy (+4)',    range: 'CLOSE/NEAR' },
+  'Sniper Rifle': { cls: 'Heavy (+4)',    range: 'FAR'   },
+};
+
+const ARMOR_VALUES = {
+  '': '0',
+  'Light (−2 dmg)': '2',
+  'Medium (−4 dmg, −1 Mob)': '4',
+  'Heavy (−6 dmg, −1 Mob)': '6',
+};
+
+// ── TOKEN COLORS ─────────────────────────────────────────────────
+const TOKEN_COLORS = [
+  { hex: '#1e8896', name: 'TEAL'   },
+  { hex: '#7a9a28', name: 'OLIVE'  },
+  { hex: '#b87820', name: 'AMBER'  },
+  { hex: '#8c68c0', name: 'VIOLET' },
+  { hex: '#3878b8', name: 'COBALT' },
+  { hex: '#c07030', name: 'COPPER' },
+];
+let currentTokenColor = '#1e8896';
+
+function buildTokenSwatches() {
+  const container = document.getElementById('tokenSwatches');
+  if (!container) return;
+  container.innerHTML = '';
+  TOKEN_COLORS.forEach(({ hex, name }) => {
+    const sw = document.createElement('div');
+    sw.className = 'token-swatch' + (hex === currentTokenColor ? ' selected' : '');
+    sw.style.background = hex;
+    sw.title = name;
+    sw.onclick = () => {
+      currentTokenColor = hex;
+      buildTokenSwatches();
+      updateTokenLabel();
+      markUnsaved();
+    };
+    container.appendChild(sw);
+  });
+}
+
+function updateTokenLabel() {
+  const el = document.getElementById('tokenColorName');
+  const found = TOKEN_COLORS.find(c => c.hex === currentTokenColor);
+  if (el) el.textContent = found ? found.name : currentTokenColor.toUpperCase();
+}
+
+// ── LOADOUT AUTO-FILL ────────────────────────────────────────────
+function autoWeapon(slot) {
+  const name = document.getElementById(slot + 'name').value;
+  const data = WEAPON_CATALOG[name] || { cls: '', range: '' };
+  const clsEl = document.getElementById(slot + 'class');
+  const rngEl = document.getElementById(slot + 'range');
+  if (clsEl) clsEl.value = data.cls;
+  if (rngEl) rngEl.value = data.range;
+}
+
+function autoArmorValue() {
+  const type = document.getElementById('armorType').value;
+  const el = document.getElementById('armorValue');
+  if (el) el.value = ARMOR_VALUES[type] ?? '0';
+}
+
+// ── ATTRIBUTES ───────────────────────────────────────────────────
 const ATTRS = ['BODY','MIND','TECH','AWARENESS','RESOLVE'];
 const attrVals = [0,0,0,0,0];
 
@@ -1997,6 +1140,7 @@ function buildAttrs() {
     row.appendChild(box);
     buildDots(i);
   });
+  validateAttrs();
 }
 
 function buildDots(i) {
@@ -2016,9 +1160,23 @@ function setAttr(i, val) {
   document.getElementById(`val-${i}`).textContent = attrVals[i];
   updateHP();
   updateComp();
+  validateAttrs();
 }
 
-// ── VITALS ──────────────────────────────────────────────────────
+function validateAttrs() {
+  const sum = attrVals.reduce((a, b) => a + b, 0);
+  const overCap = attrVals.some(v => v > 3);
+  const el = document.getElementById('attrBudget');
+  if (!el) return;
+  el.textContent = `${sum} / 11 PTS`;
+  el.style.color = overCap || sum > 11
+    ? 'var(--red-bright)'
+    : sum === 11
+      ? 'var(--green)'
+      : 'var(--text-dim)';
+}
+
+// ── VITALS ───────────────────────────────────────────────────────
 function getHPMax()   { return 10 + attrVals[0]; }
 function getCompMax() { return 5  + attrVals[4]; }
 
@@ -2060,28 +1218,7 @@ function updateComp() {
   onCompChange();
 }
 
-// ── SKILLS ──────────────────────────────────────────────────────
-// ── TOKEN COLOR ─────────────────────────────────────────────────────────────
-const TOKEN_COLOR_NAMES = {
-  '#1e8896': 'TEAL', '#7a9a28': 'OLIVE', '#b87820': 'AMBER',
-  '#8c68c0': 'VIOLET', '#3878b8': 'COBALT', '#c07030': 'COPPER',
-};
-let selectedTokenColor = '#1e8896';
-
-function initTokenColorPicker() {
-  document.querySelectorAll('.token-swatch').forEach(sw => {
-    if (sw.dataset.color === selectedTokenColor) sw.classList.add('selected');
-    sw.addEventListener('click', () => {
-      document.querySelectorAll('.token-swatch').forEach(s => s.classList.remove('selected'));
-      sw.classList.add('selected');
-      selectedTokenColor = sw.dataset.color;
-      document.getElementById('tokenColorLabel').textContent = TOKEN_COLOR_NAMES[selectedTokenColor] ?? selectedTokenColor;
-      autoSave();
-    });
-  });
-  document.getElementById('tokenColorLabel').textContent = TOKEN_COLOR_NAMES[selectedTokenColor] ?? selectedTokenColor;
-}
-
+// ── SKILLS ───────────────────────────────────────────────────────
 const SKILLS = [
   { name: 'Firearms',      attr: 'AWARENESS', group: 'COMBAT'    },
   { name: 'Close Combat',  attr: 'BODY',      group: 'COMBAT'    },
@@ -2097,7 +1234,6 @@ const SKILLS = [
   { name: 'Persuasion',    attr: 'MIND',      group: 'SOCIAL'    },
   { name: 'Intimidation',  attr: 'RESOLVE',   group: 'SOCIAL'    },
 ];
-
 const skillState = new Array(SKILLS.length).fill(0);
 
 function buildSkills() {
@@ -2119,30 +1255,25 @@ function buildSkills() {
       <div class="sk-name">${sk.name}</div>
       <div class="sk-attr">${sk.attr}</div>
       <div class="sk-bonus">${skillState[i] === 0 ? '—' : skillState[i] === 1 ? '+2' : '+3'}</div>`;
-    row.onclick = () => {
-      skillState[i] = (skillState[i] + 1) % 3;
-      buildSkills();
-    };
+    row.onclick = () => { skillState[i] = (skillState[i] + 1) % 3; buildSkills(); };
     list.appendChild(row);
   });
 }
 
-// ── SPIKE SCALE ─────────────────────────────────────────────────
-// SPIKE 0: Baseline only — no mechanical bonus. The bonus (+1 TECH) has been removed
-// as it does not appear in the GM-facing tools and risks confusing the threat/reward framing.
+// ── SPIKE SCALE ──────────────────────────────────────────────────
 const SPIKE_DATA = [
-  { val: 0,  cls: 'active-0',  label: '0 — SERENE',    effect: 'Baseline. No mechanical effect. The ideal operative state.' },
-  { val: 1,  cls: 'active-12', label: '1 — STABLE',    effect: 'No mechanical effect. Nominal baseline.' },
-  { val: 2,  cls: 'active-12', label: '2 — STABLE',    effect: 'No mechanical effect. Nominal baseline.' },
-  { val: 3,  cls: 'active-35', label: '3 — SHAKEN',    effect: '−1 to all MIND rolls. SPIKE Save required when triggered: d20 + RESOLVE vs TN 9. Success holds your level; failure raises SPIKE by 1.' },
-  { val: 4,  cls: 'active-35', label: '4 — SHAKEN',    effect: '−1 to all MIND rolls. SPIKE Save required when triggered: d20 + RESOLVE vs TN 9. Success holds your level; failure raises SPIKE by 1.' },
-  { val: 5,  cls: 'active-35', label: '5 — SHAKEN',    effect: '−1 to all MIND rolls. SPIKE Save required when triggered: d20 + RESOLVE vs TN 9. Success holds your level; failure raises SPIKE by 1.' },
-  { val: 6,  cls: 'active-67', label: '6 — CRACKED',   effect: '−1 to MIND and RESOLVE. Hallucinations possible. Save required when triggered: d20 + RESOLVE vs TN 9. Success holds; failure raises SPIKE by 1.' },
-  { val: 7,  cls: 'active-67', label: '7 — CRACKED',   effect: '−1 to MIND and RESOLVE. Hallucinations possible. Save required when triggered: d20 + RESOLVE vs TN 9. Success holds; failure raises SPIKE by 1.' },
+  { val: 0,  cls: 'active-0',  label: '0 — SERENE',     effect: 'Baseline. No mechanical effect. The ideal operative state.' },
+  { val: 1,  cls: 'active-12', label: '1 — STABLE',     effect: 'No mechanical effect. Nominal baseline.' },
+  { val: 2,  cls: 'active-12', label: '2 — STABLE',     effect: 'No mechanical effect. Nominal baseline.' },
+  { val: 3,  cls: 'active-35', label: '3 — SHAKEN',     effect: '−1 to all MIND rolls. SPIKE Save required when triggered: d20 + RESOLVE vs TN 9. Success holds your level; failure raises SPIKE by 1.' },
+  { val: 4,  cls: 'active-35', label: '4 — SHAKEN',     effect: '−1 to all MIND rolls. SPIKE Save required when triggered: d20 + RESOLVE vs TN 9. Success holds your level; failure raises SPIKE by 1.' },
+  { val: 5,  cls: 'active-35', label: '5 — SHAKEN',     effect: '−1 to all MIND rolls. SPIKE Save required when triggered: d20 + RESOLVE vs TN 9. Success holds your level; failure raises SPIKE by 1.' },
+  { val: 6,  cls: 'active-67', label: '6 — CRACKED',    effect: '−1 to MIND and RESOLVE. Hallucinations possible. Save required when triggered: d20 + RESOLVE vs TN 9. Success holds; failure raises SPIKE by 1.' },
+  { val: 7,  cls: 'active-67', label: '7 — CRACKED',    effect: '−1 to MIND and RESOLVE. Hallucinations possible. Save required when triggered: d20 + RESOLVE vs TN 9. Success holds; failure raises SPIKE by 1.' },
   { val: 8,  cls: 'active-89', label: '8 — OVERLOADED', effect: 'Disadvantage on all social checks. Operative unreasonable in roleplay. SPIKE Save required when triggered and once per hour of sustained exposure: d20 + RESOLVE vs TN 9.' },
   { val: 9,  cls: 'active-89', label: '9 — OVERLOADED', effect: 'Disadvantage on all social checks. Operative unreasonable in roleplay. SPIKE Save required when triggered and once per hour of sustained exposure: d20 + RESOLVE vs TN 9.' },
-  { val: 10, cls: 'active-10', label: '10 — SPIKED',   effect: 'Loss of character control. Roll Behavior Table (d20) at start of each turn. End of turn: d20 + RESOLVE vs TN 16. Nat 20: SPIKE −2. Nat 1: SPIKE +1.' },
-  { val: 11, cls: 'active-11', label: '11 — CONSUMED', effect: '1d4 True Damage per turn until HP 0. Then 1d4 RESOLVE damage per turn until 0. Death follows. End of turn: d20 + RESOLVE vs TN 18. Nat 1: damage rolls at Advantage.' },
+  { val: 10, cls: 'active-10', label: '10 — SPIKED',    effect: 'Loss of character control. Roll Behavior Table (d20) at start of each turn. End of turn: d20 + RESOLVE vs TN 16. Nat 20: SPIKE −2. Nat 1: SPIKE +1.' },
+  { val: 11, cls: 'active-11', label: '11 — CONSUMED',  effect: '1d4 True Damage per turn until HP 0. Then 1d4 RESOLVE damage per turn until 0. Death follows. End of turn: d20 + RESOLVE vs TN 18. Nat 1: damage rolls at Advantage.' },
 ];
 
 let currentSpike = 0;
@@ -2151,13 +1282,13 @@ let reactionPips = [false, false];
 function toggleReactionPip(idx) {
   reactionPips[idx] = !reactionPips[idx];
   renderReactionPips();
-  autoSave();
+  markUnsaved();
 }
 
 function resetReactionPips() {
   reactionPips = [false, false];
   renderReactionPips();
-  autoSave();
+  markUnsaved();
 }
 
 function renderReactionPips() {
@@ -2182,22 +1313,20 @@ function buildSpikeTrack() {
     pip.className = 'spike-pip' + (i <= currentSpike ? ' ' + SPIKE_DATA[i].cls : '');
     pip.textContent = sp.val;
     pip.onclick = () => {
-      currentSpike = currentSpike === i ? -1 : i;
-      if (currentSpike < 0) currentSpike = 0;
+      currentSpike = currentSpike === i ? 0 : i;
       updateSpike();
     };
     track.appendChild(pip);
   });
-  document.getElementById('spikeLevelName').textContent = SPIKE_DATA[currentSpike].label;
-  document.getElementById('spikeEffect').textContent = SPIKE_DATA[currentSpike].effect;
-
   const colors = ['#5a9a5a','#7ab07a','#7ab07a','#c8b840','#c8b840','#c8b840','#c87820','#c87820','#d04820','#d04820','#c03030','#9a1010'];
+  document.getElementById('spikeLevelName').textContent = SPIKE_DATA[currentSpike].label;
   document.getElementById('spikeLevelName').style.color = colors[currentSpike];
+  document.getElementById('spikeEffect').textContent = SPIKE_DATA[currentSpike].effect;
 }
 
 function updateSpike() { buildSpikeTrack(); }
 
-// ── PAGE TABS ───────────────────────────────────────────────────
+// ── PAGE TABS ────────────────────────────────────────────────────
 function switchTab(n) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
@@ -2205,7 +1334,7 @@ function switchTab(n) {
   document.querySelectorAll('.tab')[n].classList.add('active');
 }
 
-// ── LOADOUT FIELD IDS ───────────────────────────────────────────
+// ── LOADOUT FIELD IDS ────────────────────────────────────────────
 const LOADOUT_FIELDS = ['w1name','w1class','w1range','w1notes','w2name','w2class','w2range','w2notes','armorType','armorValue','armorNotes','eq1','eq2','eq3'];
 
 function gatherLoadout() {
@@ -2225,16 +1354,29 @@ function applyLoadout(data) {
   });
 }
 
+// ── HELPERS ──────────────────────────────────────────────────────
+function gv(id) { return document.getElementById(id)?.value ?? ''; }
+function sv(id, val) { const el = document.getElementById(id); if (el && val !== undefined) el.value = val; }
+
 // ── SAVE / LOAD ──────────────────────────────────────────────────
 function gatherState() {
-  const inputs = [...document.querySelectorAll('input.f-input:not(#w1name):not(#w1notes):not(#w2name):not(#w2notes):not(#armorValue):not(#armorNotes):not(#eq1):not(#eq2):not(#eq3)')].map(el => el.value);
+  // Build inputs array in stable order (server reads [0]=name, [1]=callsign)
+  const inputs = [
+    gv('opName'), gv('opCallsign'), gv('opId'), gv('opOrigin'),
+    gv('trait1name'), gv('trait1effect'),
+    gv('trait2name'), gv('trait2effect'),
+    gv('trait3name'), gv('trait3effect'),
+    gv('trait4name'), gv('trait4effect'),
+    gv('trait5name'), gv('trait5effect'),
+    gv('trait6name'), gv('trait6effect'),
+    gv('flaw1name'), gv('flaw1trigger'), gv('flaw1effect'),
+    gv('flaw2name'), gv('flaw2trigger'), gv('flaw2effect'),
+  ];
   const textareas = [...document.querySelectorAll('textarea.note-area')].map(el => el.value);
-  const hpRange   = document.getElementById('hpRange');
-  const compRange = document.getElementById('compRange');
-
   return {
     version: 4,
     savedAt: new Date().toISOString(),
+    tokenColor: currentTokenColor,
     attrVals: [...attrVals],
     skillState: [...skillState],
     currentSpike,
@@ -2242,73 +1384,88 @@ function gatherState() {
     inputs,
     textareas,
     loadout: gatherLoadout(),
-    hpCurrent:  parseInt(hpRange.value),
-    hpMax:      parseInt(hpRange.max),
-    compCurrent: parseInt(compRange.value),
-    compMax:    parseInt(compRange.max),
-    tokenColor: selectedTokenColor,
+    hpCurrent:   parseInt(document.getElementById('hpRange').value),
+    hpMax:       parseInt(document.getElementById('hpRange').max),
+    compCurrent: parseInt(document.getElementById('compRange').value),
+    compMax:     parseInt(document.getElementById('compRange').max),
   };
 }
 
 function applyState(state) {
   if (!state) return;
 
-  state.attrVals.forEach((v, i) => { attrVals[i] = v; });
+  // Token color
+  currentTokenColor = state.tokenColor ?? '#1e8896';
+  buildTokenSwatches();
+  updateTokenLabel();
+
+  // Attributes
+  (state.attrVals || []).forEach((v, i) => { attrVals[i] = v; });
   buildAttrs();
   updateHP(); updateComp();
 
-  state.skillState.forEach((v, i) => { skillState[i] = v; });
+  // Skills
+  (state.skillState || []).forEach((v, i) => { skillState[i] = v; });
   buildSkills();
 
+  // SPIKE
   currentSpike = state.currentSpike ?? 0;
   buildSpikeTrack();
 
+  // Reactions
   reactionPips = state.reactionPips || [false, false];
   renderReactionPips();
 
-  // Loadout (version 3+)
-  if (state.loadout) applyLoadout(state.loadout);
-
-  // Token color (version 4+)
-  if (state.tokenColor && TOKEN_COLOR_NAMES[state.tokenColor]) {
-    selectedTokenColor = state.tokenColor;
-    document.querySelectorAll('.token-swatch').forEach(sw => {
-      sw.classList.toggle('selected', sw.dataset.color === selectedTokenColor);
-    });
-    document.getElementById('tokenColorLabel').textContent = TOKEN_COLOR_NAMES[selectedTokenColor];
-  }
-
-  // HP / Composure
+  // HP / Composure sliders
   const hpSlider   = document.getElementById('hpRange');
   const compSlider = document.getElementById('compRange');
-
   if (state.version >= 2) {
     hpSlider.value   = state.hpCurrent  ?? hpSlider.max;
     compSlider.value = state.compCurrent ?? compSlider.max;
-  } else if (state.hpFilled) {
-    hpSlider.value   = state.hpFilled.filter(Boolean).length;
-    compSlider.value = (state.compFilled || []).filter(Boolean).length;
   }
-  onHPChange();
-  onCompChange();
+  onHPChange(); onCompChange();
 
-  // Text inputs (excluding loadout fields which are handled separately)
-  const inputEls = [...document.querySelectorAll('input.f-input:not(#w1name):not(#w1notes):not(#w2name):not(#w2notes):not(#armorValue):not(#armorNotes):not(#eq1):not(#eq2):not(#eq3)')];
-  (state.inputs || []).forEach((val, i) => { if (inputEls[i]) inputEls[i].value = val; });
+  // Loadout
+  if (state.loadout) {
+    applyLoadout(state.loadout);
+    // Re-run auto-fill in case old saves had text values
+    autoWeapon('w1'); autoWeapon('w2'); autoArmorValue();
+  }
 
+  // Named text inputs (inputs array, stable order)
+  const inp = state.inputs || [];
+  sv('opName',      inp[0]);  sv('opCallsign',  inp[1]);
+  sv('opId',        inp[2]);  sv('opOrigin',    inp[3]);
+  sv('trait1name',  inp[4]);  sv('trait1effect', inp[5]);
+  sv('trait2name',  inp[6]);  sv('trait2effect', inp[7]);
+  sv('trait3name',  inp[8]);  sv('trait3effect', inp[9]);
+  sv('trait4name',  inp[10]); sv('trait4effect', inp[11]);
+  sv('trait5name',  inp[12]); sv('trait5effect', inp[13]);
+  sv('trait6name',  inp[14]); sv('trait6effect', inp[15]);
+  sv('flaw1name',   inp[16]); sv('flaw1trigger', inp[17]); sv('flaw1effect', inp[18]);
+  sv('flaw2name',   inp[19]); sv('flaw2trigger', inp[20]); sv('flaw2effect', inp[21]);
+
+  // Textareas
   const taEls = [...document.querySelectorAll('textarea.note-area')];
   (state.textareas || []).forEach((val, i) => { if (taEls[i]) taEls[i].value = val; });
 }
 
+// ── STATUS ───────────────────────────────────────────────────────
 function setStatus(msg, cls) {
   const el = document.getElementById('saveStatus');
   el.textContent = msg;
   el.className = 'save-status' + (cls ? ' ' + cls : '');
 }
 
+function markUnsaved() {
+  try { localStorage.setItem('spike_autosave', JSON.stringify(gatherState())); } catch(e) {}
+  setStatus('UNSAVED CHANGES', 'warn');
+}
+
+// ── FILE OPS ─────────────────────────────────────────────────────
 function saveToFile() {
   const state = gatherState();
-  const name = document.querySelector('input.f-input')?.value?.trim().replace(/\s+/g, '_') || 'operative';
+  const name = gv('opName').trim().replace(/\s+/g, '_') || 'operative';
   const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
@@ -2325,8 +1482,7 @@ function loadFromFile(evt) {
   const reader = new FileReader();
   reader.onload = e => {
     try {
-      const state = JSON.parse(e.target.result);
-      applyState(state);
+      applyState(JSON.parse(e.target.result));
       setStatus('LOADED // ' + file.name, 'ok');
     } catch(err) {
       setStatus('ERROR: INVALID FILE', 'warn');
@@ -2336,34 +1492,42 @@ function loadFromFile(evt) {
   evt.target.value = '';
 }
 
-function resetSheet() {
-  if (!confirm('RESET ALL FIELDS? This cannot be undone.')) return;
+// ── RESET MODAL ──────────────────────────────────────────────────
+function openResetModal()  { document.getElementById('resetModalOverlay').style.display = 'flex'; }
+function closeResetModal() { document.getElementById('resetModalOverlay').style.display = 'none'; }
+
+function executeReset() {
+  closeResetModal();
   attrVals.fill(0);
   skillState.fill(0);
   currentSpike = 0;
   reactionPips = [false, false];
+  currentTokenColor = '#1e8896';
   buildAttrs(); buildSkills(); buildSpikeTrack();
   updateHP(); updateComp();
   renderReactionPips();
+  buildTokenSwatches(); updateTokenLabel();
   const hpS = document.getElementById('hpRange');
   const cS  = document.getElementById('compRange');
   hpS.value = hpS.max; cS.value = cS.max;
   onHPChange(); onCompChange();
-  document.querySelectorAll('input.f-input').forEach(el => el.value = '');
-  LOADOUT_FIELDS.forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.value = '';
-  });
+  ['opName','opCallsign','opId','opOrigin',
+   'trait1name','trait1effect','trait2name','trait2effect',
+   'trait3name','trait3effect','trait4name','trait4effect',
+   'trait5name','trait5effect','trait6name','trait6effect',
+   'flaw1name','flaw1trigger','flaw1effect',
+   'flaw2name','flaw2trigger','flaw2effect',
+   'w1notes','w2notes','armorNotes'].forEach(id => sv(id, ''));
+  LOADOUT_FIELDS.forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+  // Re-apply auto-fill defaults after clearing
+  autoArmorValue();
   document.querySelectorAll('textarea.note-area').forEach(el => el.value = '');
   try { localStorage.removeItem('spike_autosave'); } catch(e) {}
   setStatus('RESET', 'warn');
 }
 
-// Auto-save on any change
-document.addEventListener('input', () => {
-  try { localStorage.setItem('spike_autosave', JSON.stringify(gatherState())); } catch(e) {}
-  setStatus('UNSAVED CHANGES', 'warn');
-});
+// Auto-save on any input change
+document.addEventListener('input', markUnsaved);
 
 // ── INIT ─────────────────────────────────────────────────────────
 buildAttrs();
@@ -2372,7 +1536,8 @@ buildSpikeTrack();
 updateHP();
 updateComp();
 renderReactionPips();
-initTokenColorPicker();
+buildTokenSwatches();
+updateTokenLabel();
 
 try {
   const saved = localStorage.getItem('spike_autosave');
