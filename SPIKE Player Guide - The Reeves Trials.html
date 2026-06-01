@@ -1095,7 +1095,7 @@ p, li, td, .step-text, .trait-fx, .flaw-body,
       <div class="step-body">
         <div class="step-label">CALCULATE VITALS</div>
         <div class="step-text">
-          <span class="mono">HP = 10 + BODY</span> &nbsp;&nbsp; <span class="mono">COMPOSURE = 5 + RESOLVE</span>
+          <span class="mono">HP = 15 + BODY</span> &nbsp;&nbsp; <span class="mono">COMPOSURE = 5 + RESOLVE</span>
         </div>
       </div>
     </div>
@@ -1144,7 +1144,11 @@ p, li, td, .step-text, .trait-fx, .flaw-body,
   <!-- Traits -->
   <div class="panel mbr">
     <div class="panel-title">TRAITS — GAINED THROUGH ADVANCEMENT // MAX 6</div>
-    <p style="font-size:14px;margin-bottom:14px;">Traits are passive abilities gained at milestones. Characters begin with none. No trait may be taken twice.</p>
+    <p style="font-size:14px;margin-bottom:8px;">Traits are passive abilities gained at milestones. Characters begin with none. No trait may be taken twice.</p>
+    <div class="panel red" style="margin-bottom:14px; background:rgba(0,0,0,.2);">
+      <div class="panel-title red">⚠ SESSION 1 RESTRICTION</div>
+      <p style="margin-bottom:0;">Traits are <strong>not selected at character creation</strong> and are not available in Session 1. They are earned through advancement milestones as the campaign progresses. Leave your trait slots blank until the GM signals a milestone.</p>
+    </div>
     <div class="g2">
       <div>
         <div class="trait-cat-head">// COMBAT</div>
@@ -1200,6 +1204,10 @@ p, li, td, .step-text, .trait-fx, .flaw-body,
     <p style="margin-bottom:8px;">Emotional Flaws are scars, acquired through play when a character suffers extreme trauma. They're <strong>roleplay-first</strong>, shaping how your operative carries what they've been through. The flaws below are examples; the GM and player may define others.</p>
     <p style="margin-bottom:8px;">A flaw is not a mechanical penalty with a name. It is a persistent lens through which the character processes stress — a pattern that formed under pressure and has not been dismantled. When a trigger situation arises, the character feels the pull of the flaw before they make any decision about it.</p>
     <p style="margin-bottom:12px;">Flaws are not chosen at creation — they are acquired during play. When a flaw triggers, you must declare whether you are <strong>leaning in</strong> or <strong>resisting</strong> before any dice are rolled. You cannot wait to see the outcome first.</p>
+    <div class="panel red" style="margin-bottom:14px; background:rgba(0,0,0,.2);">
+      <div class="panel-title red">⚠ SESSION 1 RESTRICTION</div>
+      <p style="margin-bottom:0;">Emotional Flaws are <strong>not assigned at character creation</strong> and do not apply in Session 1. They emerge through play when the GM determines that a character has experienced trauma significant enough to leave a mark. Flaw slots on your dossier begin empty.</p>
+    </div>
     <div class="g2" style="margin-bottom:14px;">
       <div class="panel" style="background:rgba(0,0,0,.25); border-left-color:var(--green-dim); margin-bottom:0;">
         <div class="panel-title">LEAN INTO IT</div>
@@ -1301,7 +1309,7 @@ p, li, td, .step-text, .trait-fx, .flaw-body,
   <div class="g2 mbr">
     <div class="inline-block">
       <div class="block-label">NATURAL 10 — CRITICAL SUCCESS</div>
-      In combat: base damage is <strong>doubled</strong> before the weapon modifier is added. On non-combat rolls: a significant narrative bonus at GM discretion.
+      In combat: damage is <strong>10 + (weapon modifier × 2)</strong> — flat critical damage, not dependent on margin. On non-combat rolls: a significant narrative bonus at GM discretion.
     </div>
     <div class="inline-block">
       <div class="block-label">NATURAL 1 — CRITICAL FAULT</div>
@@ -1379,9 +1387,9 @@ p, li, td, .step-text, .trait-fx, .flaw-body,
       <div>
         <div style="font-family:'Share Tech Mono',monospace; font-size:7.5px; letter-spacing:.16em; color:var(--text-dim); margin-bottom:6px;">ARMOR</div>
         <ul>
-          <li><strong>Light armor:</strong> −2 final damage, no penalty</li>
-          <li><strong>Medium armor:</strong> −4 final damage, −1 Mobility</li>
-          <li><strong>Heavy armor:</strong> −6 final damage, −1 Mobility, −1 AWARENESS. Extended movement costs +1 COMPOSURE.</li>
+          <li><strong>Light armor:</strong> −5 final damage, no penalty</li>
+          <li><strong>Medium armor:</strong> −7 final damage, −1 Mobility</li>
+          <li><strong>Heavy armor:</strong> −10 final damage, −1 Mobility, −1 AWARENESS. Extended movement costs +1 COMPOSURE.</li>
         </ul>
       </div>
     </div>
@@ -1678,15 +1686,15 @@ p, li, td, .step-text, .trait-fx, .flaw-body,
     <div class="panel-title">ARMOUR — SELECT ONE OR NONE</div>
     <div class="g3">
       <div class="inline-block">
-        <div class="block-label">LIGHT ARMOUR // −2 DAMAGE</div>
+        <div class="block-label">LIGHT ARMOUR // −5 DAMAGE</div>
         Soft-plate concealed armour. No movement or skill penalties.
       </div>
       <div class="inline-block">
-        <div class="block-label">MEDIUM ARMOUR // −4 DAMAGE</div>
+        <div class="block-label">MEDIUM ARMOUR // −7 DAMAGE</div>
         Tactical hard-plate carrier. <strong>−1 to all Mobility checks</strong>.
       </div>
       <div class="inline-block">
-        <div class="block-label">HEAVY ARMOUR // −6 DAMAGE</div>
+        <div class="block-label">HEAVY ARMOUR // −10 DAMAGE</div>
         Full tactical rig. <strong>−1 Mobility, −1 AWARENESS</strong>. Extended movement costs <strong>+1 COMPOSURE</strong>.
       </div>
     </div>

@@ -549,7 +549,7 @@ body::after {
         <div>
           <div class="cg-panel amber">
             <div class="cg-panel-title amber">VITALS &amp; SKILLS</div>
-            <p style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--text-hi);margin-bottom:6px;">HP = 10 + BODY &nbsp; | &nbsp; COMPOSURE = 5 + RESOLVE</p>
+            <p style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--text-hi);margin-bottom:6px;">HP = 15 + BODY &nbsp; | &nbsp; COMPOSURE = 5 + RESOLVE</p>
             <p>Choose <strong>3 skills</strong> at creation. Skills add +2 (Trained) or +3 (Specialized via advancement). Untrained: attribute only.</p>
             <p style="margin-bottom:0;font-size:12px;color:var(--text-dim);">Traits are gained through advancement (max 6). Emotional Flaws are acquired through play. Neither is chosen at creation.</p>
           </div>
@@ -644,7 +644,7 @@ body::after {
                 <span class="vital-cur" id="hpCur">10</span><span class="vital-sep">/</span><span class="vital-max-num" id="hpMaxDisplay">10</span>
               </div>
             </div>
-            <div class="vital-formula" id="hpFormula">10 + BODY (0)</div>
+            <div class="vital-formula" id="hpFormula">15 + BODY (0)</div>
             <input type="range" class="vital-range hp-range" id="hpRange" min="0" max="10" value="10" oninput="onHPChange()">
           </div>
           <div class="vital-box">
@@ -781,9 +781,9 @@ body::after {
                 <span class="field-label">ARMOR TYPE</span>
                 <select class="f-input" id="armorType" onchange="autoArmorValue()" style="appearance:none;cursor:pointer;font-size:13px;">
                   <option value="">— None</option>
-                  <option value="Light (−2 dmg)">Light (−2 dmg)</option>
-                  <option value="Medium (−4 dmg, −1 Mob)">Medium (−4 dmg, −1 Mob)</option>
-                  <option value="Heavy (−6 dmg, −1 Mob)">Heavy (−6 dmg, −1 Mob)</option>
+                  <option value="Light (−5 dmg)">Light (−5 dmg)</option>
+                  <option value="Medium (−7 dmg, −1 Mob)">Medium (−7 dmg, −1 Mob)</option>
+                  <option value="Heavy (−10 dmg, −1 Mob)">Heavy (−10 dmg, −1 Mob)</option>
                 </select>
               </div>
               <div>
@@ -861,7 +861,10 @@ body::after {
 
         <!-- TRAITS -->
         <div class="traits-section">
-          <div class="section-label">TRAITS <span>GAINED VIA ADVANCEMENT // MAX 6</span></div>
+          <div class="section-label">TRAITS <span>GAINED VIA ADVANCEMENT // MAX 6 // NOT AVAILABLE SESSION 1</span></div>
+          <div style="background:rgba(138,32,32,.07); border:1px solid rgba(138,32,32,.3); border-left:2px solid var(--red-bright); padding:7px 10px; margin-bottom:10px; font-family:'Share Tech Mono',monospace; font-size:7.5px; letter-spacing:.1em; color:var(--red-bright); line-height:1.6;">
+            ⚠ &nbsp;TRAITS ARE NOT SELECTED AT CREATION — LEAVE BLANK UNTIL A MILESTONE IS SIGNALED BY THE GM
+          </div>
           <div class="trait-slots">
             <div class="trait-slot"><div class="trait-slot-num">TRAIT 01</div><input class="f-input" type="text" id="trait1name" placeholder="Trait name"><div class="field-label" style="margin-top:6px;">EFFECT</div><input class="f-input" type="text" id="trait1effect" placeholder="Mechanical effect"></div>
             <div class="trait-slot"><div class="trait-slot-num">TRAIT 02</div><input class="f-input" type="text" id="trait2name" placeholder="Trait name"><div class="field-label" style="margin-top:6px;">EFFECT</div><input class="f-input" type="text" id="trait2effect" placeholder="Mechanical effect"></div>
@@ -874,7 +877,10 @@ body::after {
 
         <!-- FLAWS -->
         <div class="flaws-section">
-          <div class="section-label">EMOTIONAL FLAWS</div>
+          <div class="section-label">EMOTIONAL FLAWS <span>NOT AVAILABLE SESSION 1</span></div>
+          <div style="background:rgba(138,32,32,.07); border:1px solid rgba(138,32,32,.3); border-left:2px solid var(--red-bright); padding:7px 10px; margin-bottom:10px; font-family:'Share Tech Mono',monospace; font-size:7.5px; letter-spacing:.1em; color:var(--red-bright); line-height:1.6;">
+            ⚠ &nbsp;FLAWS ARE NOT ASSIGNED AT CREATION — THEY EMERGE THROUGH PLAY AT GM DISCRETION
+          </div>
           <div class="flaw-slots">
             <div class="flaw-slot">
               <div class="flaw-slot-num">EMOTIONAL FLAW 01</div>
@@ -1007,9 +1013,9 @@ body::after {
 
     <div class="section-label">ARMOR <span>SELECT ONE — RECORD ON PAGE 1</span></div>
     <div class="cg-grid" style="margin-bottom:18px;">
-      <div class="cg-panel"><div class="cg-panel-title">LIGHT ARMOR &nbsp;// &nbsp;−2 DAMAGE RECEIVED</div><p>Soft-plate concealed armor. Reduces all incoming damage by 2. No penalties to movement or skill checks.</p></div>
-      <div class="cg-panel amber"><div class="cg-panel-title amber">MEDIUM ARMOR &nbsp;// &nbsp;−4 DAMAGE RECEIVED</div><p>Tactical hard-plate carrier. Reduces all incoming damage by 4. Imposes <strong>−1 to Mobility checks</strong> due to encumbrance.</p></div>
-      <div class="cg-panel red"><div class="cg-panel-title red">HEAVY ARMOR &nbsp;// &nbsp;−6 DAMAGE RECEIVED</div><p>Full tactical rig. Reduces all incoming damage by 6. Imposes <strong>−1 to Mobility checks</strong> and <strong>−1 to AWARENESS checks</strong>. Extended movement costs +1 COMPOSURE.</p></div>
+      <div class="cg-panel"><div class="cg-panel-title">LIGHT ARMOR &nbsp;// &nbsp;−5 DAMAGE RECEIVED</div><p>Soft-plate concealed armor. Reduces all incoming damage by 5. No penalties to movement or skill checks.</p></div>
+      <div class="cg-panel amber"><div class="cg-panel-title amber">MEDIUM ARMOR &nbsp;// &nbsp;−7 DAMAGE RECEIVED</div><p>Tactical hard-plate carrier. Reduces all incoming damage by 7. Imposes <strong>−1 to Mobility checks</strong> due to encumbrance.</p></div>
+      <div class="cg-panel red"><div class="cg-panel-title red">HEAVY ARMOR &nbsp;// &nbsp;−10 DAMAGE RECEIVED</div><p>Full tactical rig. Reduces all incoming damage by 10. Imposes <strong>−1 to Mobility checks</strong> and <strong>−1 to AWARENESS checks</strong>. Extended movement costs +1 COMPOSURE.</p></div>
     </div>
 
     <div class="section-label">FIELD EQUIPMENT <span>SELECT UP TO 3 ADDITIONAL ITEMS — RECORD ON PAGE 1</span></div>
@@ -1065,9 +1071,9 @@ const WEAPON_CATALOG = {
 
 const ARMOR_VALUES = {
   '': '0',
-  'Light (−2 dmg)': '2',
-  'Medium (−4 dmg, −1 Mob)': '4',
-  'Heavy (−6 dmg, −1 Mob)': '6',
+  'Light (−5 dmg)': '5',
+  'Medium (−7 dmg, −1 Mob)': '7',
+  'Heavy (−10 dmg, −1 Mob)': '10',
 };
 
 // ── TOKEN COLORS ─────────────────────────────────────────────────
@@ -1177,7 +1183,7 @@ function validateAttrs() {
 }
 
 // ── VITALS ───────────────────────────────────────────────────────
-function getHPMax()   { return 10 + attrVals[0]; }
+function getHPMax()   { return 15 + attrVals[0]; }
 function getCompMax() { return 5  + attrVals[4]; }
 
 function onHPChange() {
@@ -1202,7 +1208,7 @@ function updateHP() {
   s.value = Math.min(parseInt(s.value) || max, max);
   if (prevPct >= 1) s.value = max;
   document.getElementById('hpMaxDisplay').textContent = max;
-  document.getElementById('hpFormula').textContent = `10 + BODY (${attrVals[0]})`;
+  document.getElementById('hpFormula').textContent = `15 + BODY (${attrVals[0]})`;
   onHPChange();
 }
 
