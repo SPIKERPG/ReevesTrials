@@ -697,7 +697,196 @@ p, li, td, .step-text, .trait-fx, .flaw-body,
     grid-template-columns: repeat(7, 1fr) !important;
     flex-direction: unset !important;
   }
+  .lv-grid { grid-template-columns: 1fr !important; display: flex !important; flex-direction: column !important; }
 }
+
+/* ══════════════════════════════════════
+   SECTION 06 — TABLE SAFETY
+══════════════════════════════════════ */
+
+:root {
+  --input-bg:     rgba(0,0,0,.28);
+  --input-border: #2a2e1a;
+  --blue-pale:    #0e1a22;
+}
+
+/* ── Tool cards ── */
+.tool-card {
+  background: var(--surface2);
+  border: 1px solid var(--border-hi);
+  border-top: 2px solid var(--green-dim);
+  margin-bottom: 12px;
+  overflow: hidden;
+}
+.tool-card.red   { border-top-color: var(--red-bright); }
+.tool-card.amber { border-top-color: var(--amber-dim); }
+.tool-card.blue  { border-top-color: var(--blue); }
+
+.tool-header {
+  display: flex; align-items: center; gap: 14px;
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--border);
+  background: rgba(0,0,0,.15);
+}
+
+.tool-sigil {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 28px; letter-spacing: .1em;
+  color: var(--green); line-height: 1;
+  min-width: 44px; text-align: center;
+}
+.tool-card.red   .tool-sigil { color: var(--red-bright); }
+.tool-card.amber .tool-sigil { color: var(--amber); }
+.tool-card.blue  .tool-sigil { color: var(--blue); }
+
+.tool-code {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 7px; letter-spacing: .24em; color: var(--text-dim);
+}
+.tool-name {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 18px; letter-spacing: .28em;
+  color: var(--text-hi); line-height: 1.1;
+}
+.tool-card.red   .tool-name { color: var(--red-bright); }
+.tool-card.amber .tool-name { color: var(--amber); }
+.tool-card.blue  .tool-name { color: var(--blue); }
+
+.tool-body { padding: 14px 16px; }
+.tool-body p { font-size: 14.5px; }
+.tool-body p:last-child { margin-bottom: 0; }
+
+.tool-mechanic {
+  background: rgba(0,0,0,.25);
+  border-left: 2px solid var(--green-dim);
+  padding: 8px 12px; margin: 10px 0;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 11px; letter-spacing: .05em;
+  color: var(--text-hi); line-height: 1.65;
+  white-space: pre-line;
+}
+.tool-card.red   .tool-mechanic { border-left-color: var(--red); }
+.tool-card.amber .tool-mechanic { border-left-color: var(--amber-dim); }
+.tool-card.blue  .tool-mechanic { border-left-color: var(--blue); }
+
+/* ── Quick ref card ── */
+.qr-card {
+  background: #1c1f14;
+  border: 1px solid var(--border-hi);
+  padding: 14px 16px; margin-bottom: 10px;
+}
+.qr-title {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 8px; letter-spacing: .2em;
+  color: var(--amber); margin-bottom: 8px;
+}
+.qr-row { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 7px; font-size: 14px; }
+.qr-signal {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px; color: var(--text-hi);
+  min-width: 70px; padding-top: 1px;
+}
+.qr-meaning { color: var(--text-dim); line-height: 1.45; }
+
+/* ── Lines & Veils ── */
+.lv-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+.lv-box { background: var(--surface2); border: 1px solid var(--border-hi); }
+.lv-header {
+  padding: 8px 14px; border-bottom: 1px solid var(--border);
+  background: rgba(0,0,0,.18);
+  display: flex; align-items: center; gap: 10px;
+}
+.lv-icon { font-family: 'Share Tech Mono', monospace; font-size: 13px; min-width: 22px; }
+.lv-title { font-family: 'Share Tech Mono', monospace; font-size: 8.5px; letter-spacing: .2em; line-height: 1.4; }
+.lv-box.line .lv-title { color: var(--red-bright); }
+.lv-box.veil .lv-title { color: var(--amber); }
+.lv-def { padding: 10px 14px; font-size: 13.5px; line-height: 1.55; color: var(--text-dim); border-bottom: 1px solid var(--border); font-style: italic; }
+.lv-items { padding: 10px 14px; display: flex; flex-direction: column; gap: 4px; }
+.lv-item {
+  display: flex; align-items: flex-start; gap: 8px;
+  background: var(--input-bg); border: 1px solid var(--input-border);
+  padding: 5px 8px; min-height: 28px;
+}
+.lv-item-num { font-family: 'Share Tech Mono', monospace; font-size: 7px; letter-spacing: .12em; color: var(--text-dim); min-width: 16px; padding-top: 2px; }
+.lv-item input {
+  flex: 1; background: transparent; border: none; outline: none;
+  color: var(--text-hi);
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 14px; caret-color: var(--green); width: 100%;
+}
+.lv-item input::placeholder { color: var(--text-dim); font-weight: 300; font-size: 13px; }
+.lv-add-btn {
+  margin: 4px 14px 10px;
+  background: transparent; border: 1px dashed var(--border-hi);
+  color: var(--text-dim);
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 7.5px; letter-spacing: .16em;
+  padding: 4px 10px; cursor: pointer;
+  width: calc(100% - 28px); transition: all .15s; text-align: center;
+}
+.lv-add-btn:hover { border-color: var(--green-dim); color: var(--green); }
+
+/* ── Table contract ── */
+.contract-block {
+  background: var(--surface2);
+  border: 1px solid var(--border-hi);
+  border-top: 2px solid var(--green);
+  margin-bottom: 16px; overflow: hidden;
+}
+.contract-block-header {
+  padding: 8px 16px; border-bottom: 1px solid var(--border);
+  background: rgba(0,0,0,.2);
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 8px; letter-spacing: .22em; color: var(--green);
+}
+.contract-items { padding: 12px 16px; display: flex; flex-direction: column; gap: 6px; }
+.contract-item {
+  display: flex; align-items: flex-start; gap: 10px;
+  padding: 7px 10px;
+  background: var(--input-bg); border: 1px solid var(--input-border);
+  cursor: pointer;
+}
+.contract-check {
+  width: 16px; height: 16px;
+  border: 1px solid var(--border-hi); flex-shrink: 0;
+  margin-top: 2px;
+  display: flex; align-items: center; justify-content: center;
+  transition: all .12s; font-size: 10px; color: transparent;
+}
+.contract-check.checked { background: var(--green-dim); border-color: var(--green); color: var(--green); }
+.contract-text { flex: 1; font-size: 14px; line-height: 1.5; color: var(--text); }
+.contract-text strong { font-weight: 600; }
+.contract-item.checked-item .contract-text { color: var(--text-dim); }
+
+/* ── Save toolbar ── */
+.save-toolbar {
+  position: fixed; bottom: 0; left: 0; right: 0;
+  background: var(--surface); border-top: 1px solid var(--border-hi);
+  padding: 8px 20px;
+  display: flex; align-items: center; gap: 10px;
+  z-index: 700;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 8px; letter-spacing: .14em;
+}
+.save-toolbar-label { color: var(--text-dim); white-space: nowrap; }
+.save-btn {
+  background: var(--green-dim); border: 1px solid var(--green);
+  color: var(--text-hi);
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 8px; letter-spacing: .2em;
+  padding: 5px 14px; cursor: pointer; transition: all .15s; white-space: nowrap;
+}
+.save-btn:hover { background: var(--green); color: var(--bg); }
+.save-btn.load-btn { background: transparent; border-color: var(--border-hi); color: var(--text-dim); }
+.save-btn.load-btn:hover { border-color: var(--green-dim); color: var(--text); }
+.save-btn.reset-btn { background: transparent; border-color: var(--red); color: var(--red-bright); }
+.save-btn.reset-btn:hover { background: var(--red); color: var(--text-hi); }
+.save-status { flex: 1; text-align: right; color: var(--text-dim); font-size: 7.5px; letter-spacing: .12em; transition: color .3s; }
+.save-status.ok { color: var(--green); }
+.save-status.warn { color: var(--amber); }
+
+/* account for fixed toolbar */
+main { padding-bottom: 80px !important; }
 
 </style>
 </head>
@@ -725,7 +914,7 @@ p, li, td, .step-text, .trait-fx, .flaw-body,
   <a href="#spike-roleplay">■ PLAYING SPIKE</a>
   <a href="#campaign">■ THE CAMPAIGN</a>
   <a href="#gettingmost">■ GETTING THE MOST OUT OF IT</a>
-  <a href="#live-session">■ SPIKE LIVE SESSION</a>
+  <a href="#safety">■ TABLE SAFETY</a>
 </nav>
 
 <!-- COVER -->
@@ -1153,73 +1342,275 @@ p, li, td, .step-text, .trait-fx, .flaw-body,
 </section>
 
 
-<!-- ═══════════════════════════════════════════════
-     SPIKE LIVE SESSION
-════════════════════════════════════════════════ -->
-<section class="section" id="live-session">
+<!-- ════════════════════════════════════════════
+     06, TABLE SAFETY
+═════════════════════════════════════════════ -->
+<section class="section" id="safety">
   <div class="section-head">
-    <span class="sh-num">ADDENDUM //</span>
-    <span class="sh-title">SPIKE LIVE SESSION</span>
+    <span class="sh-num">06 //</span>
+    <span class="sh-title">TABLE SAFETY</span>
     <div class="sh-line"></div>
   </div>
 
+  <div class="oow-flag">■ OUT OF WORLD — ALL PARTICIPANTS</div>
+
   <div class="panel hi mbr">
-    <div class="panel-title hi">WHAT IS THE SPIKE LIVE SESSION?</div>
-    <p>The SPIKE Live Session is a browser-based interface that connects all players and the GM during play. It handles initiative, combat tracking, maps, dice roll requests, and live notifications — running on the GM's machine and accessible to players via a shared local network connection.</p>
-    <p style="margin-bottom:0;">You don't need to install anything. When the GM starts a session, they'll give you an IP address. Open it in any browser on your device and you're connected.</p>
-  </div>
-
-  <div class="panel mbr">
-    <div class="panel-title">JOINING A SESSION</div>
-    <ol style="padding-left:1.2em; line-height:2;">
-      <li>Open the address your GM provides in any browser on your phone, tablet, or laptop.</li>
-      <li>Enter your <strong>operative callsign</strong> exactly as it appears on your character sheet.</li>
-      <li>Select your <strong>token color</strong> — this is how you appear on the GM's map.</li>
-      <li>If the GM has set a session password, enter it when prompted.</li>
-      <li>Hit <strong>CONNECT TO RELAY</strong>. You're in.</li>
-    </ol>
-  </div>
-
-  <div class="panel mbr">
-    <div class="panel-title">THE TABS</div>
-    <div style="display:grid; grid-template-columns:auto 1fr; gap:6px 14px; font-size:15px; line-height:1.8;">
-      <span style="font-family:'Share Tech Mono',monospace; color:var(--text-hi);">◆ COMBAT</span>
-      <span>Initiative order, your current phase, action/reaction submission. This is your primary screen during combat encounters.</span>
-      <span style="font-family:'Share Tech Mono',monospace; color:var(--text-hi);">◈ MAP</span>
-      <span>The GM's current tactical map. Your token appears here when placed. Markers and fog of war are controlled by the GM.</span>
-      <span style="font-family:'Share Tech Mono',monospace; color:var(--text-hi);">◉ CHARACTER</span>
-      <span>Your operative's live stats — HP, COMPOSURE, SPIKE level, reactions, and skill check submission panel.</span>
-      <span style="font-family:'Share Tech Mono',monospace; color:var(--text-hi);">▣ NOTES</span>
-      <span>A personal notepad, saved locally to your device. Not shared with anyone.</span>
-      <span style="font-family:'Share Tech Mono',monospace; color:var(--text-hi);">■ GUIDE</span>
-      <span>Quick in-session reference — turn structure, reactions, skills, SPIKE levels, behavior table, rest rules, and flaws. Everything you'd otherwise need to look up mid-session.</span>
-    </div>
+    <div class="panel-title hi">THIS GAME GOES PLACES</div>
+    <p>SPIKE: The Reeves Trials is a game about psychological unraveling, grief, loss of control, and what happens when people are denied their own emotional lives. It is also a game about care, loyalty, and what it means to be human. Both of those things are true simultaneously, and holding both is the work.</p>
+    <p>The content in this campaign can include: body horror (mild), dissociation and loss of self, grief and loss, psychological manipulation, institutionalized control, identity and memory, and the experience of emotions that have no name or framework. None of this is presented gratuitously — it all serves the story. But it is real, and some of it may land harder than expected for some people at some times.</p>
+    <p style="margin-bottom:0;">The tools in this section aren't a sign that the game is dangerous. They're a sign that the people running it care enough to build in ways to navigate it. Use them.</p>
   </div>
 
   <div class="g2 mbr">
-    <div class="panel">
-      <div class="panel-title">ROLL REQUESTS</div>
-      <p>The GM can send you a roll request at any time. When one arrives, a notification appears and your CHARACTER tab opens automatically with the skill pre-selected.</p>
-      <p style="margin-bottom:0;">Roll your dice, enter the result in the SKILL CHECK panel, and hit <strong>▸ SUBMIT</strong>. The full total broadcasts to everyone at the table.</p>
+    <div class="panel quiet">
+      <div class="panel-title">THE REAL-WORLD PRINCIPLE</div>
+      <p>The fiction exists to serve the people at the table, not the other way around. No story beat, dramatic moment, or narrative payoff is worth genuine distress for a real person. The characters are in danger. The players never are.</p>
+      <p style="margin-bottom:0;">If something stops working for someone, the story adjusts. That's the game functioning correctly.</p>
     </div>
-    <div class="panel">
-      <div class="panel-title">GM TRANSMISSIONS</div>
-      <p>The GM can send you direct messages — narrative prompts, warnings, SPIKE triggers — as notifications on your screen.</p>
-      <p style="margin-bottom:0;">Standard transmissions fade after a few seconds. <strong>Warnings persist</strong> until you manually dismiss them. Pay attention to warnings.</p>
+    <div class="panel quiet">
+      <div class="panel-title">NO EXPLANATION REQUIRED</div>
+      <p>When a player uses any safety tool, no one asks why. No one needs to know why. The tool is used, the table responds, and play continues or adjusts.</p>
+      <p style="margin-bottom:0;">The same applies to the GM. If a scene isn't going the way it should, the GM can call a pause too.</p>
     </div>
   </div>
 
-  <div class="panel amber">
-    <div class="panel-title amber">◈ SPIKE STORM ALERT</div>
-    <p style="margin-bottom:0;">If a SPIKE Storm event occurs during play, a <strong>◈ SPIKE STORM</strong> indicator appears in the header of your screen. This is not a technical error. It is a narrative event with mechanical consequences. Your SPIKE level may rise. Check your current level immediately and be ready for a save.</p>
+  <div class="pull-quote">
+    <div class="pq-text">"We are here to tell a story together. The safety tools are how we make sure everyone stays in the room long enough to see how it ends."</div>
+    <div class="pq-attr">— TABLE SAFETY PRINCIPLE</div>
   </div>
+
+  <!-- SAFETY TOOLS -->
+  <div class="tool-card red mbr">
+    <div class="tool-header">
+      <div class="tool-sigil">X</div>
+      <div class="tool-name-block">
+        <div class="tool-code">PROTOCOL ST-01 // IMMEDIATE STOP</div>
+        <div class="tool-name">THE X-CARD</div>
+      </div>
+    </div>
+    <div class="tool-body">
+      <p>The X-Card is a hard stop. When someone invokes it — by saying <strong>"X"</strong>, typing X in chat, or tapping a card on the table — the current scene or content stops immediately. No discussion. No questions. The table moves on or the scene is edited.</p>
+      <div class="tool-mechanic">HOW TO USE IT
+Say: "X" or "X-card" aloud / type X in chat
+Result: Scene stops. GM adjusts, skips, or cuts. Play resumes.
+Who can use it: ANYONE at the table, including the GM
+Explanation required: NO</div>
+      <p style="margin-bottom:0;">The X-Card is not a last resort. It's a first resort. Using it earlier, before something becomes genuinely distressing, is always the right call. There is no content in this campaign that is more important than the person reaching for the X-Card.</p>
+    </div>
+  </div>
+
+  <div class="tool-card amber mbr">
+    <div class="tool-header">
+      <div class="tool-sigil">⬚</div>
+      <div class="tool-name-block">
+        <div class="tool-code">PROTOCOL ST-02 // EXIT WITHOUT PENALTY</div>
+        <div class="tool-name">THE OPEN DOOR</div>
+      </div>
+    </div>
+    <div class="tool-body">
+      <p>Anyone can leave the session at any time, for any reason, without explanation. The door is always open — a standing permission that exists for everyone before it's ever needed.</p>
+      <div class="tool-mechanic">HOW TO USE IT
+Say: "I need to step out" or simply leave
+Result: Session pauses, continues without you, or ends — your call
+Who can use it: ANYONE at the table, including the GM
+Explanation required: NO</div>
+      <p style="margin-bottom:0;">When someone steps out, the table doesn't speculate about why. We don't make it notable. It's just a door.</p>
+    </div>
+  </div>
+
+  <div class="tool-card blue mbr">
+    <div class="tool-header">
+      <div class="tool-sigil">||</div>
+      <div class="tool-name-block">
+        <div class="tool-code">PROTOCOL ST-03 // STEP OUTSIDE THE FICTION</div>
+        <div class="tool-name">THE PAUSE / OOW SIGNAL</div>
+      </div>
+    </div>
+    <div class="tool-body">
+      <p>The Pause signal steps out of the fiction without stopping it entirely. Use it to check in, ask a question, clarify intent, or flag that something needs a brief conversation before continuing.</p>
+      <div class="tool-mechanic">HOW TO USE IT
+Say: "OOW" (out of world) or "Pause" or make a T-shape with your hands
+Result: Table steps outside the fiction briefly. Speak. Resume when ready.
+Who can use it: ANYONE at the table, including the GM
+Explanation required: BRIEF — just enough to address what needs addressing</div>
+      <p style="margin-bottom:0;">When you return to the fiction, signal it: <em>"Back in."</em> This prevents confusion about whether people are speaking as themselves or as characters.</p>
+    </div>
+  </div>
+
+  <div class="tool-card mbr">
+    <div class="tool-header">
+      <div class="tool-sigil">↺</div>
+      <div class="tool-name-block">
+        <div class="tool-code">PROTOCOL ST-04 // NARRATIVE EDIT</div>
+        <div class="tool-name">THE REWIND</div>
+      </div>
+    </div>
+    <div class="tool-body">
+      <p>The Rewind lets anyone call for an edit to something that already happened in fiction — if a scene landed wrong in retrospect, or an X-Card wasn't reached for in time. The scene can be retroactively adjusted.</p>
+      <div class="tool-mechanic">HOW TO USE IT
+Say: "Can we rewind that?" or "I want to edit [scene/moment]"
+Result: Table discusses briefly. GM adjusts what happened. New version is canon.
+Who can use it: ANYONE at the table, including the GM
+Explanation required: MINIMAL — enough to identify what needs changing</div>
+      <p style="margin-bottom:0;">The Rewind isn't about retconning for convenience. It's a safety tool — use it when something didn't sit right and you wish it had gone differently.</p>
+    </div>
+  </div>
+
+  <div class="qr-card mbr">
+    <div class="qr-title">■ QUICK REFERENCE // ALL SIGNALS AT A GLANCE</div>
+    <div class="qr-row"><span class="qr-signal">X / X-CARD</span><span class="qr-meaning">Hard stop. This content ends now. No questions.</span></div>
+    <div class="qr-row"><span class="qr-signal">OPEN DOOR</span><span class="qr-meaning">Anyone may leave at any time, for any reason. No explanation needed.</span></div>
+    <div class="qr-row"><span class="qr-signal">OOW / PAUSE</span><span class="qr-meaning">Step outside the fiction briefly. Check in. Resume when ready.</span></div>
+    <div class="qr-row"><span class="qr-signal">REWIND ↺</span><span class="qr-meaning">Edit something that already happened. New version is canon.</span></div>
+  </div>
+
+  <!-- LINES & VEILS -->
+  <div class="section-head" style="margin-bottom:16px; padding-bottom:8px; border-bottom:1px solid var(--border-hi);">
+    <span class="sh-num">06B //</span>
+    <span class="sh-title" style="font-size:22px;">LINES & VEILS</span>
+    <div class="sh-line"></div>
+  </div>
+
+  <div class="g2 mbr">
+    <div class="panel red">
+      <div class="panel-title red">LINES // CONTENT THAT DOES NOT APPEAR</div>
+      <p>A Line is content that doesn't enter the game at all — not offscreen, not implied. Once something is a Line for anyone at the table, it becomes a Line for the whole table. No negotiation.</p>
+      <p style="margin-bottom:0;">"I don't want that in the game" is sufficient. No justification needed.</p>
+    </div>
+    <div class="panel amber">
+      <div class="panel-title amber">VEILS // CONTENT THAT HAPPENS OFFSCREEN</div>
+      <p>A Veil is content that can exist in the fiction but happens offscreen — acknowledged or referenced, but not depicted in play. "We cut away before it gets to that point."</p>
+      <p style="margin-bottom:0;">Veils can be added at any time, including mid-campaign. The Rewind tool can retroactively apply one if needed.</p>
+    </div>
+  </div>
+
+  <div class="panel quiet mbr" style="padding:10px 14px;">
+    <p style="font-size:13.5px; margin-bottom:0;" class="dim">Fill in these fields during Session 0. Click <strong style="color:var(--text);">+ ADD</strong> to add entries. Use the toolbar below to save a JSON file.</p>
+  </div>
+
+  <div class="lv-grid mbr">
+    <div class="lv-box line">
+      <div class="lv-header">
+        <span class="lv-icon red-c">✕</span>
+        <div class="lv-title red-c">LINES<br><span style="color:var(--text-dim); font-size:7px;">DOES NOT ENTER PLAY</span></div>
+      </div>
+      <div class="lv-def">Content that will not appear in any form — not described, not implied, not offscreen.</div>
+      <div class="lv-items" id="linesItems">
+        <div class="lv-item"><span class="lv-item-num">01</span><input type="text" placeholder="Add a Line..."></div>
+        <div class="lv-item"><span class="lv-item-num">02</span><input type="text" placeholder="Add a Line..."></div>
+        <div class="lv-item"><span class="lv-item-num">03</span><input type="text" placeholder="Add a Line..."></div>
+      </div>
+      <button class="lv-add-btn" onclick="addLVItem('linesItems', 'line')">+ ADD LINE</button>
+    </div>
+    <div class="lv-box veil">
+      <div class="lv-header">
+        <span class="lv-icon amb">〜</span>
+        <div class="lv-title amb">VEILS<br><span style="color:var(--text-dim); font-size:7px;">OFFSCREEN ONLY</span></div>
+      </div>
+      <div class="lv-def">Content that exists in the fiction but is not depicted in play. We cut away.</div>
+      <div class="lv-items" id="veilsItems">
+        <div class="lv-item"><span class="lv-item-num">01</span><input type="text" placeholder="Add a Veil..."></div>
+        <div class="lv-item"><span class="lv-item-num">02</span><input type="text" placeholder="Add a Veil..."></div>
+        <div class="lv-item"><span class="lv-item-num">03</span><input type="text" placeholder="Add a Veil..."></div>
+      </div>
+      <button class="lv-add-btn" onclick="addLVItem('veilsItems', 'veil')">+ ADD VEIL</button>
+    </div>
+  </div>
+
+  <div class="panel quiet mbr">
+    <div class="panel-title">SPIKE-SPECIFIC CONTENT NOTE</div>
+    <p>Because SPIKE deals directly with psychological distress and emotional crisis, some content is worth discussing even if it doesn't end up as a Line or Veil. Consider a brief conversation about:</p>
+    <ul>
+      <li>Depictions of dissociation and loss of self (SPIKE 10–11)</li>
+      <li>Grief and death of NPCs the party is attached to</li>
+      <li>Content that might mirror real-world mental health experiences</li>
+      <li>Body horror — SPIKE's physical symptoms at high levels</li>
+      <li>Manipulation, gaslighting, and institutional control (themes in this campaign)</li>
+    </ul>
+    <p style="margin-bottom:0;" class="dim">None of these are automatically Lines or Veils. They're starting points for a conversation.</p>
+  </div>
+
+  <!-- TABLE CONTRACT -->
+  <div class="section-head" style="margin-bottom:16px; padding-bottom:8px; border-bottom:1px solid var(--border-hi);">
+    <span class="sh-num">06C //</span>
+    <span class="sh-title" style="font-size:22px;">TABLE CONTRACT</span>
+    <div class="sh-line"></div>
+  </div>
+
+  <p style="margin-bottom:18px; font-size:15px;">These are the agreements this table makes before play begins. Click each item to mark that the whole table has discussed and agreed to it.</p>
+
+  <div class="contract-block">
+    <div class="contract-block-header">■ SAFETY & COMFORT</div>
+    <div class="contract-items">
+      <div class="contract-item" onclick="toggleCheck(this)">
+        <div class="contract-check">■</div>
+        <div class="contract-text"><strong>Safety tools are always available.</strong> Any participant may invoke an X-Card, call a Pause, use the Open Door, or request a Rewind at any time, with no explanation required and no social penalty.</div>
+      </div>
+      <div class="contract-item" onclick="toggleCheck(this)">
+        <div class="contract-check">■</div>
+        <div class="contract-text"><strong>Lines and Veils are enforced without question.</strong> Any content that becomes a Line is removed from the game entirely, permanently, for everyone. Not subject to in-session negotiation.</div>
+      </div>
+      <div class="contract-item" onclick="toggleCheck(this)">
+        <div class="contract-check">■</div>
+        <div class="contract-text"><strong>No one is pushed through discomfort for the story's sake.</strong> If a scene is landing wrong for a real person at this table, the scene changes. The story isn't more important than the person.</div>
+      </div>
+      <div class="contract-item" onclick="toggleCheck(this)">
+        <div class="contract-check">■</div>
+        <div class="contract-text"><strong>Real-world distress is taken at face value.</strong> If someone says they need to stop or step out, we don't assume they're roleplaying. We treat it as real unless they clearly indicate otherwise.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="contract-block">
+    <div class="contract-block-header">■ PLAY NORMS</div>
+    <div class="contract-items">
+      <div class="contract-item" onclick="toggleCheck(this)">
+        <div class="contract-check">■</div>
+        <div class="contract-text"><strong>We play our own characters.</strong> We don't dictate other players' characters' actions, emotions, or responses. We may try to influence them in fiction. We don't override them out of fiction.</div>
+      </div>
+      <div class="contract-item" onclick="toggleCheck(this)">
+        <div class="contract-check">■</div>
+        <div class="contract-text"><strong>We separate character from player.</strong> What happens to a character isn't happening to the player. We never use fiction as a vector for real-world grievances.</div>
+      </div>
+      <div class="contract-item" onclick="toggleCheck(this)">
+        <div class="contract-check">■</div>
+        <div class="contract-text"><strong>Spotlight is shared.</strong> We're attentive to who is and isn't getting screen time, and we actively create space for quieter players.</div>
+      </div>
+      <div class="contract-item" onclick="toggleCheck(this)">
+        <div class="contract-check">■</div>
+        <div class="contract-text"><strong>We lean into the genre.</strong> SPIKE is a psychological thriller. We embrace slow tension, unreliable information, and difficult emotional content as features of the campaign, not problems to be solved quickly.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="contract-block mbr">
+    <div class="contract-block-header">■ CHECK-IN PROTOCOL</div>
+    <div class="contract-items">
+      <div class="contract-item" onclick="toggleCheck(this)">
+        <div class="contract-check">■</div>
+        <div class="contract-text"><strong>We check in before each session.</strong> A quick round: how are you coming in today? Anything from last session still sitting with you? Any changes to Lines, Veils, or comfort levels to flag?</div>
+      </div>
+      <div class="contract-item" onclick="toggleCheck(this)">
+        <div class="contract-check">■</div>
+        <div class="contract-text"><strong>We check in after each session.</strong> How are you leaving today? Anything to flag for the GM? A rose (something that worked) and/or a thorn (something that didn't)?</div>
+      </div>
+      <div class="contract-item" onclick="toggleCheck(this)">
+        <div class="contract-check">■</div>
+        <div class="contract-text"><strong>We watch for mid-session signals.</strong> Going quiet, unusual deflection, checking out from the fiction. A quiet OOW check-in — "Hey, still good?" — is always appropriate.</div>
+      </div>
+      <div class="contract-item" onclick="toggleCheck(this)">
+        <div class="contract-check">■</div>
+        <div class="contract-text"><strong>The GM will telegraph difficult content.</strong> Before scenes that may go to dark places, a brief heads-up: "This scene may escalate — everyone okay to continue?"</div>
+      </div>
+    </div>
+  </div>
+
 </section>
-
 
 </main>
 
 <footer>
-  <span>SPIKE: THE REEVES TRIALS // SESSION ZERO DOCUMENT</span>
+  <span>SPIKE: THE REEVES TRIALS // SESSION 0 & TABLE SAFETY</span>
   <span>■ FOR PLAYERS // OUT OF WORLD ■</span>
   <span>THE REEVES TRIALS // YEAR 5 POST-RESET</span>
 </footer>
@@ -1233,8 +1624,151 @@ p, li, td, .step-text, .trait-fx, .flaw-body,
         links.forEach(l => l.classList.toggle('active', l.getAttribute('href') === '#' + e.target.id));
       }
     });
-  }, { threshold: 0.2, rootMargin: '-80px 0px 0px 0px' });
+  }, { threshold: 0.15, rootMargin: '-80px 0px 0px 0px' });
   sections.forEach(s => io.observe(s));
+</script>
+
+<script>
+// ── LINES & VEILS ──────────────────────────────────────
+let lineCount = 3, veilCount = 3;
+
+function addLVItem(containerId, type) {
+  const container = document.getElementById(containerId);
+  const isLine = type === 'line';
+  if (isLine) lineCount++; else veilCount++;
+  const count = isLine ? lineCount : veilCount;
+  const div = document.createElement('div');
+  div.className = 'lv-item';
+  div.innerHTML = `<span class="lv-item-num">${String(count).padStart(2,'0')}</span><input type="text" placeholder="${isLine ? 'Add a Line...' : 'Add a Veil...'}">`;
+  container.appendChild(div);
+  div.querySelector('input').focus();
+  markUnsaved();
+}
+
+// ── TABLE CONTRACT ─────────────────────────────────────
+function toggleCheck(item) {
+  const check = item.querySelector('.contract-check');
+  const isChecked = check.classList.toggle('checked');
+  item.classList.toggle('checked-item', isChecked);
+  markUnsaved();
+}
+
+// ── SAVE / LOAD ────────────────────────────────────────
+const S0_KEY = 'spike_session0_safety';
+
+function markUnsaved() {
+  const s = document.getElementById('saveStatus');
+  if (s) { s.textContent = 'UNSAVED'; s.className = 'save-status warn'; }
+}
+
+function gatherState() {
+  const lines  = [...document.querySelectorAll('#linesItems input')].map(i => i.value);
+  const veils  = [...document.querySelectorAll('#veilsItems input')].map(i => i.value);
+  const checks = [...document.querySelectorAll('.contract-check')].map(c => c.classList.contains('checked'));
+  return { lines, veils, checks, lineCount, veilCount };
+}
+
+function applyState(state) {
+  if (!state) return;
+  if (state.lineCount) lineCount = state.lineCount;
+  if (state.veilCount) veilCount = state.veilCount;
+  if (state.lines) {
+    const container = document.getElementById('linesItems');
+    while (container.children.length < state.lines.length) {
+      lineCount++;
+      const div = document.createElement('div');
+      div.className = 'lv-item';
+      div.innerHTML = `<span class="lv-item-num">${String(lineCount).padStart(2,'0')}</span><input type="text" placeholder="Add a Line...">`;
+      container.appendChild(div);
+    }
+    [...container.querySelectorAll('input')].forEach((inp, i) => { inp.value = state.lines[i] || ''; });
+  }
+  if (state.veils) {
+    const container = document.getElementById('veilsItems');
+    while (container.children.length < state.veils.length) {
+      veilCount++;
+      const div = document.createElement('div');
+      div.className = 'lv-item';
+      div.innerHTML = `<span class="lv-item-num">${String(veilCount).padStart(2,'0')}</span><input type="text" placeholder="Add a Veil...">`;
+      container.appendChild(div);
+    }
+    [...container.querySelectorAll('input')].forEach((inp, i) => { inp.value = state.veils[i] || ''; });
+  }
+  if (state.checks) {
+    const checks = document.querySelectorAll('.contract-check');
+    state.checks.forEach((val, i) => {
+      if (checks[i]) {
+        checks[i].classList.toggle('checked', val);
+        checks[i].closest('.contract-item').classList.toggle('checked-item', val);
+      }
+    });
+  }
+}
+
+function autoSave() {
+  localStorage.setItem(S0_KEY, JSON.stringify(gatherState()));
+  const s = document.getElementById('saveStatus');
+  if (s) {
+    s.textContent = 'AUTO-SAVED'; s.className = 'save-status ok';
+    setTimeout(() => { if (s.textContent === 'AUTO-SAVED') s.textContent = 'SAVED'; }, 2000);
+  }
+}
+
+function saveToFile() {
+  const blob = new Blob([JSON.stringify(gatherState(), null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'spike-session0.json';
+  a.click();
+  const s = document.getElementById('saveStatus');
+  if (s) { s.textContent = 'SAVED'; s.className = 'save-status ok'; }
+}
+
+function loadFromFile(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const state = JSON.parse(e.target.result);
+      applyState(state);
+      localStorage.setItem(S0_KEY, e.target.result);
+      const s = document.getElementById('saveStatus');
+      if (s) { s.textContent = 'LOADED'; s.className = 'save-status ok'; }
+    } catch(err) { alert('Error loading file — make sure it is a valid Session 0 JSON.'); }
+  };
+  reader.readAsText(file);
+}
+
+function resetDoc() {
+  if (!confirm('Reset all Lines, Veils, and Contract data? This cannot be undone.')) return;
+  document.querySelectorAll('#linesItems input, #veilsItems input').forEach(i => i.value = '');
+  document.querySelectorAll('.contract-check').forEach(c => {
+    c.classList.remove('checked');
+    c.closest('.contract-item').classList.remove('checked-item');
+  });
+  localStorage.removeItem(S0_KEY);
+  const s = document.getElementById('saveStatus');
+  if (s) { s.textContent = 'RESET'; s.className = 'save-status'; }
+}
+
+// Auto-save on input change
+document.addEventListener('input', e => {
+  if (e.target.matches('#linesItems input, #veilsItems input')) {
+    clearTimeout(window._s0Timer);
+    window._s0Timer = setTimeout(autoSave, 1200);
+  }
+});
+
+// Restore from localStorage on load
+document.addEventListener('DOMContentLoaded', () => {
+  const saved = localStorage.getItem(S0_KEY);
+  if (saved) {
+    try { applyState(JSON.parse(saved)); } catch(e) {}
+    const s = document.getElementById('saveStatus');
+    if (s) { s.textContent = 'RESTORED'; s.className = 'save-status ok'; }
+  }
+});
 </script>
 
 <script>
@@ -1258,6 +1792,14 @@ p, li, td, .step-text, .trait-fx, .flaw-body,
 
 
 
+<div class="save-toolbar">
+  <span class="save-toolbar-label">■ SESSION 0 & SAFETY</span>
+  <button class="save-btn" onclick="saveToFile()">↓ SAVE JSON</button>
+  <button class="save-btn load-btn" onclick="document.getElementById('s0LoadInput').click()">↑ LOAD JSON</button>
+  <input type="file" id="s0LoadInput" accept=".json" style="display:none" onchange="loadFromFile(event)">
+  <button class="save-btn reset-btn" onclick="resetDoc()">✕ RESET</button>
+  <span class="save-status" id="saveStatus">UNSAVED</span>
+</div>
 
 </body>
 </html>
