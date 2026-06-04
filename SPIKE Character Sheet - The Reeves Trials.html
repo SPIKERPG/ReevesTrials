@@ -161,6 +161,8 @@ body::after {
 .f-input:focus { border-bottom-color: var(--green-dim); }
 .f-input::placeholder { color: var(--text-dim); font-weight: 300; font-size: 13px; }
 .f-input[readonly] { color: var(--text-dim); cursor: default; }
+select.f-input { background: var(--surface3); color: var(--text-hi); }
+select.f-input option { background: var(--surface3); color: var(--text-hi); }
 
 /* ─── IDENTITY ROW ─── */
 .identity-row {
@@ -313,7 +315,7 @@ body::after {
 .loadout-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px; }
 .loadout-item-block { background: var(--surface); border: 1px solid var(--border); border-top: 2px solid var(--border-hi); padding: 10px; }
 .loadout-item-num { font-family: 'Share Tech Mono', monospace; font-size: 7px; letter-spacing: .18em; color: var(--text-dim); margin-bottom: 6px; }
-.loadout-row { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 8px; margin-bottom: 6px; }
+.loadout-row { display: grid; grid-template-columns: 1.6fr 1fr 1fr 1fr; gap: 8px; margin-bottom: 6px; }
 .loadout-note { grid-column: 1 / -1; }
 .loadout-upload-hint { font-family: 'Share Tech Mono', monospace; font-size: 7.5px; letter-spacing: .14em; color: var(--amber); background: rgba(184,120,32,.06); border: 1px solid var(--amber-dim); border-left: 2px solid var(--amber); padding: 7px 10px; line-height: 1.6; margin-top: 4px; }
 
@@ -528,20 +530,17 @@ body::after {
         <div>
           <div class="cg-panel">
             <div class="cg-panel-title">ATTRIBUTE GENERATION</div>
-            <div class="step-item">
+            <div class="step-item" style="margin-bottom:0;">
               <div class="step-n">1</div>
               <div class="step-body">
-                <div class="step-label">ASSIGN BASE ARRAY</div>
-                <div class="step-text">Distribute across five attributes in any order:
-                  <div class="array-row"><div class="arr-n">3</div><div class="arr-n">2</div><div class="arr-n">2</div><div class="arr-n">1</div><div class="arr-n">1</div></div>
+                <div class="step-label">DISTRIBUTE 9 POINTS</div>
+                <div class="step-text">Assign freely across five attributes. No attribute may exceed <strong>3</strong>, and <strong>at most one</strong> attribute may be rated 3.
+                  <div style="margin-top:6px;font-family:'Share Tech Mono',monospace;font-size:8px;letter-spacing:.1em;color:var(--text-dim);">EXAMPLE &nbsp;
+                    <div class="array-row" style="display:inline-flex;"><div class="arr-n">3</div><div class="arr-n">2</div><div class="arr-n">2</div><div class="arr-n">1</div><div class="arr-n">1</div></div>
+                    &nbsp; OR &nbsp;
+                    <div class="array-row" style="display:inline-flex;"><div class="arr-n">2</div><div class="arr-n">2</div><div class="arr-n">2</div><div class="arr-n">2</div><div class="arr-n">1</div></div>
+                  </div>
                 </div>
-              </div>
-            </div>
-            <div class="step-item" style="margin-bottom:0;">
-              <div class="step-n">2</div>
-              <div class="step-body">
-                <div class="step-label">APPLY SPECIALIZATION</div>
-                <div class="step-text">Add +1 to any <strong>two different</strong> attributes currently rated <strong>2 or lower</strong>. No attribute may exceed 3.</div>
               </div>
             </div>
           </div>
@@ -550,14 +549,14 @@ body::after {
           <div class="cg-panel amber">
             <div class="cg-panel-title amber">VITALS &amp; SKILLS</div>
             <p style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--text-hi);margin-bottom:6px;">HP = 15 + BODY &nbsp; | &nbsp; COMPOSURE = 5 + RESOLVE</p>
-            <p>Choose <strong>3 skills</strong> at creation. Skills add +2 (Trained) or +3 (Specialized via advancement). Untrained: attribute only.</p>
+            <p>Choose <strong>one Trained (+1)</strong> and <strong>one Specialized (+2)</strong> skill at creation. Untrained: attribute only.</p>
             <p style="margin-bottom:0;font-size:12px;color:var(--text-dim);">Traits are gained through advancement (max 6). Emotional Flaws are acquired through play. Neither is chosen at creation.</p>
           </div>
         </div>
       </div>
       <div class="cg-panel" style="margin-bottom:10px;">
         <div class="cg-panel-title">LOADOUT // REQUISITION PROCESS</div>
-        <p style="margin-bottom:6px;">Before departing UGD HQ, you will be issued standard equipment and may requisition a field loadout. <strong>Weapon allowance — choose one package:</strong> two light weapons &nbsp;|&nbsp; one standard weapon + knife &nbsp;|&nbsp; one heavy weapon (no second weapon). Plus one armour type (or none) and up to three field equipment items.</p>
+        <p style="margin-bottom:6px;">Before departing UGD HQ, you will be issued standard equipment and may requisition a field loadout. <strong>Weapon allowance — choose one package:</strong> two light weapons &nbsp;|&nbsp; one standard weapon + knife &nbsp;|&nbsp; one Brute or Precision weapon (no second weapon). Plus one armour type (or none — no armor grants +2 Stealth) and up to three field equipment items.</p>
         <p>Record your selections on the <strong>OPERATIVE</strong> tab. See the <strong>REQUISITION GUIDE</strong> tab for the full catalogue. When complete, use <strong>↓ SAVE JSON</strong> and send the file to your GM.</p>
       </div>
       <div class="cg-panel red" style="margin-bottom:0;">
@@ -598,6 +597,25 @@ body::after {
   </div>
 
   <div class="sheet">
+
+    <!-- QUICK BUILD -->
+    <div class="section-label" style="margin-bottom:8px;">QUICK BUILD <span>FILLS ATTRIBUTES · SKILLS · LOADOUT — TWEAK AFTER</span></div>
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:18px;flex-wrap:wrap;">
+      <select class="f-input" style="max-width:260px;appearance:none;cursor:pointer;font-size:13px;" onchange="applyPreset(this.value)">
+        <option value="">— Custom (build from scratch)</option>
+        <option value="Investigator">Investigator</option>
+        <option value="Soldier">Soldier</option>
+        <option value="Breacher">Breacher</option>
+        <option value="Medic">Medic</option>
+        <option value="Fixer">Fixer</option>
+        <option value="Ghost">Ghost</option>
+        <option value="Generalist">Generalist</option>
+        <option value="Sniper">Sniper</option>
+        <option value="Hacker">Hacker</option>
+        <option value="Captain">Captain</option>
+      </select>
+      <span style="font-family:'Share Tech Mono',monospace;font-size:7.5px;letter-spacing:.14em;color:var(--text-dim);">Selecting a build fills the form — all fields remain editable.</span>
+    </div>
 
     <!-- IDENTITY -->
     <div class="identity-row">
@@ -725,12 +743,17 @@ body::after {
                   <option value="Pistol">Pistol</option>
                   <option value="Rifle">Rifle</option>
                   <option value="Shotgun">Shotgun</option>
+                  <option value="Machine Gun">Machine Gun</option>
                   <option value="Sniper Rifle">Sniper Rifle</option>
                 </select>
               </div>
               <div>
                 <span class="field-label">CLASS</span>
                 <input class="f-input" type="text" id="w1class" readonly placeholder="—" style="font-size:12px;">
+              </div>
+              <div>
+                <span class="field-label">ATTR</span>
+                <input class="f-input" type="text" id="w1attr" readonly placeholder="—" style="font-size:12px;">
               </div>
               <div>
                 <span class="field-label">RANGE</span>
@@ -755,12 +778,17 @@ body::after {
                   <option value="Pistol">Pistol</option>
                   <option value="Rifle">Rifle</option>
                   <option value="Shotgun">Shotgun</option>
+                  <option value="Machine Gun">Machine Gun</option>
                   <option value="Sniper Rifle">Sniper Rifle</option>
                 </select>
               </div>
               <div>
                 <span class="field-label">CLASS</span>
                 <input class="f-input" type="text" id="w2class" readonly placeholder="—" style="font-size:12px;">
+              </div>
+              <div>
+                <span class="field-label">ATTR</span>
+                <input class="f-input" type="text" id="w2attr" readonly placeholder="—" style="font-size:12px;">
               </div>
               <div>
                 <span class="field-label">RANGE</span>
@@ -780,10 +808,10 @@ body::after {
               <div>
                 <span class="field-label">ARMOR TYPE</span>
                 <select class="f-input" id="armorType" onchange="autoArmorValue()" style="appearance:none;cursor:pointer;font-size:13px;">
-                  <option value="">— None</option>
-                  <option value="Light (−5 dmg)">Light (−5 dmg)</option>
-                  <option value="Medium (−7 dmg, −1 Mob)">Medium (−7 dmg, −1 Mob)</option>
-                  <option value="Heavy (−10 dmg, −1 Mob)">Heavy (−10 dmg, −1 Mob)</option>
+                  <option value="">— None (+2 Stealth)</option>
+                  <option value="Light (DV 3)">Light (DV 3)</option>
+                  <option value="Medium (DV 5, −1 Mob)">Medium (DV 5, −1 Mob)</option>
+                  <option value="Heavy (DV 7, −1 Mob, −1 Rxn)">Heavy (DV 7, −1 Mob, −1 Rxn)</option>
                 </select>
               </div>
               <div>
@@ -854,9 +882,9 @@ body::after {
 
         <!-- SKILLS -->
         <div class="skills-section">
-          <div class="section-label">SKILLS <span>CLICK ONCE: TRAINED (+2) &nbsp; TWICE: SPECIALIZED (+3)</span></div>
+          <div class="section-label">SKILLS <span>CLICK ONCE: TRAINED (+1) &nbsp; TWICE: SPECIALIZED (+2)</span></div>
           <div class="skill-list" id="skillList"></div>
-          <div class="skill-hint">▸ Untrained: attribute only &nbsp;|&nbsp; Trained: +2 &nbsp;|&nbsp; Specialized: +3</div>
+          <div class="skill-hint">▸ Untrained: attribute only &nbsp;|&nbsp; Trained: +1 &nbsp;|&nbsp; Specialized: +2</div>
         </div>
 
         <!-- TRAITS -->
@@ -979,43 +1007,53 @@ body::after {
   </div>
   <div class="sheet">
 
-    <div class="section-label">WEAPONS <span>TWO LIGHT — OR — STANDARD + KNIFE — OR — ONE HEAVY</span></div>
+    <div class="section-label">WEAPONS <span>TWO LIGHT — OR — STANDARD + KNIFE — OR — ONE BRUTE / PRECISION</span></div>
     <div class="loadout-upload-hint" style="margin-bottom:14px;">
-      ■ WEAPON ALLOWANCE // Select one package: <strong>two light weapons</strong> (e.g. pistol + knife) &nbsp;|&nbsp; <strong>one standard weapon + knife</strong> &nbsp;|&nbsp; <strong>one heavy weapon only</strong> (no second weapon)
+      ■ WEAPON ALLOWANCE // Select one package: <strong>two light weapons</strong> (e.g. pistol + knife) &nbsp;|&nbsp; <strong>one standard weapon + knife</strong> &nbsp;|&nbsp; <strong>one Brute or Precision weapon only</strong> (no second weapon)
     </div>
 
     <div class="cg-grid" style="margin-bottom:18px;">
       <div class="cg-panel">
-        <div class="cg-panel-title">LIGHT WEAPONS &nbsp;// &nbsp;+0 TO DAMAGE</div>
-        <p>Concealable, fast, mobile. Light weapons deal damage equal to the margin of success only — no modifier.</p>
+        <div class="cg-panel-title">LIGHT WEAPONS &nbsp;// &nbsp;+0 &nbsp;// &nbsp;ATTR: varies</div>
+        <p>Concealable, fast, mobile. No damage modifier. Knife uses BODY; Pistol uses AWARENESS.</p>
         <div style="display:flex;flex-wrap:wrap;gap:5px;margin-top:8px;">
-          <span class="std-equip-item">KNIFE</span>
-          <span class="std-equip-item">PISTOL</span>
+          <span class="std-equip-item">KNIFE &nbsp;<span style="font-size:9px;color:var(--text-dim);font-family:'Share Tech Mono',monospace;">BODY · CLOSE</span></span>
+          <span class="std-equip-item">PISTOL &nbsp;<span style="font-size:9px;color:var(--text-dim);font-family:'Share Tech Mono',monospace;">AWARENESS · NEAR</span></span>
         </div>
+        <p style="font-size:12px;color:var(--text-dim);margin-top:8px;margin-bottom:0;">Pistol specialists (Firearms Specialized) may fire a second shot as a Minor Action for half damage when dual-wielding.</p>
       </div>
       <div class="cg-panel hi">
-        <div class="cg-panel-title hi">STANDARD WEAPONS &nbsp;// &nbsp;+2 TO DAMAGE</div>
-        <p>Reliable operational weapons. Damage equals margin of success + 2. Balanced between mobility and lethality.</p>
+        <div class="cg-panel-title hi">STANDARD WEAPONS &nbsp;// &nbsp;+1 &nbsp;// &nbsp;ATTR: AWARENESS</div>
+        <p>Reliable operational weapon. Damage equals margin of success + 1. Uses AWARENESS + Firearms.</p>
         <div style="display:flex;flex-wrap:wrap;gap:5px;margin-top:8px;">
-          <span class="std-equip-item">RIFLE</span>
+          <span class="std-equip-item">RIFLE &nbsp;<span style="font-size:9px;color:var(--text-dim);font-family:'Share Tech Mono',monospace;">AWARENESS · FAR</span></span>
         </div>
       </div>
       <div class="cg-panel red">
-        <div class="cg-panel-title red">HEAVY WEAPONS &nbsp;// &nbsp;+4 TO DAMAGE</div>
-        <p>Slow, dangerous, high-impact. Damage equals margin of success + 4. Cannot move and attack in the same turn.</p>
+        <div class="cg-panel-title red">BRUTE WEAPONS &nbsp;// &nbsp;+2 &nbsp;// &nbsp;ATTR: BODY &nbsp;// &nbsp;NO SKILL REQUIRED</div>
+        <p>Heavy suppressive weapons. Damage equals margin of success + 2. Uses BODY directly — no Firearms skill bonus applies. Cannot move and attack in the same turn.</p>
         <div style="display:flex;flex-wrap:wrap;gap:5px;margin-top:8px;">
-          <span class="std-equip-item">SHOTGUN <span style="font-size:9px;color:var(--amber);font-family:'Share Tech Mono',monospace;letter-spacing:.08em;">CLOSE / NEAR ONLY</span></span>
-          <span class="std-equip-item">SNIPER RIFLE</span>
+          <span class="std-equip-item">SHOTGUN &nbsp;<span style="font-size:9px;color:var(--amber);font-family:'Share Tech Mono',monospace;">CLOSE / NEAR</span></span>
+          <span class="std-equip-item">MACHINE GUN &nbsp;<span style="font-size:9px;color:var(--amber);font-family:'Share Tech Mono',monospace;">NEAR / FAR</span></span>
         </div>
-        <p style="font-size:12px;color:var(--text-dim);margin-top:8px;margin-bottom:0;">The shotgun is Heavy (+4) but limited to CLOSE and NEAR range.</p>
+      </div>
+      <div class="cg-panel amber">
+        <div class="cg-panel-title amber">PRECISION WEAPONS &nbsp;// &nbsp;+2 &nbsp;// &nbsp;ATTR: RESOLVE</div>
+        <p>Extreme-range specialist weapon. Damage equals margin of success + 2. Uses RESOLVE + Firearms. Disadvantage at NEAR range. Only weapon able to engage EXTREME range.</p>
+        <div style="display:flex;flex-wrap:wrap;gap:5px;margin-top:8px;">
+          <span class="std-equip-item">SNIPER RIFLE &nbsp;<span style="font-size:9px;color:var(--text-dim);font-family:'Share Tech Mono',monospace;">FAR / EXTREME</span></span>
+        </div>
       </div>
     </div>
 
     <div class="section-label">ARMOR <span>SELECT ONE — RECORD ON PAGE 1</span></div>
+    <div class="loadout-upload-hint" style="margin-bottom:14px;">
+      ■ NOTE // Wearing <strong>no armor</strong> grants <strong>+2 to Stealth checks</strong>.
+    </div>
     <div class="cg-grid" style="margin-bottom:18px;">
-      <div class="cg-panel"><div class="cg-panel-title">LIGHT ARMOR &nbsp;// &nbsp;−5 DAMAGE RECEIVED</div><p>Soft-plate concealed armor. Reduces all incoming damage by 5. No penalties to movement or skill checks.</p></div>
-      <div class="cg-panel amber"><div class="cg-panel-title amber">MEDIUM ARMOR &nbsp;// &nbsp;−7 DAMAGE RECEIVED</div><p>Tactical hard-plate carrier. Reduces all incoming damage by 7. Imposes <strong>−1 to Mobility checks</strong> due to encumbrance.</p></div>
-      <div class="cg-panel red"><div class="cg-panel-title red">HEAVY ARMOR &nbsp;// &nbsp;−10 DAMAGE RECEIVED</div><p>Full tactical rig. Reduces all incoming damage by 10. Imposes <strong>−1 to Mobility checks</strong> and <strong>−1 to AWARENESS checks</strong>. Extended movement costs +1 COMPOSURE.</p></div>
+      <div class="cg-panel"><div class="cg-panel-title">LIGHT ARMOR &nbsp;// &nbsp;DV 3</div><p>Soft-plate concealed armor. Attackers must beat DV 3 to deal damage. No penalties.</p></div>
+      <div class="cg-panel amber"><div class="cg-panel-title amber">MEDIUM ARMOR &nbsp;// &nbsp;DV 5</div><p>Tactical hard-plate carrier. Attackers must beat DV 5 to deal damage. Imposes <strong>−1 to Mobility checks</strong>.</p></div>
+      <div class="cg-panel red"><div class="cg-panel-title red">HEAVY ARMOR &nbsp;// &nbsp;DV 7</div><p>Full tactical rig. Attackers must beat DV 7 to deal damage. Imposes <strong>−1 to Mobility checks</strong> and <strong>−1 to Reaction pip pool</strong>.</p></div>
     </div>
 
     <div class="section-label">FIELD EQUIPMENT <span>SELECT UP TO 3 ADDITIONAL ITEMS — RECORD ON PAGE 1</span></div>
@@ -1059,21 +1097,58 @@ body::after {
 </div>
 
 <script>
+// ── PRESET BUILDS ────────────────────────────────────────────────
+// attr: [BODY,MIND,TECH,AWARENESS,RESOLVE]
+// skills: { skillIndex: level } where 1=Trained, 2=Specialized
+const PRESET_BUILDS = {
+  Investigator: { attr:[1,3,1,2,2], skills:{8:2, 9:1},   w1:'Pistol',       w2:'Knife',  armor:'Light (DV 3)',                    eq:['Medkit','Flashbang','Bandages'] },
+  Soldier:      { attr:[2,1,1,3,2], skills:{0:2, 2:1},   w1:'Rifle',        w2:'Knife',  armor:'Medium (DV 5, −1 Mob)',           eq:['Medkit','Flashbang','Breach Charge (×3)'] },
+  Breacher:     { attr:[3,1,1,2,2], skills:{1:2, 4:1},   w1:'Shotgun',      w2:'',       armor:'Heavy (DV 7, −1 Mob, −1 Rxn)',   eq:['Breach Charge (×3)','Flashbang','Medkit'] },
+  Medic:        { attr:[1,2,3,1,2], skills:{7:2, 6:1},   w1:'Pistol',       w2:'Knife',  armor:'Light (DV 3)',                    eq:['Medkit','Bandages','Bandages'] },
+  Fixer:        { attr:[1,2,1,2,3], skills:{11:2, 10:1}, w1:'Rifle',        w2:'Knife',  armor:'Light (DV 3)',                    eq:['Handcuffs','Flashbang','Bandages'] },
+  Ghost:        { attr:[1,2,1,3,2], skills:{3:2, 9:1},   w1:'Pistol',       w2:'Knife',  armor:'',                               eq:['Flashbang','Handcuffs','Hacking Kit'] },
+  Generalist:   { attr:[2,2,1,2,2], skills:{},           w1:'Rifle',        w2:'Knife',  armor:'Medium (DV 5, −1 Mob)',           eq:['Medkit','Bandages','Flashbang'] },
+  Sniper:       { attr:[1,2,2,1,3], skills:{0:2, 5:1},   w1:'Sniper Rifle', w2:'',       armor:'Light (DV 3)',                    eq:['Bandages','Breach Charge (×3)','Hacking Kit'] },
+  Hacker:       { attr:[1,2,3,2,1], skills:{5:2, 12:1}, w1:'Pistol',       w2:'Knife',  armor:'Medium (DV 5, −1 Mob)',           eq:['Hacking Kit','Medkit','Medkit'] },
+  Captain:      { attr:[1,3,1,2,2], skills:{0:2, 10:1},  w1:'Pistol',       w2:'Pistol', armor:'Light (DV 3)',                    eq:['Medkit','Handcuffs','Flashbang'] },
+};
+
+function applyPreset(name) {
+  const p = PRESET_BUILDS[name];
+  if (!p) return;
+  // Attributes
+  p.attr.forEach((v, i) => { attrVals[i] = v; });
+  buildAttrs(); updateHP(); updateComp();
+  // Skills — reset all then apply
+  skillState.fill(0);
+  Object.entries(p.skills).forEach(([i, lv]) => { skillState[parseInt(i)] = lv; });
+  buildSkills();
+  // Weapons
+  sv('w1name', p.w1); autoWeapon('w1');
+  sv('w2name', p.w2); autoWeapon('w2');
+  // Armor
+  sv('armorType', p.armor); autoArmorValue();
+  // Equipment
+  ['eq1','eq2','eq3'].forEach((id, i) => { sv(id, p.eq[i] || ''); });
+  markUnsaved();
+}
+
 // ── WEAPON CATALOG ───────────────────────────────────────────────
 const WEAPON_CATALOG = {
-  '':             { cls: '',              range: '' },
-  'Knife':        { cls: 'Light (+0)',    range: 'CLOSE' },
-  'Pistol':       { cls: 'Light (+0)',    range: 'NEAR'  },
-  'Rifle':        { cls: 'Standard (+2)', range: 'FAR'   },
-  'Shotgun':      { cls: 'Heavy (+4)',    range: 'CLOSE/NEAR' },
-  'Sniper Rifle': { cls: 'Heavy (+4)',    range: 'FAR'   },
+  '':              { cls: '',                 range: '',              attr: '' },
+  'Knife':         { cls: 'Light (+0)',       range: 'CLOSE',         attr: 'BODY' },
+  'Pistol':        { cls: 'Light (+0)',       range: 'NEAR',          attr: 'AWARENESS' },
+  'Rifle':         { cls: 'Standard (+1)',    range: 'FAR',           attr: 'AWARENESS' },
+  'Shotgun':       { cls: 'Brute (+2)',       range: 'CLOSE/NEAR',    attr: 'BODY' },
+  'Machine Gun':   { cls: 'Brute (+2)',       range: 'NEAR/FAR',      attr: 'BODY' },
+  'Sniper Rifle':  { cls: 'Precision (+2)',   range: 'FAR/EXTREME',   attr: 'RESOLVE' },
 };
 
 const ARMOR_VALUES = {
   '': '0',
-  'Light (−5 dmg)': '5',
-  'Medium (−7 dmg, −1 Mob)': '7',
-  'Heavy (−10 dmg, −1 Mob)': '10',
+  'Light (DV 3)':              '3',
+  'Medium (DV 5, −1 Mob)':     '5',
+  'Heavy (DV 7, −1 Mob, −1 Rxn)': '7',
 };
 
 // ── TOKEN COLORS ─────────────────────────────────────────────────
@@ -1115,11 +1190,13 @@ function updateTokenLabel() {
 // ── LOADOUT AUTO-FILL ────────────────────────────────────────────
 function autoWeapon(slot) {
   const name = document.getElementById(slot + 'name').value;
-  const data = WEAPON_CATALOG[name] || { cls: '', range: '' };
-  const clsEl = document.getElementById(slot + 'class');
-  const rngEl = document.getElementById(slot + 'range');
-  if (clsEl) clsEl.value = data.cls;
-  if (rngEl) rngEl.value = data.range;
+  const data = WEAPON_CATALOG[name] || { cls: '', attr: '', range: '' };
+  const clsEl  = document.getElementById(slot + 'class');
+  const attrEl = document.getElementById(slot + 'attr');
+  const rngEl  = document.getElementById(slot + 'range');
+  if (clsEl)  clsEl.value  = data.cls;
+  if (attrEl) attrEl.value = data.attr;
+  if (rngEl)  rngEl.value  = data.range;
 }
 
 function autoArmorValue() {
@@ -1172,12 +1249,13 @@ function setAttr(i, val) {
 function validateAttrs() {
   const sum = attrVals.reduce((a, b) => a + b, 0);
   const overCap = attrVals.some(v => v > 3);
+  const multipleAtThree = attrVals.filter(v => v >= 3).length > 1;
   const el = document.getElementById('attrBudget');
   if (!el) return;
-  el.textContent = `${sum} / 11 PTS`;
-  el.style.color = overCap || sum > 11
+  el.textContent = `${sum} / 9 PTS`;
+  el.style.color = overCap || sum > 9 || multipleAtThree
     ? 'var(--red-bright)'
-    : sum === 11
+    : sum === 9
       ? 'var(--green)'
       : 'var(--text-dim)';
 }
@@ -1225,44 +1303,54 @@ function updateComp() {
 }
 
 // ── SKILLS ───────────────────────────────────────────────────────
+// Array index = save-format index. DO NOT reorder — old saves depend on position.
 const SKILLS = [
-  { name: 'Firearms',      attr: 'AWARENESS', group: 'COMBAT'    },
-  { name: 'Close Combat',  attr: 'BODY',      group: 'COMBAT'    },
-  { name: 'Mobility',      attr: 'BODY',      group: 'PHYSICAL'  },
-  { name: 'Stealth',       attr: 'AWARENESS', group: 'PHYSICAL'  },
-  { name: 'Survival',      attr: 'BODY',      group: 'PHYSICAL'  },
-  { name: 'Computing',     attr: 'TECH',      group: 'TECHNICAL' },
-  { name: 'Engineering',   attr: 'TECH',      group: 'TECHNICAL' },
-  { name: 'Medicine',      attr: 'TECH',      group: 'TECHNICAL' },
-  { name: 'History',       attr: 'MIND',      group: 'MENTAL'    },
-  { name: 'Investigation', attr: 'MIND',      group: 'MENTAL'    },
-  { name: 'Perception',    attr: 'AWARENESS', group: 'MENTAL'    },
-  { name: 'Persuasion',    attr: 'MIND',      group: 'SOCIAL'    },
-  { name: 'Intimidation',  attr: 'RESOLVE',   group: 'SOCIAL'    },
+  { name: 'Firearms',      attr: 'AWARENESS' }, // 0
+  { name: 'Close Combat',  attr: 'BODY'      }, // 1
+  { name: 'Mobility',      attr: 'BODY'      }, // 2
+  { name: 'Stealth',       attr: 'AWARENESS' }, // 3
+  { name: 'Survival',      attr: 'BODY'      }, // 4
+  { name: 'Computing',     attr: 'TECH'      }, // 5
+  { name: 'Engineering',   attr: 'TECH'      }, // 6
+  { name: 'Medicine',      attr: 'TECH'      }, // 7
+  { name: 'Investigation', attr: 'MIND'      }, // 8
+  { name: 'Perception',    attr: 'AWARENESS' }, // 9
+  { name: 'Persuasion',    attr: 'MIND'      }, // 10
+  { name: 'Intimidation',  attr: 'RESOLVE'   }, // 11
+  { name: 'History',       attr: 'MIND'      }, // 12 — appended; old saves pad with 0
 ];
+
+// Render order — History (12) grouped with MENTAL despite being last in save index
+const SKILL_GROUPS = [
+  { label: 'COMBAT',    indices: [0, 1] },
+  { label: 'PHYSICAL',  indices: [2, 3, 4] },
+  { label: 'TECHNICAL', indices: [5, 6, 7] },
+  { label: 'MENTAL',    indices: [8, 9, 12] },
+  { label: 'SOCIAL',    indices: [10, 11] },
+];
+
 const skillState = new Array(SKILLS.length).fill(0);
 
 function buildSkills() {
   const list = document.getElementById('skillList');
   list.innerHTML = '';
-  let lastGroup = null;
-  SKILLS.forEach((sk, i) => {
-    if (sk.group !== lastGroup) {
-      const hdr = document.createElement('div');
-      hdr.className = 'skill-group-label';
-      hdr.textContent = '▸ ' + sk.group;
-      list.appendChild(hdr);
-      lastGroup = sk.group;
-    }
-    const row = document.createElement('div');
-    row.className = 'skill-row' + (skillState[i] === 1 ? ' trained' : skillState[i] === 2 ? ' specialized' : '');
-    row.innerHTML = `
-      <div class="sk-toggle"></div>
-      <div class="sk-name">${sk.name}</div>
-      <div class="sk-attr">${sk.attr}</div>
-      <div class="sk-bonus">${skillState[i] === 0 ? '—' : skillState[i] === 1 ? '+2' : '+3'}</div>`;
-    row.onclick = () => { skillState[i] = (skillState[i] + 1) % 3; buildSkills(); };
-    list.appendChild(row);
+  SKILL_GROUPS.forEach(group => {
+    const hdr = document.createElement('div');
+    hdr.className = 'skill-group-label';
+    hdr.textContent = '▸ ' + group.label;
+    list.appendChild(hdr);
+    group.indices.forEach(i => {
+      const sk = SKILLS[i];
+      const row = document.createElement('div');
+      row.className = 'skill-row' + (skillState[i] === 1 ? ' trained' : skillState[i] === 2 ? ' specialized' : '');
+      row.innerHTML = `
+        <div class="sk-toggle"></div>
+        <div class="sk-name">${sk.name}</div>
+        <div class="sk-attr">${sk.attr}</div>
+        <div class="sk-bonus">${skillState[i] === 0 ? '—' : skillState[i] === 1 ? '+1' : '+2'}</div>`;
+      row.onclick = () => { skillState[i] = (skillState[i] + 1) % 3; buildSkills(); };
+      list.appendChild(row);
+    });
   });
 }
 
@@ -1274,12 +1362,12 @@ const SPIKE_DATA = [
   { val: 3,  cls: 'active-35', label: '3 — SHAKEN',     effect: '−1 to all MIND rolls. SPIKE Save required when triggered: d20 + RESOLVE vs TN 9. Success holds your level; failure raises SPIKE by 1.' },
   { val: 4,  cls: 'active-35', label: '4 — SHAKEN',     effect: '−1 to all MIND rolls. SPIKE Save required when triggered: d20 + RESOLVE vs TN 9. Success holds your level; failure raises SPIKE by 1.' },
   { val: 5,  cls: 'active-35', label: '5 — SHAKEN',     effect: '−1 to all MIND rolls. SPIKE Save required when triggered: d20 + RESOLVE vs TN 9. Success holds your level; failure raises SPIKE by 1.' },
-  { val: 6,  cls: 'active-67', label: '6 — CRACKED',    effect: '−1 to MIND and RESOLVE. Hallucinations possible. Save required when triggered: d20 + RESOLVE vs TN 9. Success holds; failure raises SPIKE by 1.' },
-  { val: 7,  cls: 'active-67', label: '7 — CRACKED',    effect: '−1 to MIND and RESOLVE. Hallucinations possible. Save required when triggered: d20 + RESOLVE vs TN 9. Success holds; failure raises SPIKE by 1.' },
-  { val: 8,  cls: 'active-89', label: '8 — OVERLOADED', effect: 'Disadvantage on all social checks. Operative unreasonable in roleplay. SPIKE Save required when triggered and once per hour of sustained exposure: d20 + RESOLVE vs TN 9.' },
-  { val: 9,  cls: 'active-89', label: '9 — OVERLOADED', effect: 'Disadvantage on all social checks. Operative unreasonable in roleplay. SPIKE Save required when triggered and once per hour of sustained exposure: d20 + RESOLVE vs TN 9.' },
-  { val: 10, cls: 'active-10', label: '10 — SPIKED',    effect: 'Loss of character control. Roll Behavior Table (d20) at start of each turn. End of turn: d20 + RESOLVE vs TN 16. Nat 20: SPIKE −2. Nat 1: SPIKE +1.' },
-  { val: 11, cls: 'active-11', label: '11 — CONSUMED',  effect: '1d4 True Damage per turn until HP 0. Then 1d4 RESOLVE damage per turn until 0. Death follows. End of turn: d20 + RESOLVE vs TN 18. Nat 1: damage rolls at Advantage.' },
+  { val: 6,  cls: 'active-67', label: '6 — CRACKED',    effect: '−1 to MIND and RESOLVE. Hallucinations possible. Save required when triggered: d20 + RESOLVE vs TN 11. Success holds; failure raises SPIKE by 1.' },
+  { val: 7,  cls: 'active-67', label: '7 — CRACKED',    effect: '−1 to MIND and RESOLVE. Hallucinations possible. Save required when triggered: d20 + RESOLVE vs TN 11. Success holds; failure raises SPIKE by 1.' },
+  { val: 8,  cls: 'active-89', label: '8 — OVERLOADED', effect: 'Disadvantage on all social checks. Operative unreasonable in roleplay. SPIKE Save required when triggered and once per hour of sustained exposure: d20 + RESOLVE vs TN 13.' },
+  { val: 9,  cls: 'active-89', label: '9 — OVERLOADED', effect: 'Disadvantage on all social checks. Operative unreasonable in roleplay. SPIKE Save required when triggered and once per hour of sustained exposure: d20 + RESOLVE vs TN 13.' },
+  { val: 10, cls: 'active-10', label: '10 — SPIKED',    effect: 'Loss of character control. Roll Behavior Table (d20) at start of each turn. End of turn: d20 + RESOLVE vs TN 15. Nat 20: SPIKE −2. Nat 1: SPIKE +1.' },
+  { val: 11, cls: 'active-11', label: '11 — CONSUMED',  effect: '1d4 True Damage per turn until HP 0. Then 1d4 RESOLVE damage per turn until 0. Death follows. End of turn: d20 + RESOLVE vs TN 17. Nat 1: damage rolls at Advantage.' },
 ];
 
 let currentSpike = 0;
@@ -1341,7 +1429,7 @@ function switchTab(n) {
 }
 
 // ── LOADOUT FIELD IDS ────────────────────────────────────────────
-const LOADOUT_FIELDS = ['w1name','w1class','w1range','w1notes','w2name','w2class','w2range','w2notes','armorType','armorValue','armorNotes','eq1','eq2','eq3'];
+const LOADOUT_FIELDS = ['w1name','w1class','w1attr','w1range','w1notes','w2name','w2class','w2attr','w2range','w2notes','armorType','armorValue','armorNotes','eq1','eq2','eq3'];
 
 function gatherLoadout() {
   const out = {};
