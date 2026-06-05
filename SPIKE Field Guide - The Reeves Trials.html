@@ -594,8 +594,8 @@ p, li, td, .step-text, .trait-fx, .flaw-body,
           <div class="block-label hi">■ THE CORE ROLL</div>
           <div class="formula">d10 <span class="op">+</span> ATTRIBUTE <span class="op">+</span> SKILL <span class="op">≥</span> <span class="tn">TARGET NUMBER</span></div>
           <div class="stat-row"><span class="stat-key">Untrained</span><span class="stat-val">d10 + ATTRIBUTE only (no skill bonus)</span></div>
-          <div class="stat-row"><span class="stat-key">Trained</span><span class="stat-val">+2 to roll</span></div>
-          <div class="stat-row"><span class="stat-key">Specialized</span><span class="stat-val">+3 to roll (via advancement)</span></div>
+          <div class="stat-row"><span class="stat-key">Trained</span><span class="stat-val">+1 to roll</span></div>
+          <div class="stat-row"><span class="stat-key">Specialized</span><span class="stat-val">+2 to roll (via advancement)</span></div>
         </div>
 
         <div class="block">
@@ -646,7 +646,7 @@ p, li, td, .step-text, .trait-fx, .flaw-body,
 
         <div class="block">
           <div class="block-label">■ VITALS FORMULA</div>
-          <div class="formula">HP <span class="op">=</span> 10 <span class="op">+</span> BODY</div>
+          <div class="formula">HP <span class="op">=</span> 15 <span class="op">+</span> BODY</div>
           <div class="formula">COMPOSURE <span class="op">=</span> 5 <span class="op">+</span> RESOLVE</div>
         </div>
       </div>
@@ -692,9 +692,9 @@ p, li, td, .step-text, .trait-fx, .flaw-body,
           <div class="block-label">■ ATTACK RESOLUTION — MARGIN OF SUCCESS</div>
           <div class="formula">d10 <span class="op">+</span> ATTRIBUTE <span class="op">+</span> SKILL <span class="op">vs</span> <span class="tn">ENEMY DEFENSE VALUE</span></div>
           <p style="font-size:12px;color:var(--text-dim);margin-top:5px;margin-bottom:5px;">One roll determines hit and damage. Beat the Defense Value and the margin is your base damage.</p>
-          <div class="formula">BASE DMG <span class="op">=</span> YOUR TOTAL <span class="op">−</span> DEFENSE VALUE</div>
-          <div class="formula">FINAL DMG <span class="op">=</span> BASE <span class="op">+</span> WEAPON MOD <span class="op">−</span> ARMOR</div>
-          <p style="font-size:12px;color:var(--text-dim);margin-top:5px;">Nat 10: double base damage before weapon mod. Nat 1: miss + complication. Min 0 damage.</p>
+          <div class="formula">BASE DMG <span class="op">=</span> max(0, YOUR TOTAL <span class="op">−</span> DEFENSE VALUE)</div>
+          <div class="formula">FINAL DMG <span class="op">=</span> BASE <span class="op">+</span> WEAPON MOD</div>
+          <p style="font-size:12px;color:var(--text-dim);margin-top:5px;">Nat 10 (CRIT): weapon mod doubles — FINAL = BASE + (MOD × 2). Nat 1: miss + complication.</p>
         </div>
 
         <div class="block amber">
@@ -742,21 +742,26 @@ p, li, td, .step-text, .trait-fx, .flaw-body,
         </div>
 
         <div class="block">
-          <div class="block-label">■ ARMOR</div>
+          <div class="block-label">■ ARMOR — DEFENSE VALUE (DV)</div>
+          <div class="stat-row">
+            <span class="stat-key">None</span>
+            <span class="stat-val">DV 0</span>
+            <span class="stat-note">+2 Stealth.</span>
+          </div>
           <div class="stat-row">
             <span class="stat-key">Light</span>
-            <span class="stat-val">−2 final dmg</span>
+            <span class="stat-val">DV 3</span>
             <span class="stat-note">No penalty.</span>
           </div>
           <div class="stat-row">
             <span class="stat-key">Medium</span>
-            <span class="stat-val">−4 final dmg</span>
-            <span class="stat-note">–1 Mobility checks.</span>
+            <span class="stat-val">DV 5</span>
+            <span class="stat-note">–1 Mobility.</span>
           </div>
           <div class="stat-row">
             <span class="stat-key">Heavy</span>
-            <span class="stat-val">−6 final dmg</span>
-            <span class="stat-note">–1 Mobility, –1 AWARENESS. Extended move costs +1 COMPOSURE.</span>
+            <span class="stat-val">DV 7</span>
+            <span class="stat-note">–1 Mobility, –1 AWARENESS, –1 Reaction pip.</span>
           </div>
         </div>
       </div>
@@ -812,7 +817,7 @@ p, li, td, .step-text, .trait-fx, .flaw-body,
         <tr>
           <td><span class="lvl-67">6–7</span></td>
           <td><span class="lvl-67">CRACKED</span></td>
-          <td>–1 to MIND and RESOLVE. Hallucinations/memory distortion possible.</td>
+          <td>–2 to MIND, –1 to RESOLVE. Hallucinations/memory distortion possible.</td>
           <td style="font-size:12px;color:#d06020;">Save required when triggered</td>
         </tr>
         <tr>
@@ -825,13 +830,13 @@ p, li, td, .step-text, .trait-fx, .flaw-body,
           <td><span class="lvl-10">10</span></td>
           <td><span class="lvl-10">SPIKED</span></td>
           <td>Loss of character control. Roll Behavior Table (d20) at start of each turn.</td>
-          <td style="font-size:12px;color:#e04040;">End of turn: d20 + RESOLVE vs TN 16. Nat 20: SPIKE –2. Nat 1: SPIKE +1.</td>
+          <td style="font-size:12px;color:#e04040;">End of turn: d20 + RESOLVE vs TN 15. Nat 20: SPIKE –2. Nat 1: SPIKE +1.</td>
         </tr>
         <tr>
           <td><span class="lvl-11">11</span></td>
           <td><span class="lvl-11">CONSUMED</span></td>
           <td>1d4 True Damage/turn until HP 0, then 1d4 RESOLVE dmg/turn until 0. Death follows.</td>
-          <td style="font-size:12px;color:#ff2020;">End of turn: d20 + RESOLVE vs TN 18. Nat 1: damage rolls at Advantage.</td>
+          <td style="font-size:12px;color:#ff2020;">End of turn: d20 + RESOLVE vs TN 17. Nat 1: damage rolls at Advantage.</td>
         </tr>
       </tbody>
     </table>

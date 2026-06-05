@@ -1104,7 +1104,7 @@ p, li, td, .step-text, .trait-fx, .flaw-body,
   <!-- Skills -->
   <div class="panel mbr">
     <div class="panel-title">SKILLS — CHOOSE 3 AT CREATION</div>
-    <p style="font-size:14px;margin-bottom:12px;">Trained skills add <span class="mono">+2</span> to relevant rolls. Untrained: attribute only. Skills can be upgraded to Specialized (<span class="mono">+3</span>) through advancement.</p>
+    <p style="font-size:14px;margin-bottom:12px;">Trained skills add <span class="mono">+1</span> to relevant rolls. Untrained: attribute only. Skills can be upgraded to Specialized (<span class="mono">+2</span>) through advancement.</p>
     <div class="g2">
       <div>
         <div class="skill-cat">
@@ -1372,8 +1372,8 @@ p, li, td, .step-text, .trait-fx, .flaw-body,
     <p style="font-family:'Share Tech Mono',monospace; font-size:13px; color:var(--text-hi); margin-bottom:10px;">d10 + ATTRIBUTE + SKILL vs ENEMY DEFENSE VALUE</p>
     <p style="margin-bottom:10px;">One roll determines both hit and damage. If your total meets or exceeds the enemy's Defense Value, the attack lands. The <strong>margin</strong> (your total minus their Defense) becomes your base damage.</p>
     <div style="background:var(--surface); border:1px solid var(--border); padding:10px 14px; margin-bottom:12px; font-family:'Share Tech Mono',monospace; font-size:13px; color:var(--text-hi); line-height:2.2;">
-      BASE DAMAGE &nbsp;=&nbsp; ROLL TOTAL − DEFENSE VALUE<br>
-      FINAL DAMAGE &nbsp;=&nbsp; BASE + WEAPON MODIFIER − ARMOR
+      BASE DAMAGE &nbsp;=&nbsp; max(0, ROLL TOTAL − DEFENSE VALUE)<br>
+      FINAL DAMAGE &nbsp;=&nbsp; BASE + WEAPON MODIFIER
     </div>
     <div class="g2">
       <div>
@@ -1385,11 +1385,12 @@ p, li, td, .step-text, .trait-fx, .flaw-body,
         </ul>
       </div>
       <div>
-        <div style="font-family:'Share Tech Mono',monospace; font-size:7.5px; letter-spacing:.16em; color:var(--text-dim); margin-bottom:6px;">ARMOR</div>
+        <div style="font-family:'Share Tech Mono',monospace; font-size:7.5px; letter-spacing:.16em; color:var(--text-dim); margin-bottom:6px;">ARMOR — DEFENSE VALUE (DV)</div>
         <ul>
-          <li><strong>Light armor:</strong> −5 final damage, no penalty</li>
-          <li><strong>Medium armor:</strong> −7 final damage, −1 Mobility</li>
-          <li><strong>Heavy armor:</strong> −10 final damage, −1 Mobility, −1 AWARENESS. Extended movement costs +1 COMPOSURE.</li>
+          <li><strong>No armor:</strong> Defense Value 0, +2 Stealth</li>
+          <li><strong>Light armor:</strong> Defense Value 3, no penalty</li>
+          <li><strong>Medium armor:</strong> Defense Value 5, −1 Mobility</li>
+          <li><strong>Heavy armor:</strong> Defense Value 7, −1 Mobility, −1 AWARENESS, −1 Reaction pip</li>
         </ul>
       </div>
     </div>
@@ -1482,7 +1483,7 @@ p, li, td, .step-text, .trait-fx, .flaw-body,
       <tr class="spike-row-cr">
         <td><span class="slvl c67">6–7</span></td>
         <td><span class="slbl c67">CRACKED</span></td>
-        <td>−1 to MIND and RESOLVE. Hallucinations possible. Saving Throw required when triggered.</td>
+        <td>−2 to MIND, −1 to RESOLVE. Hallucinations possible. Saving Throw required when triggered.</td>
       </tr>
       <tr class="spike-row-ol">
         <td><span class="slvl c89">8–9</span></td>
@@ -1492,12 +1493,12 @@ p, li, td, .step-text, .trait-fx, .flaw-body,
       <tr class="spike-row-sp">
         <td><span class="slvl c10">10</span></td>
         <td><span class="slbl c10">SPIKED</span></td>
-        <td>Loss of character control. Roll Behavior Table (d20) at turn start. End of turn: <span class="mono">d20 + RESOLVE vs TN 16</span>. Nat 20: SPIKE −2. Nat 1: SPIKE +1.</td>
+        <td>Loss of character control. Roll Behavior Table (d20) at turn start. End of turn: <span class="mono">d20 + RESOLVE vs TN 15</span>. Nat 20: SPIKE −2. Nat 1: SPIKE +1.</td>
       </tr>
       <tr class="spike-row-co">
         <td><span class="slvl c11">11</span></td>
         <td><span class="slbl c11">CONSUMED</span></td>
-        <td>1d4 True Damage per turn until HP 0, then 1d4 RESOLVE damage per turn. Death follows. End of turn: <span class="mono">d20 + RESOLVE vs TN 18</span>. Nat 1: damage at Advantage.</td>
+        <td>1d4 True Damage per turn until HP 0, then 1d4 RESOLVE damage per turn. Death follows. End of turn: <span class="mono">d20 + RESOLVE vs TN 17</span>. Nat 1: damage at Advantage.</td>
       </tr>
     </tbody>
   </table>
